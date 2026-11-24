@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "html-validate:recommended",
+    "html-validate:document",
+    "html-validate:a11y"
+  ],
+  "rules": {
+    "no-inline-style": "error",
+    "require-sri": "off",
+    "prefer-native-element": "error",
+    "no-redundant-role": "error",
+    "heading-level": "error",
+    "no-dup-id": "error",
+    "wcag/h30": "error",
+    "wcag/h32": "error",
+    "wcag/h37": "error",
+    "wcag/h67": "error"
+  }
+}

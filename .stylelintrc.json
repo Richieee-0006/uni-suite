@@ -1,0 +1,9 @@
+{
+  "extends": "stylelint-config-standard",
+  "rules": {
+    "declaration-no-important": null,
+    "media-feature-range-notation": "context",
+    "color-function-notation": "modern",
+    "alpha-value-notation": "percentage"
+  }
+}

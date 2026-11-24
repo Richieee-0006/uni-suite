@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+  <meta name="description" content="UNI Suite (uni.rutterle.eu) — studijní trenažér a interaktivní sandbox pro předměty KI UJEP. Platforma se připravuje.">
+  <title>Připravujeme | UNI Suite</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <a class="skip-link visually-hidden" href="#main-content">Přeskočit na obsah</a>
+
+  <div class="shell">
+    <header class="site-header">
+      <a class="brand" href="/" aria-current="page">
+        <svg class="brand-mark" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
+          <rect width="32" height="32" rx="7" fill="currentColor" fill-opacity="0.08"/>
+          <rect x="1" y="1" width="30" height="30" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.22" stroke-width="1"/>
+          <path d="M9.5 8.5v9.25a6.5 6.5 0 0 0 13 0V8.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="square"/>
+          <rect class="brand-mark-accent" x="21" y="21" width="4" height="4" rx="1"/>
+        </svg>
+        <span class="brand-text">
+          <strong class="brand-name">UNI Suite</strong>
+          <span class="brand-host">uni.rutterle.eu</span>
+        </span>
+      </a>
+      <span class="status-pill">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>Ve vývoji</span>
+      </span>
+    </header>
+
+    <main id="main-content" class="page-main">
+      <section class="hero" aria-labelledby="hero-title">
+        <p class="eyebrow">KI UJEP · Studijní platforma</p>
+        <h1 id="hero-title" tabindex="-1">Nová studijní platforma se připravuje</h1>
+        <p class="lead">
+          Sjednocujeme trenažéry, procvičování ke zkouškám a spouštění kódu na jedno místo.
+          TZI Trenér už funguje, další předměty postupně doplňujeme.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="https://tzi.rutterle.eu">
+            <span>Otevřít aktivní TZI Trenér</span>
+            <span aria-hidden="true">→</span>
+          </a>
+          <a class="btn btn-secondary" href="https://rutterle.eu">Zpět na rutterle.eu</a>
+        </div>
+
+        <div class="build-meter">
+          <div class="build-meter-head">
+            <label for="launch-progress">Fáze 1 · Jádro platformy a rozhraní</label>
+            <span class="mono-meta">35 %</span>
+          </div>
+          <progress id="launch-progress" value="35" max="100">35 %</progress>
+        </div>
+      </section>
+
+      <section class="subjects" aria-labelledby="subjects-title">
+        <div class="section-head">
+          <h2 id="subjects-title">Předměty v přípravě</h2>
+          <p class="section-note">Aktuální stav modulů</p>
+        </div>
+
+        <div class="subject-grid-wrap">
+          <ul class="subject-grid">
+            <li>
+              <article class="subject-card subject-card-live">
+                <div class="card-top">
+                  <span class="subject-code">KI/TIN</span>
+                  <span class="badge badge-live">Aktivní</span>
+                </div>
+                <h3>Teoretická informatika</h3>
+                <p>Banky otázek, doplňovačka pojmů, glosář a interaktivní návrhář konečných automatů.</p>
+                <a class="card-link" href="https://tzi.rutterle.eu">
+                  <span>Přejít na tzi.rutterle.eu</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+              </article>
+            </li>
+
+            <li>
+              <article class="subject-card">
+                <div class="card-top">
+                  <span class="subject-code">KI/NUM</span>
+                  <span class="badge badge-soon">Připravuje se</span>
+                </div>
+                <h3>Numerické metody</h3>
+                <p>Výpočetní úlohy s tolerancí přesnosti, přehled vzorců a R sandbox přímo v prohlížeči.</p>
+                <p class="card-meta">Chystá se v první vlně</p>
+              </article>
+            </li>
+
+            <li>
+              <article class="subject-card">
+                <div class="card-top">
+                  <span class="subject-code">KI/PAS</span>
+                  <span class="badge badge-soon">Připravuje se</span>
+                </div>
+                <h3>Pravděpodobnost a statistika</h3>
+                <p>Rozdělení náhodných veličin, testy hypotéz, kvantilové tabulky a vykreslování grafů v R.</p>
+                <p class="card-meta">Chystá se v první vlně</p>
+              </article>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="notes" aria-labelledby="notes-title">
+        <h2 id="notes-title">Co na uni.rutterle.eu přibude</h2>
+        <dl class="feature-list">
+          <div class="feature-item">
+            <dt>Chytré procvičování</dt>
+            <dd>Adaptivní opakování FSRS, automatický chybovník a zkušební simulace bez rušivých prvků.</dd>
+          </div>
+          <div class="feature-item">
+            <dt>Sandbox v prohlížeči</dt>
+            <dd>Spouštění kódu v R včetně grafů a postupně také Python, PostgreSQL, NoSQL a C#.</dd>
+          </div>
+          <div class="feature-item">
+            <dt>Přizpůsobení a mobil</dt>
+            <dd>Tmavý, AMOLED, světlý i Catppuccin motiv, Focus mód a plné ovládání na telefonu.</dd>
+          </div>
+        </dl>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <nav aria-label="Související odkazy">
+        <ul class="footer-links">
+          <li><a href="https://rutterle.eu">rutterle.eu</a></li>
+          <li><a href="https://tzi.rutterle.eu">tzi.rutterle.eu</a></li>
+        </ul>
+      </nav>
+      <p class="footer-meta">Aktualizováno <time datetime="2026-11-24">24. 11. 2026</time></p>
+    </footer>
+  </div>
+</body>
+</html>
