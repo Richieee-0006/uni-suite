@@ -1,0 +1,28 @@
+{
+  "slug": "pas",
+  "code": "KI/PAS",
+  "short": "PAS",
+  "title": "Pravděpodobnost a statistika",
+  "description": "Náhodné veličiny, rozdělení, odhady, testování hypotéz, kvantily a grafy v R",
+  "visibility": "public",
+  "provider": {
+    "type": "obsidian",
+    "folder": "PAS"
+  },
+  "engines": ["choice", "input_numeric", "recall", "code_task", "multi_step"],
+  "sandbox": {
+    "languages": ["r"],
+    "default_tier": "webr",
+    "timeout_ms": 5000
+  },
+  "tools": ["glossary", "formulas", "dist_tables"],
+  "gamification": {
+    "xp": true,
+    "daily_goal": true
+  },
+  "exam_config": {
+    "count": 15,
+    "minutes": 30,
+    "pass_pct": 60
+  }
+}

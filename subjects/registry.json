@@ -1,0 +1,28 @@
+{
+  "site": {
+    "title": "UNI Suite",
+    "domain": "uni.rutterle.eu",
+    "subtitle": "Studijní trenažéry a sandbox pro předměty KI UJEP"
+  },
+  "subjects": [
+    {
+      "slug": "num",
+      "kind": "local"
+    },
+    {
+      "slug": "pas",
+      "kind": "local"
+    },
+    {
+      "slug": "tzi",
+      "kind": "external",
+      "code": "KI/TIN",
+      "short": "TZI",
+      "title": "Teoretická informatika",
+      "description": "Banky otázek, doplňovačka, glosář a návrhář automatů",
+      "url": "https://tzi.rutterle.eu",
+      "status": "active",
+      "visibility": "public"
+    }
+  ]
+}
