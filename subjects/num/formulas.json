@@ -134,6 +134,36 @@
           "note": "$k_1 = f(x_k, y_k)$, $k_2 = f(x_k + \\tfrac{h}{2}, y_k + \\tfrac{h}{2}k_1)$, $k_3 = f(x_k + \\tfrac{h}{2}, y_k + \\tfrac{h}{2}k_2)$, $k_4 = f(x_k + h, y_k + hk_3)$."
         }
       ]
+    },
+    {
+      "title": "7. Rozhodovací tahák: jak zvolit metodu ke zkoušce",
+      "items": [
+        {
+          "name": "Bezpečné porovnání floatů (Vicher 1.2.1)",
+          "latex": "|a - b| \\le \\varepsilon \\cdot \\max(1, |a|, |b|)",
+          "note": "Nikdy nepoužívejte přímé `a == b` pro čísla s plovoucí čárkou; kombinujte absolutní a relativní toleranci."
+        },
+        {
+          "name": "Kořen rovnice / průsečík křivek f(x) = g(x)",
+          "latex": "h(x) = f(x) - g(x) = 0",
+          "note": "Jistota na $[a, b]$ se změnou znaménka → Bisekce / Regula falsi; známá derivace → Newton; polynom → Newton–Horner."
+        },
+        {
+          "name": "Soustava A x = b (přímá vs. iterační)",
+          "latex": "PA = LU \\quad \\text{nebo} \\quad A = LL^T \\; (\\text{SPD})",
+          "note": "Obecná hustá soustava → GEM s pivotací; více pravých stran / determinant → LU; velká řídká diagonálně dominantní → Gauss–Seidel / Jacobi."
+        },
+        {
+          "name": "Přesný průchod body vs. zašuměná data",
+          "latex": "P(x_i) = y_i \\; (\\text{interpolace}) \\quad \\text{vs.} \\quad \\min \\sum (y_i - \\varphi(x_i))^2 \\; (\\text{MNC})",
+          "note": "Málo přesných bodů → Lagrange / Newton; mnoho bodů bez oscilací → po částech lineární / spliny; zašuměný trend → MNC (u nelineárního modelu nejdříve linearizace)."
+        },
+        {
+          "name": "Určitý integrál a ODR",
+          "latex": "\\int_a^b f(x)\\,dx \\to \\text{Simpson / Romberg}, \\qquad y' = f(x, y) \\to \\text{RK4}",
+          "note": "Pro hladké integrandy volte Simpson $O(h^4)$, Romberg nebo Gaussovu kvadraturu ($2n-1$); pro ODR preferujte RK4 před Eulerem."
+        }
+      ]
     }
   ]
 }

@@ -235,6 +235,25 @@
         "Vysvětlení: $\\delta(a \\cdot b) \\approx 1{,}5\\,\\% + 2{,}5\\,\\% = 4{,}0\\,\\%$."
       ],
       "explanation": "U součtu/rozdílu se sčítají absolutní chyby ($\\Delta(a \\pm b) \\le \\Delta a + \\Delta b$), zatímco u součinu/podílu se v lineárním přiblížení sčítají relativní chyby ($\\delta(a \\cdot b) \\approx \\delta a + \\delta b = 4\\,\\%$)."
+    },
+    {
+      "id": "num-01-q13",
+      "number": 13,
+      "type": "choice",
+      "text": "Proč se podle Vicherových skript (kap. 1.2.1) v numerickém kódu v Pythonu či R nemá používat přímé porovnání rovnosti `a == b` pro čísla s plovoucí řádovou čárkou (např. `0.1 + 0.2 == 0.3`), a jak se porovnávají správně?",
+      "options": {
+        "A": "Operátor `==` u reálných čísel vyvolá chybu kompilace",
+        "B": "Desítkové zlomky jako $0{,}1$ nemají v dvojkové soustavě konečný rozvoj, takže zaokrouhlení způsobí drobnou odchylku; porovnáváme s tolerancí $|a - b| \\le \\varepsilon \\cdot \\max(1, |a|, |b|)$ (v Pythonu `math.isclose`, v R `isTRUE(all.equal(a, b))`)",
+        "C": "Správné je vždy převést obě čísla na celá čísla pomocí `int()`",
+        "D": "Čísla `double` ukládají desetinné zlomky vždy zcela přesně, stačí porovnat `a <= b`"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Ve dvojkové soustavě je $0{,}1_{10} = 0{,}0001100110011\\dots_2$ (periodický zlomek).",
+        "Krok 2: Proto v IEEE 754 platí `0.1 + 0.2 == 0.30000000000000004 != 0.3`.",
+        "Vysvětlení: Používáme test s tolerancí $|a - b| \\le \\varepsilon$ (příp. kombinovanou absolutní a relativní toleranci `math.isclose` / `all.equal`)."
+      ],
+      "explanation": "V binární aritmetice s konečnou mantisou nelze přesně reprezentovat většinu desítkových zlomků. Proto vždy testujeme shodu v rámci zvolené tolerance (např. `math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-12)` v Pythonu)."
     }
   ]
 }

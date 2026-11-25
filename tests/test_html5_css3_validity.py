@@ -124,6 +124,11 @@ def test_real_catalog_subjects_valid_html5(
             "Vicher, M.",
             "VONDRÁK, V.",
             "KUBEN, J.",
+            "vicher_nm1.pdf",
+            "FINALNI_VERZE_CD.pdf",
+            "script_num.pdf",
+            "nm.pdf",
+            "NUMER.PDF",
         ):
             assert token in num_html, f"Missing NUM syllabus content: {token}"
 

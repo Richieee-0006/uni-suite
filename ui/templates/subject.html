@@ -409,7 +409,11 @@ trapezoid &lt;- function(f, a, b, n) {
 {%- for ref in _subj.literature %}
                   <li class="syllabus-row">
                     <span class="eyebrow">{{ ref.kind }}</span>
+{%- if ref.url and ref.url.startswith('https://') %}
+                    <a href="{{ ref.url }}" class="text-link" target="_blank" rel="noopener noreferrer">{{ ref.citation }} ↗</a>
+{%- else %}
                     <span>{{ ref.citation }}</span>
+{%- endif %}
                   </li>
 {%- endfor %}
                 </ul>
