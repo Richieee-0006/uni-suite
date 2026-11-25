@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="cs"{% for k, v in (html_attrs or {}).items() %} {{ k }}="{{ v }}"{% endfor %}>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#121315">
+  <meta name="csrf-token" content="{{ csrf_token or '' }}">
+  <title>{{ page_title or (site.title if site else 'UNI Suite') }}</title>
+  <link rel="icon" type="image/svg+xml" href="/static/icon.svg">
+  <link rel="manifest" href="/static/manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+  <link rel="stylesheet" href="/static/css/tokens.css">
+  <link rel="stylesheet" href="/static/css/portal.css">
+{%- block extra_head %}{% endblock %}
+</head>
+<body>
+{%- set _site = site or {'title': 'UNI Suite', 'domain': 'uni.rutterle.eu', 'subtitle': 'Studijní trenažéry a sandbox pro předměty KI UJEP'} %}
+{%- set _prefs = prefs or {} %}
+{%- set _theme = _prefs.get('theme', 'graphite') %}
+{%- set _accent = _prefs.get('accent', 'sky') %}
+{%- set _density = _prefs.get('density', 'default') %}
+{%- set _font_scale = _prefs.get('font_scale', 100) %}
+{%- set _block_size = _prefs.get('block_size', 10) %}
+{%- set _daily_goal = _prefs.get('daily_goal', 5) %}
+{%- set _code_layout = _prefs.get('code_layout', 'split') %}
+  <a href="#main-content" class="skip-link visually-hidden">Přeskočit na obsah</a>
+
+  <div class="app-shell">
+    <aside id="nav-rail" class="nav-rail" popover="manual">
+      <div id="rail-scroller" class="rail-scroller">
+        <div class="rail-panel">
+{%- block rail_content %}
+          <div class="rail-header">
+            <a href="/" class="rail-brand">
+              <span class="brand-name">{{ _site.title }}</span>
+              <span class="brand-domain">{{ _site.domain }}</span>
+            </a>
+            <button type="button" id="rail-close-btn" class="icon-btn rail-close-btn" aria-label="Zavřít navigaci">
+              <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <div class="rail-sections">
+            <nav class="rail-group" aria-label="Přehled">
+              <span class="rail-group-label">Přehled</span>
+              <ul class="rail-list">
+                <li>
+                  <a href="/" class="rail-item"{% if active_nav == 'portal' %} aria-current="page"{% endif %}>
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                      <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                      <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                      <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+                    </svg>
+                    <span>Všechny předměty</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+
+            <nav class="rail-group" aria-label="Předměty">
+              <span class="rail-group-label">Předměty</span>
+              <ul class="rail-list">
+{%- for item in (subjects or []) %}
+{%- set is_ext = item.kind == 'external' and item.url %}
+                <li>
+                  <a href="{{ item.url if is_ext else '/predmet/' ~ item.slug }}" class="rail-item"{% if is_ext %} target="_blank" rel="noopener noreferrer"{% endif %}{% if active_nav == 'subject:' ~ item.slug %} aria-current="page"{% endif %}>
+                    <span class="status-dot {{ 'status-dot-active' if item.status == 'active' else 'status-dot-preparing' }}" aria-hidden="true"></span>
+                    <span class="rail-subject-code">{{ item.short or item.code }}</span>
+                    <span class="rail-subject-title">{{ item.title }}</span>
+{%- if is_ext %}
+                    <span class="rail-item-meta" aria-hidden="true">↗</span>
+{%- endif %}
+                  </a>
+                </li>
+{%- endfor %}
+              </ul>
+            </nav>
+
+            <div class="rail-group">
+              <span class="rail-group-label">Nástroje</span>
+              <ul class="rail-list">
+                <li>
+                  <button type="button" class="rail-item" data-open-cmd data-close-drawer>
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="11" cy="11" r="7"></circle>
+                      <line x1="20" y1="20" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <span>Rychlé hledání</span>
+                    <kbd class="rail-item-meta">Ctrl+K</kbd>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" class="rail-item" data-open-reference data-close-drawer>
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <span>Tahák a vzorce</span>
+                    <kbd class="rail-item-meta">F</kbd>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" class="rail-item" data-open-scratchpad data-close-drawer>
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 20h9"></path>
+                      <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                    </svg>
+                    <span>Škrabák</span>
+                    <kbd class="rail-item-meta">S</kbd>
+                  </button>
+                </li>
+                <li>
+                  <button type="button" class="rail-item" data-open-customizer data-close-drawer>
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    <span>Přizpůsobit</span>
+                  </button>
+                </li>
+              </ul>
+            </div>
+{%- if user and user.role == 'admin' %}
+            <nav class="rail-group" aria-label="Správa">
+              <span class="rail-group-label">Správa</span>
+              <ul class="rail-list">
+                <li>
+                  <a href="/admin" class="rail-item">
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <span>Správa platformy</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+{%- endif %}
+          </div>
+{%- endblock %}
+
+          <div class="rail-footer">
+            <div class="rail-user-row">
+{%- if user and user.is_authenticated %}
+              <div class="rail-user-info">
+                <span class="user-avatar-dot" aria-hidden="true">{{ (user.username or 'U')[:1] | upper }}</span>
+                <span class="rail-user-name">{{ user.username }}</span>
+              </div>
+              <form method="post" action="/logout">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+                <button type="submit" class="btn btn-ghost btn-sm">Odhlásit</button>
+              </form>
+{%- else %}
+              <div class="rail-user-info">
+                <span class="user-avatar-dot" aria-hidden="true">H</span>
+                <span class="rail-user-name">{{ user.username if user and user.username else 'Host (Trial)' }}</span>
+              </div>
+              <a href="/login" class="text-link">Přihlásit se</a>
+{%- endif %}
+            </div>
+          </div>
+        </div>
+        <div id="rail-backdrop-sentinel" class="rail-backdrop-sentinel" aria-hidden="true"></div>
+      </div>
+    </aside>
+
+    <header id="app-topbar" class="app-topbar">
+      <div class="topbar-start">
+        <button
+          type="button"
+          id="rail-open-btn"
+          class="icon-btn menu-toggle-btn"
+          aria-controls="nav-rail"
+          aria-expanded="false"
+          aria-label="Otevřít navigaci"
+        >
+          <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div class="topbar-context">
+{%- block topbar_context %}
+          <span class="topbar-title">{{ _site.title }} · {{ _site.domain }}</span>
+{%- endblock %}
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <button type="button" class="icon-btn" data-open-cmd aria-label="Hledat (Ctrl+K)">
+          <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <line x1="20" y1="20" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+        <button type="button" class="icon-btn topbar-secondary-tool" data-open-reference aria-label="Tahák a vzorce (F)">
+          <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+        </button>
+        <button type="button" class="icon-btn topbar-secondary-tool" data-open-scratchpad aria-label="Škrabák (S)">
+          <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-sm btn-toggle"
+          data-toggle-focus
+          aria-label="Focus mód"
+          aria-pressed="{{ 'true' if _prefs.get('focus_mode') else 'false' }}"
+        >
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <line x1="4" y1="21" x2="4" y2="14"></line>
+            <line x1="4" y1="10" x2="4" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12" y2="3"></line>
+            <line x1="20" y1="21" x2="20" y2="16"></line>
+            <line x1="20" y1="12" x2="20" y2="3"></line>
+            <line x1="1" y1="14" x2="7" y2="14"></line>
+            <line x1="9" y1="8" x2="15" y2="8"></line>
+            <line x1="17" y1="16" x2="23" y2="16"></line>
+          </svg>
+          <span class="topbar-btn-label">Focus mód</span>
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" data-open-customizer aria-label="Přizpůsobit rozhraní">
+          <svg class="icon" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span class="topbar-btn-label">Přizpůsobit</span>
+        </button>
+      </div>
+    </header>
+
+    <main id="main-content" class="app-main" tabindex="-1">
+      <div class="workspace-inner">
+{%- block content %}{% endblock %}
+      </div>
+    </main>
+
+    <footer id="app-footer" class="app-footer">
+      <span>{{ _site.title }} · KI UJEP</span>
+      <div class="footer-meta">
+        <span><kbd>Ctrl+K</kbd> Hledat</span>
+        <span><kbd>F</kbd> Tahák</span>
+        <span><kbd>S</kbd> Škrabák</span>
+      </div>
+    </footer>
+  </div>
+
+  <dialog id="customizer-dialog" class="drawer-dialog" aria-labelledby="customizer-title">
+    <div class="dialog-header">
+      <h2 id="customizer-title">Přizpůsobení rozhraní</h2>
+      <button type="button" class="icon-btn" data-dialog-close aria-label="Zavřít přizpůsobení">
+        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="dialog-body">
+      <fieldset class="cust-group">
+        <legend class="cust-legend">Vzhled</legend>
+        <div class="theme-grid">
+          <label class="theme-card">
+            <input type="radio" name="theme" value="graphite"{% if _theme == 'graphite' %} checked{% endif %}>
+            <span class="theme-preview preview-graphite" aria-hidden="true">
+              <span class="theme-preview-bar theme-preview-bar-sm"></span>
+              <span class="theme-preview-bar theme-preview-bar-lg"></span>
+            </span>
+            <span>Graphite</span>
+          </label>
+          <label class="theme-card">
+            <input type="radio" name="theme" value="amoled"{% if _theme == 'amoled' %} checked{% endif %}>
+            <span class="theme-preview preview-amoled" aria-hidden="true">
+              <span class="theme-preview-bar theme-preview-bar-sm"></span>
+              <span class="theme-preview-bar theme-preview-bar-lg"></span>
+            </span>
+            <span>AMOLED</span>
+          </label>
+          <label class="theme-card">
+            <input type="radio" name="theme" value="light"{% if _theme == 'light' %} checked{% endif %}>
+            <span class="theme-preview preview-light" aria-hidden="true">
+              <span class="theme-preview-bar theme-preview-bar-sm"></span>
+              <span class="theme-preview-bar theme-preview-bar-lg"></span>
+            </span>
+            <span>Světlý</span>
+          </label>
+          <label class="theme-card">
+            <input type="radio" name="theme" value="catppuccin"{% if _theme == 'catppuccin' %} checked{% endif %}>
+            <span class="theme-preview preview-catppuccin" aria-hidden="true">
+              <span class="theme-preview-bar theme-preview-bar-sm"></span>
+              <span class="theme-preview-bar theme-preview-bar-lg"></span>
+            </span>
+            <span>Catppuccin</span>
+          </label>
+          <label class="theme-card">
+            <input type="radio" name="theme" value="auto"{% if _theme == 'auto' %} checked{% endif %}>
+            <span class="theme-preview preview-auto" aria-hidden="true">
+              <span class="theme-preview-bar theme-preview-bar-sm"></span>
+              <span class="theme-preview-bar theme-preview-bar-lg"></span>
+            </span>
+            <span>Podle systému</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="cust-group">
+        <legend class="cust-legend">Akcent</legend>
+        <div class="swatch-row">
+          <label class="swatch-option">
+            <input type="radio" name="accent" value="sky"{% if _accent == 'sky' %} checked{% endif %}>
+            <span class="swatch-dot swatch-sky" aria-hidden="true"></span>
+            <span class="visually-hidden">Modrá (Sky)</span>
+          </label>
+          <label class="swatch-option">
+            <input type="radio" name="accent" value="emerald"{% if _accent == 'emerald' %} checked{% endif %}>
+            <span class="swatch-dot swatch-emerald" aria-hidden="true"></span>
+            <span class="visually-hidden">Smaragdová (Emerald)</span>
+          </label>
+          <label class="swatch-option">
+            <input type="radio" name="accent" value="amber"{% if _accent == 'amber' %} checked{% endif %}>
+            <span class="swatch-dot swatch-amber" aria-hidden="true"></span>
+            <span class="visually-hidden">Jantarová (Amber)</span>
+          </label>
+          <label class="swatch-option">
+            <input type="radio" name="accent" value="rose"{% if _accent == 'rose' %} checked{% endif %}>
+            <span class="swatch-dot swatch-rose" aria-hidden="true"></span>
+            <span class="visually-hidden">Růžová (Rose)</span>
+          </label>
+          <label class="swatch-option">
+            <input type="radio" name="accent" value="violet"{% if _accent == 'violet' %} checked{% endif %}>
+            <span class="swatch-dot swatch-violet" aria-hidden="true"></span>
+            <span class="visually-hidden">Fialová (Violet)</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="cust-group">
+        <legend class="cust-legend">Hustota</legend>
+        <div class="segmented-row">
+          <label class="seg-option">
+            <input type="radio" name="density" value="compact"{% if _density == 'compact' %} checked{% endif %}>
+            <span>Kompaktní</span>
+          </label>
+          <label class="seg-option">
+            <input type="radio" name="density" value="default"{% if _density == 'default' %} checked{% endif %}>
+            <span>Výchozí</span>
+          </label>
+          <label class="seg-option">
+            <input type="radio" name="density" value="relaxed"{% if _density == 'relaxed' %} checked{% endif %}>
+            <span>Volnější</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="cust-group">
+        <legend class="cust-legend">Měřítko písma</legend>
+        <div class="segmented-row">
+          <label class="seg-option">
+            <input type="radio" name="font_scale" value="90"{% if _font_scale == 90 %} checked{% endif %}>
+            <span>90 %</span>
+          </label>
+          <label class="seg-option">
+            <input type="radio" name="font_scale" value="100"{% if _font_scale == 100 %} checked{% endif %}>
+            <span>100 %</span>
+          </label>
+          <label class="seg-option">
+            <input type="radio" name="font_scale" value="110"{% if _font_scale == 110 %} checked{% endif %}>
+            <span>110 %</span>
+          </label>
+          <label class="seg-option">
+            <input type="radio" name="font_scale" value="120"{% if _font_scale == 120 %} checked{% endif %}>
+            <span>120 %</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="cust-group">
+        <legend class="cust-legend">Studijní moduly</legend>
+        <div class="toggle-list">
+          <div class="toggle-row">
+            <label for="pref-focus-mode">Focus mód (skrýt XP a denní cíl)</label>
+            <input id="pref-focus-mode" class="toggle-check" type="checkbox" data-pref-key="focus_mode"{% if _prefs.get('focus_mode') %} checked{% endif %}>
+          </div>
+          <div class="toggle-row">
+            <label for="pref-show-matrix">Binární matice postupu (1/0/·)</label>
+            <input id="pref-show-matrix" class="toggle-check" type="checkbox" data-pref-key="show_matrix"{% if _prefs.get('show_matrix', True) %} checked{% endif %}>
+          </div>
+          <div class="toggle-row">
+            <label for="pref-shortcuts">Klávesové zkratky (1–4, Enter, F, S)</label>
+            <input id="pref-shortcuts" class="toggle-check" type="checkbox" data-pref-key="shortcuts"{% if _prefs.get('shortcuts', True) %} checked{% endif %}>
+          </div>
+          <div class="toggle-row">
+            <label for="pref-auto-advance">Automatický přechod po odpovědi</label>
+            <input id="pref-auto-advance" class="toggle-check" type="checkbox" data-pref-key="auto_advance"{% if _prefs.get('auto_advance') %} checked{% endif %}>
+          </div>
+          <div class="toggle-row">
+            <label for="pref-formula-hints">Nápovědy vzorců</label>
+            <input id="pref-formula-hints" class="toggle-check" type="checkbox" data-pref-key="formula_hints"{% if _prefs.get('formula_hints', True) %} checked{% endif %}>
+          </div>
+          <div class="toggle-row">
+            <label for="pref-reduced-motion">Omezit animace</label>
+            <input id="pref-reduced-motion" class="toggle-check" type="checkbox" data-pref-key="reduced_motion"{% if _prefs.get('reduced_motion') %} checked{% endif %}>
+          </div>
+          <div class="toggle-row">
+            <label for="pref-sound">Zvuková odezva</label>
+            <input id="pref-sound" class="toggle-check" type="checkbox" data-pref-key="sound"{% if _prefs.get('sound') %} checked{% endif %}>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="cust-group">
+        <legend class="cust-legend">Rozvržení editoru kódu</legend>
+        <div class="segmented-row">
+          <label class="seg-option">
+            <input type="radio" name="code_layout" value="split"{% if _code_layout == 'split' %} checked{% endif %}>
+            <span>Vedle sebe</span>
+          </label>
+          <label class="seg-option">
+            <input type="radio" name="code_layout" value="stack"{% if _code_layout == 'stack' %} checked{% endif %}>
+            <span>Pod sebou</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <div class="cust-group">
+        <span class="cust-legend">Parametry</span>
+        <div class="stepper-row">
+          <span>Denní cíl</span>
+          <div class="stepper-control">
+            <button type="button" id="cust-goal-dec" class="stepper-btn" aria-label="Snížit denní cíl">−</button>
+            <output id="cust-daily-goal-out" class="stepper-val">{{ _daily_goal }} otázek</output>
+            <button type="button" id="cust-goal-inc" class="stepper-btn" aria-label="Zvýšit denní cíl">+</button>
+          </div>
+        </div>
+      </div>
+
+      <fieldset class="cust-group">
+        <legend class="cust-legend">Velikost bloku</legend>
+        <div class="segmented-row">
+          <label class="seg-option">
+            <input type="radio" name="block_size" value="5"{% if _block_size == 5 %} checked{% endif %}>
+            <span>5</span>
+          </label>
+          <label class="seg-option">
+            <input type="radio" name="block_size" value="10"{% if _block_size == 10 %} checked{% endif %}>
+            <span>10</span>
+          </label>
+          <label class="seg-option">
+            <input type="radio" name="block_size" value="15"{% if _block_size == 15 %} checked{% endif %}>
+            <span>15</span>
+          </label>
+          <label class="seg-option">
+            <input type="radio" name="block_size" value="20"{% if _block_size == 20 %} checked{% endif %}>
+            <span>20</span>
+          </label>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="dialog-footer">
+      <button type="button" id="customizer-reset" class="btn btn-ghost btn-sm">Obnovit výchozí nastavení</button>
+      <output id="customizer-status" class="daily-meta"></output>
+    </div>
+  </dialog>
+
+  <dialog id="cmd-palette-dialog" class="modal-dialog" aria-labelledby="cmd-palette-title">
+    <div class="visually-hidden">
+      <h2 id="cmd-palette-title">Rychlé vyhledávání</h2>
+    </div>
+    <search>
+      <form id="cmd-search-form" class="cmd-form" action="/" method="get">
+        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="20" y1="20" x2="16.65" y2="16.65"></line>
+        </svg>
+        <label for="cmd-search-input" class="visually-hidden">Hledat předměty, okruhy nebo akce</label>
+        <input
+          id="cmd-search-input"
+          class="cmd-input"
+          type="search"
+          name="q"
+          placeholder="Hledat předmět, okruh nebo akci"
+          autocomplete="off"
+        >
+        <button type="submit" class="btn btn-ghost btn-sm">Hledat</button>
+        <button type="button" class="icon-btn" data-dialog-close aria-label="Zavřít vyhledávání">
+          <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </form>
+    </search>
+    <div class="cmd-results-wrap">
+      <ul id="cmd-results" class="cmd-results"></ul>
+    </div>
+  </dialog>
+
+  <dialog id="reference-dialog" class="drawer-dialog" aria-labelledby="reference-title">
+    <div class="dialog-header">
+      <div class="dialog-title-wrap">
+        <h2 id="reference-title">Tahák a vzorce</h2>
+        <kbd>F</kbd>
+      </div>
+      <button type="button" class="icon-btn" data-dialog-close aria-label="Zavřít tahák">
+        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      <div id="reference-list" class="ref-list">
+{%- block reference_items %}
+        <article class="ref-card">
+          <h3 class="ref-name">Newtonova metoda</h3>
+          <p class="ref-expr">x_(k+1) = x_k - f(x_k) / f'(x_k)</p>
+          <p class="ref-note">Kvadratická konvergence v okolí jednoduchého kořene</p>
+        </article>
+        <article class="ref-card">
+          <h3 class="ref-name">Složené lichoběžníkové pravidlo</h3>
+          <p class="ref-expr">I ≈ (h / 2) · [f(a) + 2 · Σ f(x_i) + f(b)]</p>
+          <p class="ref-note">Řád chyby O(h²) pro dvakrát spojitě diferencovatelnou funkci</p>
+        </article>
+        <article class="ref-card">
+          <h3 class="ref-name">Standardizace (Z-skóre)</h3>
+          <p class="ref-expr">Z = (X - μ) / σ ~ N(0, 1)</p>
+          <p class="ref-note">Převod normálního rozdělení na normované normální</p>
+        </article>
+{%- endblock %}
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <span class="daily-meta">Klávesa <kbd>Esc</kbd> zavře panel</span>
+    </div>
+  </dialog>
+
+  <dialog id="scratchpad-dialog" class="drawer-dialog" aria-labelledby="scratchpad-title">
+    <div class="dialog-header">
+      <div class="dialog-title-wrap">
+        <h2 id="scratchpad-title">Škrabák</h2>
+        <kbd>S</kbd>
+      </div>
+      <button type="button" class="icon-btn" data-dialog-close aria-label="Zavřít škrabák">
+        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      <div class="field">
+        <label for="scratchpad-input" class="field-label">Dočasné poznámky a mezivýpočty (uloženo v této relaci)</label>
+        <textarea
+          id="scratchpad-input"
+          class="scratchpad-textarea"
+          rows="12"
+          spellcheck="false"
+          placeholder="Zapiš si mezivýpočty, hodnoty iterací nebo poznámky ke zkoušce"
+        ></textarea>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button type="button" id="scratchpad-clear" class="btn btn-ghost btn-sm">Vymazat</button>
+      <output id="scratchpad-meta" class="daily-meta">Prázdný</output>
+    </div>
+  </dialog>
+
+  <div id="live-polite" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+  <div id="live-alert" class="visually-hidden" role="alert"></div>
+
+  <script type="application/json" id="uni-state">{% block state_json %}{{ {
+    'user': {'username': user.username, 'is_authenticated': user.is_authenticated} if user else None,
+    'prefs': _prefs
+  } | tojson }}{% endblock %}</script>
+  <script src="/static/js/dom.js" defer></script>
+  <script src="/static/js/nav_drawer.js" defer></script>
+  <script src="/static/js/customizer.js" defer></script>
+  <script src="/static/js/cmd_palette.js" defer></script>
+  <script src="/static/js/scratchpad.js" defer></script>
+  <script src="/static/js/portal.js" defer></script>
+{%- block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="cs"{% for k, v in (html_attrs or {}).items() %} {{ k }}="{{ v }}"{% endfor %}>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#121315">
+  <meta name="csrf-token" content="{{ csrf_token or '' }}">
+  <title>{{ page_title or 'Správa platformy | UNI Suite' }}</title>
+  <link rel="icon" type="image/svg+xml" href="/static/icon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+  <link rel="stylesheet" href="/static/css/tokens.css">
+  <link rel="stylesheet" href="{{ admin_assets_base or '/admin/assets' }}/admin.css">
+</head>
+<body>
+{%- set _site = site or {'title': 'UNI Suite', 'domain': 'uni.rutterle.eu'} %}
+{%- set _subjects = all_subjects or [] %}
+{%- set _stats = stats or {} %}
+{%- set _users_count = _stats.get('users', _stats.get('users_count', 0)) %}
+{%- set _attempts_count = _stats.get('progress_rows', _stats.get('attempts', _stats.get('scores', 0))) %}
+{%- set _public_count = (_subjects | selectattr('visibility', 'equalto', 'public') | list | length) %}
+{%- set _hidden_count = (_subjects | length) - _public_count %}
+  <a href="#main-content" class="skip-link visually-hidden">Přeskočit na obsah</a>
+
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <div class="admin-brand-group">
+        <a href="/" class="admin-back-link">← {{ _site.title }}</a>
+        <span class="admin-env-pill mono">Správa</span>
+      </div>
+      <div class="admin-user-actions">
+        <span class="admin-username">{{ user.username if user else 'Správce' }}</span>
+        <form method="post" action="/logout">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+          <button type="submit" class="admin-btn admin-btn-ghost">Odhlásit</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="admin-main" tabindex="-1">
+    <div class="admin-container">
+      <div class="admin-page-head">
+        <h1>Správa platformy</h1>
+        <p class="admin-subtitle">Viditelnost předmětů, napojení poskytovatelů obsahu a stav systému</p>
+      </div>
+
+      <section class="admin-stats-grid" aria-label="Přehled statistik">
+        <article class="admin-stat-card">
+          <span class="admin-stat-label">Registrovaní uživatelé</span>
+          <span class="admin-stat-value tabular">{{ _users_count }}</span>
+        </article>
+        <article class="admin-stat-card">
+          <span class="admin-stat-label">Veřejné předměty</span>
+          <span id="stat-public-count" class="admin-stat-value tabular">{{ _public_count }}</span>
+        </article>
+        <article class="admin-stat-card">
+          <span class="admin-stat-label">Skryté (jen správce)</span>
+          <span id="stat-hidden-count" class="admin-stat-value tabular">{{ _hidden_count }}</span>
+        </article>
+        <article class="admin-stat-card">
+          <span class="admin-stat-label">Záznamy postupu</span>
+          <span class="admin-stat-value tabular">{{ _attempts_count }}</span>
+        </article>
+      </section>
+
+      <section class="admin-panel" aria-labelledby="subjects-admin-heading">
+        <div class="admin-panel-head">
+          <h2 id="subjects-admin-heading">Registr předmětů a viditelnost</h2>
+          <output id="admin-status-output" class="admin-status-output"></output>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <caption class="visually-hidden">Seznam všech předmětů včetně poskytovatele obsahu a přepínače viditelnosti</caption>
+            <thead>
+              <tr>
+                <th scope="col">Kód</th>
+                <th scope="col">Předmět</th>
+                <th scope="col">Zdroj / Poskytovatel</th>
+                <th scope="col">Stav</th>
+                <th scope="col">Viditelnost</th>
+                <th scope="col">Akce</th>
+              </tr>
+            </thead>
+            <tbody>
+{%- for subj in _subjects %}
+{%- set vis = subj.visibility or 'public' %}
+{%- set prov = subj.provider if subj.provider is mapping else {} %}
+              <tr data-subject-row="{{ subj.slug }}">
+                <th scope="row" class="mono" data-label="Kód">{{ subj.code }}</th>
+                <td data-label="Předmět">
+                  <span class="admin-subj-title">{{ subj.title }}</span>
+                  <span class="admin-subj-slug mono">{{ subj.slug }}</span>
+                </td>
+                <td class="mono" data-label="Poskytovatel">
+{%- if prov %}
+                  {{ prov.get('type', 'local') }}{% if prov.get('folder') %} / {{ prov.get('folder') }}{% endif %}
+{%- elif subj.kind == 'external' and subj.url %}
+                  external · {{ subj.url }}
+{%- else %}
+                  {{ subj.kind or 'local' }}
+{%- endif %}
+                </td>
+                <td data-label="Stav">{{ subj.status or 'preparing' }}</td>
+                <td data-label="Viditelnost">
+                  <span class="vis-badge {{ 'vis-public' if vis == 'public' else 'vis-admin' }}" data-vis-badge="{{ subj.slug }}">{{ 'Veřejný' if vis == 'public' else 'Skrytý (admin)' }}</span>
+                </td>
+                <td class="admin-action-cell" data-label="Akce">
+{%- if subj.kind != 'external' %}
+                  <button
+                    type="button"
+                    class="admin-btn"
+                    data-toggle-visibility
+                    data-slug="{{ subj.slug }}"
+                    data-current-visibility="{{ vis }}"
+                  >{{ 'Skrýt před veřejností' if vis == 'public' else 'Zveřejnit' }}</button>
+{%- else %}
+                  <span class="admin-muted">Externí</span>
+{%- endif %}
+                </td>
+              </tr>
+{%- endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="admin-footer">
+    <span>{{ _site.title }} · Izolovaný panel správy</span>
+  </footer>
+
+  <div id="admin-live" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+  <script src="{{ admin_assets_base or '/admin/assets' }}/admin.js" defer></script>
+</body>
+</html>

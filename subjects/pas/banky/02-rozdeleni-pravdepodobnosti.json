@@ -1,0 +1,202 @@
+{
+  "title": "02 · Rozdělení pravděpodobnosti a R funkce",
+  "lecture": 2,
+  "date": "2026-10-09",
+  "questions": [
+    {
+      "id": "pas-02-q01",
+      "number": 1,
+      "type": "choice",
+      "text": "Co znamenají čtyři standardní prefixy funkcí pro pravděpodobnostní rozdělení v jazyce **R** (`dnorm`, `pnorm`, `qnorm`, `rnorm`)?",
+      "options": {
+        "A": "`d` = distribuční funkce, `p` = hustota, `q` = kvartil, `r` = rozptyl",
+        "B": "`d` = hustota / pravděpodobnostní funkce (density), `p` = distribuční funkce $P(X \\le x)$, `q` = kvantilová funkce (inverze $F$), `r` = generování náhodného výběru",
+        "C": "`d` = derivace, `p` = průměr, `q` = kvadrát, `r` = regrese",
+        "D": "`d` = data, `p` = p-hodnota, `q` = Q-Q graf, `r` = korelace"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Anglické názvy: **d**ensity, **p**robability (CDF), **q**uantile, **r**andom.",
+        "Krok 2: `pnorm(x, mu, sd)` dává plochu vlevo $P(X \\le x)$, kdežto `qnorm(p, mu, sd)` převádí pravděpodobnost $p$ zpět na hodnotu $x$.",
+        "Vysvětlení: Toto jednotné pojmenování platí napříč všemi rozděleními v R (`binom`, `pois`, `exp`, `unif`, `norm`, `t`, `chisq`, `lnorm`)."
+      ],
+      "explanation": "V R prefix `d` vrací hustotu (u diskrétních $P(X=k)$), `p` distribuční funkci $F(x) = P(X \\le x)$, `q` kvantilovou funkci $F^{-1}(p)$ a `r` generuje náhodná čísla."
+    },
+    {
+      "id": "pas-02-q02",
+      "number": 2,
+      "type": "choice",
+      "text": "Pro **spojitou** náhodnou veličinu $X$ (např. normální nebo exponenciální rozdělení) platí pro každou konkrétní reálnou hodnotu $x_0$:",
+      "options": {
+        "A": "$P(X = x_0) = f(x_0)$ (hodnota hustoty)",
+        "B": "$P(X = x_0) = 0$, a proto $P(X \\le x_0) = P(X < x_0)$",
+        "C": "$P(X = x_0) = 1/n$",
+        "D": "$P(X \\le x_0)$ nelze v R spočítat"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Pravděpodobnost u spojité veličiny je plocha (integrál) pod křivkou hustoty $f(x)$.",
+        "Krok 2: Jakou plochu má jeden jediný bod $[x_0, x_0]$ s nulovou šířkou?",
+        "Vysvětlení: Integrál v jednom bodě je nulový, takže $P(X = x_0) = 0$ a nezáleží na tom, zda je v nerovnosti $<$ nebo $\\le$."
+      ],
+      "explanation": "U spojitých rozdělení je pravděpodobnost jednoho přesného bodu nulová; nenulové pravděpodobnosti mají pouze intervaly $P(a \\le X \\le b) = F(b) - F(a)$."
+    },
+    {
+      "id": "pas-02-q03",
+      "number": 3,
+      "type": "input_numeric",
+      "text": "Házíme 10krát poctivou šestistěnnou kostkou ($X \\sim \\operatorname{Bi}(10, 1/6)$). Jaká je pravděpodobnost, že padne **přesně 3krát** trojka? (Zaokrouhlete na 4 desetinná místa.)",
+      "answer": 0.155,
+      "tolerance": 0.002,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Použijte binomický vzorec $P(X = k) = \\binom{n}{k} p^k (1 - p)^{n - k}$ (v R `dbinom(3, 10, 1/6)`).",
+        "Krok 2: Kombinační číslo $\\binom{10}{3} = \\frac{10\\cdot 9\\cdot 8}{6} = 120$.",
+        "Vysvětlení: $120 \\cdot (1/6)^3 \\cdot (5/6)^7 \\approx 0{,}1550$."
+      ],
+      "explanation": "Počet trojek má binomické rozdělení $\\operatorname{Bi}(10, 1/6)$, odkud $P(X = 3) = \\binom{10}{3}(1/6)^3(5/6)^7 \\approx 0{,}1550$."
+    },
+    {
+      "id": "pas-02-q04",
+      "number": 4,
+      "type": "choice",
+      "text": "Které rozdělení přirozeně modeluje **počet vzácných nezávislých událostí** nastávajících za jednotku času nebo prostoru (např. počet poruch serveru za den při průměru $\\lambda$)?",
+      "options": {
+        "A": "Rovnoměrné rozdělení $R(a, b)$",
+        "B": "Poissonovo rozdělení $\\operatorname{Po}(\\lambda)$",
+        "C": "Studentovo $t$-rozdělení",
+        "D": "Logaritmicko-normální rozdělení"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Jde o diskrétní rozdělení nabývající hodnot $0, 1, 2, \\dots$ s jediným parametrem $\\lambda > 0$.",
+        "Krok 2: Má pozoruhodnou vlastnost $E(X) = \\operatorname{Var}(X) = \\lambda$.",
+        "Vysvětlení: Počet událostí v Poissonově procesu za pevný časový interval se řídí Poissonovým rozdělením $\\operatorname{Po}(\\lambda)$."
+      ],
+      "explanation": "Poissonovo rozdělení $\\operatorname{Po}(\\lambda)$ modeluje počty vzácných událostí za fixní interval ($P(X=k) = \\frac{\\lambda^k}{k!}e^{-\\lambda}$). Doba čekání mezi těmito událostmi pak má exponenciální rozdělení $\\operatorname{Exp}(\\lambda)$."
+    },
+    {
+      "id": "pas-02-q05",
+      "number": 5,
+      "type": "choice",
+      "text": "Které spojité rozdělení vyniká vlastností **bezpaměťovosti** ($P(X > s + t \\mid X > s) = P(X > t)$) a modeluje dobu čekání do příští události?",
+      "options": {
+        "A": "Normální rozdělení $N(\\mu, \\sigma^2)$",
+        "B": "Exponenciální rozdělení $\\operatorname{Exp}(\\lambda)$",
+        "C": "Chí-kvadrát rozdělení $\\chi^2_\\nu$",
+        "D": "Studentovo rozdělení $t_\\nu$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Střední doba čekání je $E(X) = 1/\\lambda$ a distribuční funkce je $F(x) = 1 - e^{-\\lambda x}$ pro $x \\ge 0$.",
+        "Krok 2: To, že už čekáte $s$ minut, nijak nezvyšuje ani nesnižuje šanci, že budete čekat dalších $t$ minut.",
+        "Vysvětlení: Jediným spojitým bezpaměťovým rozdělením je exponenciální rozdělení $\\operatorname{Exp}(\\lambda)$."
+      ],
+      "explanation": "Exponenciální rozdělení má vlastnost bezpaměťovosti (podobně jako diskrétní geometrické rozdělení) a modeluje časy mezi událostmi v Poissonově procesu."
+    },
+    {
+      "id": "pas-02-q06",
+      "number": 6,
+      "type": "input_numeric",
+      "text": "Náhodná veličina $U \\sim N(0, 1)$ vznikla normováním veličiny $X \\sim N(20, 25)$ (pozor: druhý parametr je **rozptyl** $\\sigma^2 = 25$!). Víme, že $P(U < 1{,}645) = 0{,}95$. Určete $95\\,\\%$ kvantil $x$ veličiny $X$, pro který platí $P(X < x) = 0{,}95$.",
+      "answer": 28.225,
+      "tolerance": 0.02,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Ze zadání $\\sigma^2 = 25$ plyne směrodatná odchylka $\\sigma = \\sqrt{25} = 5$.",
+        "Krok 2: Ze vztahu $U = \\frac{X - \\mu}{\\sigma}$ vyjádřete $x = \\mu + u \\cdot \\sigma$.",
+        "Vysvětlení: $x = 20 + 1{,}645 \\cdot 5 = 20 + 8{,}225 = 28{,}225$."
+      ],
+      "explanation": "Pozor na častý chyták v notaci $N(\\mu, \\sigma^2)$ vs. R `qnorm(p, mean, sd)`: z rozptylu $\\sigma^2 = 25$ je $\\sigma = 5$, tedy $x = 20 + 1{,}645 \\cdot 5 = 28{,}225$."
+    },
+    {
+      "id": "pas-02-q07",
+      "number": 7,
+      "type": "choice",
+      "text": "Jaký je správný zápis v jazyce **R** pro výpočet $P(X > 200)$ u normálního rozdělení $X \\sim N(180, 49)$ (střední hodnota $180$, rozptyl $49$)?",
+      "options": {
+        "A": "`1 - pnorm(200, 180, 49)`",
+        "B": "`1 - pnorm(200, 180, 7)` (nebo `pnorm(200, 180, 7, lower.tail = FALSE)`)",
+        "C": "`dnorm(200, 180, 7)`",
+        "D": "`qnorm(200, 180, 7)`"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: R očekává ve funkcích `*norm` jako třetí parametr směrodatnou odchylku `sd`, nikoli rozptyl `var`!",
+        "Krok 2: Protože `pnorm` počítá $P(X \\le x)$, pravý chvost získáme jako `1 - pnorm(...)` nebo s `lower.tail = FALSE`.",
+        "Vysvětlení: Z rozptylu $\\sigma^2 = 49$ je $\\sigma = 7$, proto `1 - pnorm(200, 180, 7)`."
+      ],
+      "explanation": "Funkce `pnorm(q, mean, sd)` přijímá směrodatnou odchylku $\\sigma = \\sqrt{49} = 7$. Záměna rozptylu za směrodatnou odchylku je jednou z nejčastějších chyb v zápočtových testech."
+    },
+    {
+      "id": "pas-02-q08",
+      "number": 8,
+      "type": "choice",
+      "text": "Jak zní praktický důsledek **Centrální limitní věty (CLV)**?",
+      "options": {
+        "A": "Každá jednotlivá naměřená veličina v přírodě má přesně normální rozdělení",
+        "B": "Výběrový průměr $\\bar{X}$ z $n$ nezávislých stejně rozdělených měření s konečným rozptylem $\\sigma^2$ má pro dostatečně velké $n$ přibližně normální rozdělení $N(\\mu, \\sigma^2 / n)$ bez ohledu na tvar původního rozdělení",
+        "C": "Rozptyl výběrového průměru roste úměrně s $n$",
+        "D": "Centrální limitní věta platí pouze pro binomické rozdělení"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: CLV nemění rozdělení jednotlivých dat $X_i$, ale rozdělení jejich průměru $\\bar{X}$ (nebo součtu).",
+        "Krok 2: S rostoucím $n$ se rozdělení průměru zužuje se směrodatnou chybou $\\sigma / \\sqrt{n}$ a blíží se Gaussově křivce.",
+        "Vysvětlení: Díky CLV můžeme pro $n \\ge 30$ aplikovat metody založené na normalitě na výběrové průměry i u šikmých dat."
+      ],
+      "explanation": "Centrální limitní věta zaručuje, že standardizovaný výběrový průměr $\\frac{\\bar{X} - \\mu}{\\sigma / \\sqrt{n}}$ konverguje v rozdělení k $N(0, 1)$."
+    },
+    {
+      "id": "pas-02-q09",
+      "number": 9,
+      "type": "choice",
+      "text": "Čím se liší **Studentovo $t$-rozdělení** s $\\nu$ stupni volnosti od normovaného normálního rozdělení $N(0, 1)$?",
+      "options": {
+        "A": "Je silně pravostranně zešikmené a nabývá jen kladných hodnot",
+        "B": "Je symetrické kolem nuly jako $N(0, 1)$, ale má těžší (širší) konce — pro $\\nu \\to \\infty$ konverguje k $N(0, 1)$",
+        "C": "Má užší konce než $N(0, 1)$",
+        "D": "Používá se, jen když známe přesný populační rozptyl $\\sigma^2$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Studentovo $t$-rozdělení vzniká, když neznámé $\\sigma$ nahradíme výběrovým odhadem $s$.",
+        "Krok 2: Další nejistota z odhadu $s$ rozšiřuje konce rozdělení (větší kritické kvantily pro malá $n$).",
+        "Vysvětlení: Se vzrůstajícím počtem stupňů volnosti $\\nu = n - 1$ se $s$ blíží $\\sigma$ a $t_\\nu$ splývá s $N(0, 1)$."
+      ],
+      "explanation": "Studentovo $t$-rozdělení reflektuje nejistotu při odhadu rozptylu ze vzorku: je symetrické, má těžší chvosty než $N(0, 1)$ a pro velká $\\nu$ se k $N(0, 1)$ blíží."
+    },
+    {
+      "id": "pas-02-q10",
+      "number": 10,
+      "type": "multi_step",
+      "text": "Doba čekání na požadavek na serveru má exponenciální rozdělení $X \\sim \\operatorname{Exp}(\\lambda)$ s intenzitou $\\lambda = 0{,}2\\text{ s}^{-1}$.",
+      "steps": [
+        {
+          "prompt": "Krok 1: Jaká je střední doba čekání $E(X)$ v sekundách?",
+          "type": "input_numeric",
+          "answer": 5,
+          "tolerance": 0.01,
+          "tolerance_mode": "abs",
+          "unit": "s"
+        },
+        {
+          "prompt": "Krok 2: Jaká je pravděpodobnost $P(X > 5)$ (tedy že čekáme déle než průměrnou dobu; zaokrouhlete na 3 des. místa)?",
+          "type": "input_numeric",
+          "answer": 0.368,
+          "tolerance": 0.005,
+          "tolerance_mode": "abs",
+          "unit": ""
+        }
+      ],
+      "hints": [
+        "Krok 1: Pro $\\operatorname{Exp}(\\lambda)$ platí $E(X) = 1 / \\lambda = 1 / 0{,}2 = 5\\text{ s}$.",
+        "Krok 2: Funkce přežití je $P(X > x) = e^{-\\lambda x}$.",
+        "Vysvětlení: $P(X > 5) = e^{-0{,}2 \\cdot 5} = e^{-1} \\approx 0{,}3679$ (všimněte si, že medián je menší než průměr!)."
+      ],
+      "explanation": "Pro $\\operatorname{Exp}(0{,}2)$ je $E(X) = 5\\text{ s}$ a $P(X > 5) = e^{-1} \\approx 0{,}368$. Díky pravostranné šikmosti je pravděpodobnost překročení průměru menší než $50\\,\\%$."
+    }
+  ]
+}

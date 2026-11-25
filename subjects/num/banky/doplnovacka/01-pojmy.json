@@ -1,0 +1,247 @@
+{
+  "title": "Doplňovačka pojmů · KI/NUM",
+  "lecture": 1,
+  "date": "2026-10-01",
+  "questions": [
+    {
+      "id": "num-rec-01",
+      "number": 1,
+      "type": "recall",
+      "category": "Chyby a aritmetika",
+      "text": "Nejmenší kladné číslo $\\varepsilon$, pro které ve strojové aritmetice s plovoucí řádovou čárkou stále platí $1 + \\varepsilon > 1$, se nazývá ____.",
+      "accept": ["strojové epsilon", "strojove epsilon", "machine epsilon"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Označuje se řeckým písmenem $\\varepsilon_M$.",
+        "Krok 2: Pro IEEE 754 double má hodnotu $2^{-52} \\approx 2{,}22 \\cdot 10^{-16}$.",
+        "Vysvětlení: Správný pojem je strojové epsilon."
+      ],
+      "explanation": "Strojové epsilon určuje horní mez relativní zaokrouhlovací chyby při uložení reálného čísla do formátu s plovoucí řádovou čárkou."
+    },
+    {
+      "id": "num-rec-02",
+      "number": 2,
+      "type": "recall",
+      "category": "Chyby a aritmetika",
+      "text": "Prudká ztráta platných cifer způsobená odečítáním dvou téměř stejně velkých zaokrouhlených čísel se označuje jako ____.",
+      "accept": ["katastrofické krácení", "katastroficke kraceni", "catastrophic cancellation"],
+      "words": 2,
+      "hints": [
+        "Krok 1: První slovo naznačuje dramatickou ztrátu přesnosti.",
+        "Krok 2: Nastává například při výpočtu $\\sqrt{x^2+1} - x$ pro velké $x$.",
+        "Vysvětlení: Jde o katastrofické krácení."
+      ],
+      "explanation": "Katastrofické krácení nastává, když se shodné vedoucí cifry dvou čísel odečtou a zbyde převážně zaokrouhlovací chyba."
+    },
+    {
+      "id": "num-rec-03",
+      "number": 3,
+      "type": "recall",
+      "category": "Chyby a aritmetika",
+      "text": "Bezrozměrná veličina $\\kappa(A) = \\|A\\|\\cdot\\|A^{-1}\\|$ měřící citlivost řešení soustavy lineárních rovnic na malé perturbace vstupu se nazývá ____.",
+      "accept": ["číslo podmíněnosti", "cislo podminenosti", "condition number"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Čím je tato veličina větší, tím hůře je úloha podmíněna.",
+        "Krok 2: Pro ortogonální matici je rovna 1, pro Hilbertovu matici roste exponenciálně.",
+        "Vysvětlení: Jedná se o číslo podmíněnosti."
+      ],
+      "explanation": "Číslo podmíněnosti udává maximální zesílení relativní chyby vstupních dat do relativní chyby řešení."
+    },
+    {
+      "id": "num-rec-04",
+      "number": 4,
+      "type": "recall",
+      "category": "Polynomy a kořeny",
+      "text": "Algoritmus vyhodnocující polynom stupně $n$ (i jeho derivaci) v čase $O(n)$ pomocí vnořeného vytýkání $x$ se nazývá ____.",
+      "accept": ["Hornerovo schéma", "Hornerovo schema", "Hornerův algoritmus", "Horneruv algoritmus"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Přepisuje $a_3 x^3 + a_2 x^2 + a_1 x + a_0$ na $((a_3 x + a_2)x + a_1)x + a_0$.",
+        "Krok 2: Používá se také v Newtonově–Hornerově metodě.",
+        "Vysvětlení: Správná odpověď je Hornerovo schéma."
+      ],
+      "explanation": "Hornerovo schéma potřebuje pouze $n$ násobení a $n$ sčítání a je numericky stabilnější než přímé vyhodnocování mocnin."
+    },
+    {
+      "id": "num-rec-05",
+      "number": 5,
+      "type": "recall",
+      "category": "Hledání kořenů",
+      "text": "Jednoduchá metoda hledání kořene se zaručenou lineární konvergencí, která v každém kroku dělí interval $[a, b]$ se změnou znaménka na polovinu, se nazývá ____.",
+      "accept": ["bisekce", "metoda půlení intervalu", "metoda puleni intervalu", "půlení intervalu", "puleni intervalu"],
+      "words": 1,
+      "hints": [
+        "Krok 1: V každém kroku získá přesně 1 bit přesnosti.",
+        "Krok 2: Jednoslovný cizí název vychází z latinského „rozdělit na dvě části“.",
+        "Vysvětlení: Jde o bisekci (metodu půlení intervalu)."
+      ],
+      "explanation": "Bisekce vyžaduje pouze spojitost a podmínku $f(a)\\cdot f(b) < 0$ a garantuje chybu nejvýše $(b-a)/2^n$."
+    },
+    {
+      "id": "num-rec-06",
+      "number": 6,
+      "type": "recall",
+      "category": "Hledání kořenů",
+      "text": "Metoda hledání kořenů definovaná iteračním vzorcem $x_{k+1} = x_k - \\frac{f(x_k)}{f'(x_k)}$ s kvadratickou konvergencí se nazývá ____.",
+      "accept": ["Newtonova metoda", "Newtonova metoda tečen", "Newtonova metoda tecen", "Newton-Raphsonova metoda", "metoda tečen", "metoda tecen"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Geometricky prokládá křivku v bodě $x_k$ tečnou a hledá její průsečík s osou $x$.",
+        "Krok 2: Nese jméno slavného anglického fyzika a matematika.",
+        "Vysvětlení: Jedná se o Newtonovu metodu (tečen)."
+      ],
+      "explanation": "Newtonova metoda tečen v okolí jednoduchého kořene zdvojnásobuje počet platných cifer v každé iteraci."
+    },
+    {
+      "id": "num-rec-07",
+      "number": 7,
+      "type": "recall",
+      "category": "Hledání kořenů",
+      "text": "Ohraničená metoda sečen, která si na rozdíl od běžné metody sečen v každém kroku hlídá opačná znaménka $f(a)\\cdot f(b) < 0$, nese latinský název ____.",
+      "accept": ["regula falsi", "metoda regula falsi"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Latinsky doslova „pravidlo chybného předpokladu“.",
+        "Krok 2: Zaručuje konvergenci, ale jeden kraj intervalu u ní může uvíznout.",
+        "Vysvětlení: Správný název je regula falsi."
+      ],
+      "explanation": "Regula falsi nahrazuje funkci sečnou a z obou podintervalů vybírá ten, na němž funkce mění znaménko."
+    },
+    {
+      "id": "num-rec-08",
+      "number": 8,
+      "type": "recall",
+      "category": "Soustavy rovnic",
+      "text": "Prohazování řádků během Gaussovy eliminace tak, aby se na diagonálu dostal prvek s největší absolutní hodnotou v daném sloupci, se nazývá ____.",
+      "accept": ["částečná pivotace", "castecna pivotace", "částečný výběr hlavního prvku", "castecny vyber hlavniho prvku", "pivotace"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Brání dělení nulou nebo malým číslem.",
+        "Krok 2: Na rozdíl od úplné pivotace neprohazuje sloupce, jen řádky.",
+        "Vysvětlení: Jde o částečnou pivotaci (částečný výběr hlavního prvku)."
+      ],
+      "explanation": "Částečná pivotace zajišťuje numerickou stabilitu Gaussovy eliminace při minimální režii $O(n^2)$ porovnání."
+    },
+    {
+      "id": "num-rec-09",
+      "number": 9,
+      "type": "recall",
+      "category": "Soustavy rovnic",
+      "text": "Faktorizace regulární čtvercové matice na součin dolní trojúhelníkové matice $L$ a horní trojúhelníkové matice $U$ se označuje jako ____.",
+      "accept": ["LU rozklad", "LU faktorizace", "LU dekompozice"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Písmena označují anglicky Lower a Upper.",
+        "Krok 2: Umožňuje řešit stejnou soustavu pro mnoho pravých stran v čase $O(n^2)$.",
+        "Vysvětlení: Správný pojem je LU rozklad."
+      ],
+      "explanation": "LU rozklad zaznamená násobitele přímého chodu Gaussovy eliminace do matice $L$ a výsledný horní trojúhelník do matice $U$."
+    },
+    {
+      "id": "num-rec-10",
+      "number": 10,
+      "type": "recall",
+      "category": "Soustavy rovnic",
+      "text": "Matice, jejíž každý řádek splňuje $|a_{ii}| > \\sum_{j \\neq i} |a_{ij}|$ (což zaručuje konvergenci Jacobiho i Gaussovy–Seidelovy metody), se nazývá ____.",
+      "accept": ["ostře diagonálně dominantní", "ostre diagonalne dominantni", "diagonálně dominantní", "diagonalne dominantni", "ostře diagonálně dominantní matice"],
+      "words": 3,
+      "hints": [
+        "Krok 1: Hlavní prvek na diagonále převažuje nad součtem ostatních prvků v řádku.",
+        "Krok 2: Díky ostré nerovnosti `>` se přidává přívlastek „ostře“.",
+        "Vysvětlení: Jde o ostře diagonálně dominantní matici."
+      ],
+      "explanation": "Ostrá diagonální dominance je postačující podmínkou pro regulárnost matice i globální konvergenci základních iteračních metod."
+    },
+    {
+      "id": "num-rec-11",
+      "number": 11,
+      "type": "recall",
+      "category": "Interpolace",
+      "text": "Divoké oscilace interpolačního polynomu vysokého stupně u okrajů intervalu při použití ekvidistantních uzlů se nazývají ____.",
+      "accept": ["Rungeho fenomén", "Rungeho fenomen", "Rungeův jev", "Rungeuv jev", "Rungeův fenomén"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Klasicky se demonstruje na funkci $f(x) = \\frac{1}{1+25x^2}$.",
+        "Krok 2: Pojmenováno po německém matematikovi Carlu Rungem.",
+        "Vysvětlení: Jde o Rungeho fenomén."
+      ],
+      "explanation": "Rungeho fenoménu se předchází použitím kubických splinů nebo Čebyševových uzlů zahuštěných u krajů intervalu."
+    },
+    {
+      "id": "num-rec-12",
+      "number": 12,
+      "type": "recall",
+      "category": "Interpolace",
+      "text": "Koeficienty $a_k$ Newtonova interpolačního polynomu $a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) + \\dots$ se postupně počítají jako tzv. ____.",
+      "accept": ["poměrné diference", "pomerne diference", "podílové diference", "podilove diference"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Pro dva body je to podíl $\\frac{y_1 - y_0}{x_1 - x_0}$.",
+        "Krok 2: Značí se $f[x_0, x_1, \\dots, x_k]$.",
+        "Vysvětlení: Správný pojem jsou poměrné diference."
+      ],
+      "explanation": "Poměrné diference umožňují inkrementální stavbu Newtonova interpolačního polynomu v trojúhelníkové tabulce."
+    },
+    {
+      "id": "num-rec-13",
+      "number": 13,
+      "type": "recall",
+      "category": "Aproximace",
+      "text": "Aproximační metoda hledající parametry modelu tak, aby minimalizovala součet čtverců svislých odchylek $\\sum (f(x_i) - y_i)^2$, se nazývá ____.",
+      "accept": ["metoda nejmenších čtverců", "metoda nejmensich ctvercu", "MNC"],
+      "words": 3,
+      "hints": [
+        "Krok 1: Zkratka z českého názvu je MNC.",
+        "Krok 2: Vede na řešení normálních rovnic $A^T A \\vec{c} = A^T \\vec{y}$.",
+        "Vysvětlení: Jde o metodu nejmenších čtverců."
+      ],
+      "explanation": "Metoda nejmenších čtverců (MNC) je základem lineární i polynomiální regrese zašuměných dat."
+    },
+    {
+      "id": "num-rec-14",
+      "number": 14,
+      "type": "recall",
+      "category": "Numerická integrace",
+      "text": "Newtonovo–Cotesovo integrační pravidlo prokládající trojice bodů parabolou, které je přesné až pro kubické polynomy a má chybu $O(h^4)$, je ____.",
+      "accept": ["Simpsonovo pravidlo", "Simpsonova metoda"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Na dílčích bodech používá váhy $1, 4, 2, 4, \\dots, 4, 1$ násobené $\\frac{h}{3}$.",
+        "Krok 2: Vyžaduje sudý počet podintervalů $n$.",
+        "Vysvětlení: Správná odpověď je Simpsonovo pravidlo."
+      ],
+      "explanation": "Simpsonovo pravidlo dosahuje díky symetrii o dva řády lepší přesnosti než lichoběžníkové pravidlo."
+    },
+    {
+      "id": "num-rec-15",
+      "number": 15,
+      "type": "recall",
+      "category": "Numerická integrace",
+      "text": "Technika kombinující dva numerické odhady s kroky $h$ a $h/2$ tak, aby se vzájemně zrušil vedoucí člen chyby (jádro Rombergovy integrace), se nazývá ____.",
+      "accept": ["Richardsonova extrapolace", "Richardsonova metoda"],
+      "words": 2,
+      "hints": [
+        "Krok 1: U lichoběžníkového pravidla dává vzorec $\\frac{4T(h/2) - T(h)}{3}$.",
+        "Krok 2: Pojmenováno po britském fyzikovi Lewisu Fry Richardsonovi.",
+        "Vysvětlení: Jedná se o Richardsonovu extrapolaci."
+      ],
+      "explanation": "Richardsonova extrapolace systematicky zvyšuje řád přesnosti numerické integrace i derivování bez změny základního schématu."
+    },
+    {
+      "id": "num-rec-16",
+      "number": 16,
+      "type": "recall",
+      "category": "Numerické řešení ODR",
+      "text": "Jednokroková metoda pro řešení ODR $y' = f(x, y)$ využívající čtyři vyhodnocení pravé strany s váhami $\\frac{1}{6}(k_1 + 2k_2 + 2k_3 + k_4)$ a globální chybou $O(h^4)$ se nazývá ____.",
+      "accept": ["Rungeho-Kuttova metoda", "Runge-Kutta", "RK4", "Rungeho-Kuttova metoda 4. řádu", "Rungeho-Kuttova metoda 4. radu"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Zkracuje se dvěma písmeny a číslicí řádu: RK4.",
+        "Krok 2: Nese jména dvou německých matematiků.",
+        "Vysvětlení: Jedná se o Rungeho–Kuttovu metodu (RK4)."
+      ],
+      "explanation": "Rungeho–Kuttova metoda 4. řádu (RK4) patří díky skvělému poměru přesnosti $O(h^4)$ a jednoduchosti mezi nejpoužívanější řešiče ODR."
+    }
+  ]
+}

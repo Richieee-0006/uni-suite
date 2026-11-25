@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{%- set _mode = mode or 'login' %}
+{%- set _is_reg = _mode == 'register' %}
+{%- set _next = next_url or '/' %}
+
+{%- block topbar_context %}
+          <span class="topbar-title">{{ 'Registrace' if _is_reg else 'Přihlášení' }} · {{ site.title if site else 'UNI Suite' }}</span>
+{%- endblock %}
+
+{%- block content %}
+        <div class="auth-wrap">
+          <div class="page-heading">
+            <h1>{{ 'Vytvořit účet' if _is_reg else 'Přihlášení' }}</h1>
+            <p class="page-subtitle">Synchronizuj postup, FSRS opakování a vlastní nastavení rozhraní napříč zařízeními.</p>
+          </div>
+{%- if from_source == 'tzi' %}
+          <div class="notice-banner" role="status">
+            Přecházíš z tzi.rutterle.eu — účet, postup i nové předměty najdeš na jednom místě v UNI Suite.
+          </div>
+{%- endif %}
+
+          <article class="card">
+            <nav class="auth-tabs" aria-label="Přepínač přihlášení a registrace">
+              <a href="/login{% if _next != '/' %}?next={{ _next | urlencode }}{% endif %}" class="auth-tab"{% if not _is_reg %} aria-current="page"{% endif %}>Přihlášení</a>
+              <a href="/register{% if _next != '/' %}?next={{ _next | urlencode }}{% endif %}" class="auth-tab"{% if _is_reg %} aria-current="page"{% endif %}>Registrace</a>
+            </nav>
+{%- if error %}
+            <div class="alert-box" role="alert">{{ error }}</div>
+{%- endif %}
+
+            <form method="post" action="{{ '/register' if _is_reg else '/login' }}" class="form-stack">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+              <input type="hidden" name="next" value="{{ _next }}">
+
+              <div class="field">
+                <label for="auth-username" class="field-label">Uživatelské jméno</label>
+                <input
+                  id="auth-username"
+                  class="text-input"
+                  type="text"
+                  name="username"
+                  required
+                  minlength="3"
+                  maxlength="32"
+                  autocomplete="username"
+                  autocapitalize="none"
+                  spellcheck="false"
+                >
+              </div>
+
+              <div class="field">
+                <label for="auth-password" class="field-label">Heslo</label>
+                <input
+                  id="auth-password"
+                  class="text-input"
+                  type="password"
+                  name="password"
+                  required
+                  minlength="8"
+                  maxlength="128"
+                  autocomplete="{{ 'new-password' if _is_reg else 'current-password' }}"
+                >
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block">{{ 'Vytvořit účet' if _is_reg else 'Přihlásit se' }}</button>
+            </form>
+
+            <div class="divider-row"><span>nebo bez účtu</span></div>
+
+            <form method="post" action="/trial" class="form-stack">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token or '' }}">
+              <input type="hidden" name="next" value="{{ _next }}">
+              <button type="submit" class="btn btn-secondary btn-block">Vyzkoušet Trial</button>
+            </form>
+          </article>
+        </div>
+{%- endblock %}

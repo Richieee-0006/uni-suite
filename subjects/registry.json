@@ -1,0 +1,21 @@
+{
+  "site": {
+    "title": "UNI Suite",
+    "domain": "uni.rutterle.eu",
+    "subtitle": "Studijní trenažéry a sandbox pro předměty KI UJEP"
+  },
+  "subjects": [
+    {
+      "slug": "num",
+      "kind": "local"
+    },
+    {
+      "slug": "pas",
+      "kind": "local"
+    },
+    {
+      "slug": "tzi",
+      "kind": "local"
+    }
+  ]
+}

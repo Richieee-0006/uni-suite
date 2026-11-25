@@ -1,0 +1,73 @@
+name: UNI Suite CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-and-standards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Python dependencies & linters
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt ruff pip-audit
+
+      - name: Ruff SAST & Lint
+        run: ruff check --select S,E,F server.py db.py webapp/ scripts/
+
+      - name: Dependency audit (pip-audit)
+        run: pip-audit -r requirements.txt
+
+      - name: Run pytest (API, Security, Engine v2, Sandbox, TZI, HTML5 SSR gate)
+        env:
+          TESTING: "1"
+          APP_SECRET: "ci-test-secret-key-at-least-32-chars-long-0123456789"
+        run: pytest tests/ -q
+
+      - name: Validate CSS3+ standards (stylelint)
+        run: |
+          npm install --no-save stylelint stylelint-config-standard
+          npx stylelint --config .stylelintrc.json "ui/public/css/*.css" "ui/admin/*.css" "under-construction/style.css"
+
+      - name: Validate JS syntax & zero-innerHTML CSP hygiene
+        run: |
+          for f in ui/public/js/*.js ui/public/js/engine/*.js ui/public/js/engine/renderers/*.js ui/public/js/tools/*.js ui/public/js/sandbox/*.js ui/admin/*.js; do
+            node --check "$f"
+          done
+          python3 - <<'PY'
+          import pathlib, re, sys
+          bad = []
+          patterns = [
+              (r"\binnerHTML\b", "innerHTML"),
+              (r"\bouterHTML\b", "outerHTML"),
+              (r"\binsertAdjacentHTML\b", "insertAdjacentHTML"),
+              (r"\bdocument\.write\b", "document.write"),
+              (r"\bnew\s+Function\b", "new Function"),
+          ]
+          for root in (pathlib.Path("ui/public/js"), pathlib.Path("ui/admin")):
+              for p in sorted(root.rglob("*.js")):
+                  txt = re.sub(r"/\*.*?\*/", "", p.read_text(encoding="utf-8"), flags=re.S)
+                  txt = re.sub(r"//[^\n]*", "", txt)
+                  for pat, label in patterns:
+                      if re.search(pat, txt):
+                          bad.append(f"{p}: {label}")
+          if bad:
+              print("\n".join(bad))
+              sys.exit(1)
+          print("CSP_JS_HYGIENE_OK")
+          PY

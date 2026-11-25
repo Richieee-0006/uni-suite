@@ -1,0 +1,28 @@
+{
+  "slug": "num",
+  "code": "KI/NUM",
+  "short": "NUM",
+  "title": "Numerické metody",
+  "description": "Chyby výpočtu, hledání kořenů, soustavy rovnic, interpolace, integrace a aproximace",
+  "visibility": "public",
+  "provider": {
+    "type": "obsidian",
+    "folder": "NUM"
+  },
+  "engines": ["choice", "input_numeric", "recall", "code_task", "multi_step"],
+  "sandbox": {
+    "languages": ["r"],
+    "default_tier": "webr",
+    "timeout_ms": 5000
+  },
+  "tools": ["glossary", "formulas", "numeric_lab"],
+  "gamification": {
+    "xp": true,
+    "daily_goal": true
+  },
+  "exam_config": {
+    "count": 15,
+    "minutes": 30,
+    "pass_pct": 60
+  }
+}

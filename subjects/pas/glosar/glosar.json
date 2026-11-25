@@ -1,0 +1,114 @@
+{
+  "banks": {
+    "01-pravdepodobnost-a-nahodne-veliciny": [
+      {
+        "term": "Podmíněná pravděpodobnost",
+        "body": "Pravděpodobnost jevu $A$ za podmínky, že nastal jev $B$ ($P(B) > 0$): $P(A \\mid B) = \\frac{P(A \\cap B)}{P(B)}$."
+      },
+      {
+        "term": "Statistická nezávislost",
+        "body": "Jevy $A, B$ se vzájemně neovlivňují právě tehdy, když $P(A \\cap B) = P(A)\\cdot P(B)$."
+      },
+      {
+        "term": "Bayesova věta",
+        "body": "Obrácení podmínky: $P(A \\mid B) = \\frac{P(B \\mid A)P(A)}{P(B)}$. U vzácných jevů varuje před převahou falešných poplachů."
+      },
+      {
+        "term": "Průměr, medián a IQR",
+        "body": "Průměr $\\bar{x}$ je citlivý na odlehlé hodnoty; medián ($Q_2$) a mezikvartilové rozpětí $\\text{IQR} = Q_3 - Q_1$ jsou robustní."
+      },
+      {
+        "term": "Z-skór",
+        "body": "Standardizovaná bezrozměrná hodnota $z = \\frac{x - \\bar{x}}{s}$ vyjadřující vzdálenost od průměru v násobcích směrodatné odchylky."
+      },
+      {
+        "term": "Šikmost a špičatost",
+        "body": "Charakteristiky tvaru rozdělení: kladná šikmost znamená delší pravý chvost (typicky $\\bar{x} > \\text{medián}$)."
+      }
+    ],
+    "02-rozdeleni-pravdepodobnosti": [
+      {
+        "term": "Binomické rozdělení Bi(n, p)",
+        "body": "Počet úspěchů v $n$ nezávislých pokusech s pravděpodobností $p$: $E(X)=np$, $\\operatorname{Var}(X)=np(1-p)$. V R: `dbinom`, `pbinom`."
+      },
+      {
+        "term": "Poissonovo rozdělení Po(λ)",
+        "body": "Počet vzácných nezávislých událostí za jednotku času/prostoru: $E(X) = \\operatorname{Var}(X) = \\lambda$. V R: `dpois`, `ppois`."
+      },
+      {
+        "term": "Exponenciální rozdělení Exp(λ)",
+        "body": "Spojitá doba čekání na příští událost s bezpaměťovostí a $E(X) = 1/\\lambda$. V R: `dexp`, `pexp`, `qexp`."
+      },
+      {
+        "term": "Normální rozdělení N(μ, σ²)",
+        "body": "Gaussova křivka určená střední hodnotou $\\mu$ a rozptylem $\\sigma^2$. Pozor: R funkce `pnorm`/`qnorm` berou $\\sigma = \\sqrt{\\sigma^2}$!"
+      },
+      {
+        "term": "Studentovo rozdělení t_ν",
+        "body": "Symetrické rozdělení s těžšími chvosty než $N(0, 1)$, vznikající při nahrazení neznámého $\\sigma$ výběrovou odchylkou $s$ ($\\nu = n - 1$)."
+      },
+      {
+        "term": "Centrální limitní věta (CLV)",
+        "body": "Výběrový průměr $\\bar{X}$ ze $n$ nezávislých měření se pro větší $n$ chová přibližně jako $N(\\mu, \\sigma^2 / n)$."
+      }
+    ],
+    "03-odhady-a-intervaly-spolehlivosti": [
+      {
+        "term": "Nestrannost a konzistence",
+        "body": "Nestranný odhad má $E(\\hat{\\theta}) = \\theta$ (proto u $s^2$ dělíme $n-1$); konzistentní odhad se pro $n \\to \\infty$ přibližuje k $\\theta$."
+      },
+      {
+        "term": "Směrodatná chyba průměru (SE)",
+        "body": "Nejiskota odhadu průměru $\\text{SE} = s / \\sqrt{n}$. Zmenšení chyby na polovinu vyžaduje $4\\times$ větší vzorek."
+      },
+      {
+        "term": "Interval spolehlivosti (IS)",
+        "body": "Interval $\\bar{x} \\pm t_{1-\\alpha/2,\\,n-1}\\cdot s/\\sqrt{n}$, který při opakovaném výběru pokryje pravé $\\mu$ v $(1-\\alpha)\\cdot 100\\,\\%$ případů."
+      },
+      {
+        "term": "Vydatnost (efektivita) odhadu",
+        "body": "Z více nestranných odhadů téhož parametru je vydatnější ten, který má menší rozptyl."
+      }
+    ],
+    "04-testovani-hypotez-a-regrese": [
+      {
+        "term": "p-hodnota",
+        "body": "Pravděpodobnost získání alespoň tak extrémních dat čistě náhodou, pokud platí $H_0$. Při $p < \\alpha$ zamítáme $H_0$."
+      },
+      {
+        "term": "Chyba I. a II. druhu (α, β)",
+        "body": "$\\alpha$ = zamítnutí pravdivé $H_0$ (falešný poplach); $\\beta$ = nezamítnutí nepravdivé $H_0$; síla testu je $1 - \\beta$."
+      },
+      {
+        "term": "Studentův a Wilcoxonův test",
+        "body": "`t.test` porovnává průměry při normalitě dat; `wilcox.test` je robustní neparametrický pořadový protějšek."
+      },
+      {
+        "term": "Shapiro–Wilkův test a Q-Q graf",
+        "body": "`shapiro.test(x)` testuje $H_0$: data jsou normální; `qqnorm(x); qqline(x)` poskytuje vizuální kontrolu."
+      },
+      {
+        "term": "Pearsonův χ² test nezávislosti",
+        "body": "`chisq.test(tabulka)` ověřuje nezávislost dvou kategoriálních proměnných v kontingenční tabulce."
+      },
+      {
+        "term": "Korelace a koeficient determinace R²",
+        "body": "Pearsonův $r$ měří lineární vazbu, Spearmanův $\\rho$ monotónní vazbu; $R^2$ vyjadřuje podíl vysvětlené variability v lineární regresi."
+      }
+    ],
+    "05-r-code-tasks": [
+      {
+        "term": "Prefixy d / p / q / r v R",
+        "body": "`d` hustota / $P(X=k)$, `p` distribuční funkce $P(X \\le x)$, `q` kvantil $F^{-1}(p)$, `r` generátor náhodných čísel."
+      },
+      {
+        "term": "lm() a abline() v R",
+        "body": "`m <- lm(y ~ x)` odhadne regresní přímku, `summary(m)$r.squared` vrací $R^2$ a `abline(m)` přímku vykreslí do grafu."
+      },
+      {
+        "term": "hist(..., probability = TRUE)",
+        "body": "Nastavení `probability = TRUE` přepne osu $y$ histogramu na hustotu, aby bylo možné přes něj vykreslit `curve(dnorm(...), add = TRUE)`."
+      }
+    ]
+  }
+}

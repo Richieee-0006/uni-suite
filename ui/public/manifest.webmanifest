@@ -1,0 +1,19 @@
+{
+  "name": "UNI Suite",
+  "short_name": "UNI Suite",
+  "description": "Studijní trenažéry a sandbox pro předměty KI UJEP",
+  "lang": "cs",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#121315",
+  "theme_color": "#121315",
+  "icons": [
+    {
+      "src": "/static/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

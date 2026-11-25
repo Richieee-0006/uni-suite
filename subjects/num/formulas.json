@@ -1,0 +1,129 @@
+{
+  "sections": [
+    {
+      "title": "1. Chyby, podmíněnost a Hornerovo schéma",
+      "items": [
+        {
+          "name": "Absolutní a relativní chyba",
+          "latex": "\\Delta x = |\\tilde{x} - x|, \\qquad \\delta x = \\frac{|\\tilde{x} - x|}{|x|}",
+          "note": "IEEE 754 double: strojové epsilon $\\varepsilon_M = 2^{-52} \\approx 2{,}22 \\cdot 10^{-16}$ (15–17 platných cifer)."
+        },
+        {
+          "name": "Číslo podmíněnosti matice",
+          "latex": "\\kappa(A) = \\|A\\| \\cdot \\|A^{-1}\\| \\ge 1",
+          "note": "Při $\\kappa(A) \\approx 10^k$ hrozí ztráta až $k$ platných desítkových cifer."
+        },
+        {
+          "name": "Hornerovo schéma",
+          "latex": "P_n(x) = (\\dots((a_n x + a_{n-1})x + a_{n-2})\\dots)x + a_0",
+          "note": "Vyhodnotí polynom i derivaci v čase $O(n)$ ($n$ násobení a $n$ sčítání)."
+        }
+      ]
+    },
+    {
+      "title": "2. Hledání kořenů nelineárních rovnic",
+      "items": [
+        {
+          "name": "Bisekce (odhad chyby a počet kroků)",
+          "latex": "|x^* - c_n| \\le \\frac{b - a}{2^{n+1}}, \\qquad n \\ge \\left\\lceil \\log_2\\frac{b - a}{\\varepsilon} \\right\\rceil",
+          "note": "Vyžaduje spojitost a $f(a)\\cdot f(b) < 0$. Konvergence lineární, 100 % jistá."
+        },
+        {
+          "name": "Newtonova metoda tečen",
+          "latex": "x_{k+1} = x_k - \\frac{f(x_k)}{f'(x_k)}",
+          "note": "Kvadratická konvergence u jednoduchého kořene; pozor na $f'(x_k) \\approx 0$."
+        },
+        {
+          "name": "Regula falsi a metoda sečen",
+          "latex": "x_{k+1} = x_k - f(x_k)\\frac{x_k - x_{k-1}}{f(x_k) - f(x_{k-1})}",
+          "note": "Bez derivace; regula falsi hlídá změnu znaménka, metoda sečen má řád $\\varphi \\approx 1{,}618$."
+        },
+        {
+          "name": "Prosté iterace (Banachova podmínka)",
+          "latex": "x_{k+1} = \\varphi(x_k), \\qquad |\\varphi'(x)| \\le q < 1",
+          "note": "Postačující podmínka lineární konvergence k jedinému pevnému bodu."
+        }
+      ]
+    },
+    {
+      "title": "3. Soustavy lineárních rovnic",
+      "items": [
+        {
+          "name": "LU rozklad",
+          "latex": "PA = LU \\implies L\\vec{y} = P\\vec{b}, \\quad U\\vec{x} = \\vec{y}",
+          "note": "Rozklad stojí $O(n^3)$, každá další pravá strana už jen $O(n^2)$."
+        },
+        {
+          "name": "Ostrá diagonální dominance",
+          "latex": "|a_{ii}| > \\sum_{\\substack{j=1 \\\\ j \\neq i}}^{n} |a_{ij}| \\quad \\forall i",
+          "note": "Zaručuje konvergenci Jacobiho i Gaussovy–Seidelovy iterační metody."
+        },
+        {
+          "name": "Gaussova–Seidelova iterace",
+          "latex": "x_i^{(k+1)} = \\frac{1}{a_{ii}}\\left(b_i - \\sum_{j < i} a_{ij}x_j^{(k+1)} - \\sum_{j > i} a_{ij}x_j^{(k)}\\right)",
+          "note": "Jacobi používá i pro $j < i$ hodnoty z předchozí iterace $x_j^{(k)}$."
+        }
+      ]
+    },
+    {
+      "title": "4. Interpolace a metoda nejmenších čtverců",
+      "items": [
+        {
+          "name": "Lagrangeův interpolační polynom",
+          "latex": "P_n(x) = \\sum_{i=0}^{n} y_i \\prod_{\\substack{j=0 \\\\ j \\neq i}}^{n} \\frac{x - x_j}{x_i - x_j}",
+          "note": "Přidání nového uzlu vyžaduje přepočet všech bázových polynomů $L_i(x)$."
+        },
+        {
+          "name": "Newtonův interpolační polynom",
+          "latex": "P_n(x) = a_0 + a_1(x - x_0) + a_2(x - x_0)(x - x_1) + \\dots",
+          "note": "Koeficienty jsou poměrné diference $a_k = f[x_0, \\dots, x_k]$; snadné přidávání uzlů."
+        },
+        {
+          "name": "Normální soustava MNC",
+          "latex": "A^T A \\vec{c} = A^T \\vec{y} \\quad \\Longleftrightarrow \\quad \\min_{\\vec{c}} \\|A\\vec{c} - \\vec{y}\\|_2^2",
+          "note": "V R: `solve(t(A) %*% A, t(A) %*% y)` nebo přes QR rozklad."
+        }
+      ]
+    },
+    {
+      "title": "5. Numerické derivování a integrace",
+      "items": [
+        {
+          "name": "Dopředná a centrální diference",
+          "latex": "f'(x) \\approx \\frac{f(x+h)-f(x)}{h} + O(h), \\qquad f'(x) \\approx \\frac{f(x+h)-f(x-h)}{2h} + O(h^2)",
+          "note": "Centrální diference ruší člen $h^2 f''(x)$ a má optimální krok $h \\approx \\varepsilon_M^{1/3}$."
+        },
+        {
+          "name": "Složené lichoběžníkové pravidlo",
+          "latex": "T_n = h\\left(\\frac{f(x_0)}{2} + \\sum_{i=1}^{n-1} f(x_i) + \\frac{f(x_n)}{2}\\right), \\qquad E_T = O(h^2)",
+          "note": "Přesné pro lineární funkce ($h = (b-a)/n$)."
+        },
+        {
+          "name": "Složené Simpsonovo pravidlo",
+          "latex": "S_n = \\frac{h}{3}\\left(f(x_0) + 4\\sum_{i\\text{ lichá}} f(x_i) + 2\\sum_{i\\text{ sudá}} f(x_i) + f(x_n)\\right), \\qquad E_S = O(h^4)",
+          "note": "Vyžaduje sudé $n$; přesné pro polynomy až do 3. stupně!"
+        },
+        {
+          "name": "Richardsonova extrapolace (Romberg)",
+          "latex": "R_{k,1} = \\frac{4 T(h/2) - T(h)}{3}",
+          "note": "První krok Rombergovy extrapolace z lichoběžníkového pravidla dává řád $O(h^4)$."
+        }
+      ]
+    },
+    {
+      "title": "6. Numerické řešení ODR",
+      "items": [
+        {
+          "name": "Explicitní Eulerova metoda",
+          "latex": "y_{k+1} = y_k + h\\, f(x_k, y_k), \\qquad E_{\\text{glob}} = O(h)",
+          "note": "Jednoduchá, ale vyžaduje velmi malý krok $h$ pro solidní přesnost."
+        },
+        {
+          "name": "Runge–Kutta 4. řádu (RK4)",
+          "latex": "y_{k+1} = y_k + \\frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4), \\qquad E_{\\text{glob}} = O(h^4)",
+          "note": "$k_1 = f(x_k, y_k)$, $k_2 = f(x_k + \\tfrac{h}{2}, y_k + \\tfrac{h}{2}k_1)$, $k_3 = f(x_k + \\tfrac{h}{2}, y_k + \\tfrac{h}{2}k_2)$, $k_4 = f(x_k + h, y_k + hk_3)$."
+        }
+      ]
+    }
+  ]
+}

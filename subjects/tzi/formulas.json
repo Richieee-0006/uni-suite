@@ -1,0 +1,159 @@
+{
+  "sections": [
+    {
+      "title": "1. Číselné soustavy a reprezentace čísel",
+      "items": [
+        {
+          "name": "Číselné obory",
+          "latex": "\\mathbb{N} \\subset \\mathbb{Z} \\subset \\mathbb{Q} \\subset \\mathbb{R} \\subset \\mathbb{C}",
+          "note": "Přirozená, celá, racionální (zlomky), reálná a komplexní čísla."
+        },
+        {
+          "name": "Rozvoj v poziční soustavě o základu Z",
+          "latex": "(a_n \\dots a_1 a_0, a_{-1} \\dots a_{-k})_Z = \\sum_{i=-k}^{n} a_i \\cdot Z^i, \\qquad 0 \\le a_i < Z",
+          "note": "Základ Z > 1 udává maximální počet číslic v soustavě; hodnota číslice závisí na její pozici."
+        },
+        {
+          "name": "Převody mezi základy 2, 8 a 16",
+          "latex": "2^3 = 8, \\qquad 2^4 = 16, \\qquad N = q \\cdot Z + r",
+          "note": "Celou část převádíme postupným dělením (zbytky odspodu), zlomkovou postupným násobením. Skupiny 3 bitů = osmičková, 4 bitů = šestnáctková."
+        },
+        {
+          "name": "Dvojkový doplněk (n bitů)",
+          "latex": "[-2^{n-1},\\; 2^{n-1} - 1], \\qquad -x \\equiv \\overline{x} + 1 \\pmod{2^n}",
+          "note": "Nejvyšší bit je znaménkový (0 = nezáporné, 1 = záporné); nula má jedinou reprezentaci."
+        }
+      ]
+    },
+    {
+      "title": "2. Výroková a predikátová logika, důkazy",
+      "items": [
+        {
+          "name": "De Morganovy zákony",
+          "latex": "\\neg(p \\land q) \\equiv \\neg p \\lor \\neg q, \\qquad \\neg(p \\lor q) \\equiv \\neg p \\land \\neg q",
+          "note": "Negace konjunkce je disjunkce negací a naopak."
+        },
+        {
+          "name": "Implikace a obměna (kontrapozice)",
+          "latex": "p \\Rightarrow q \\equiv \\neg p \\lor q \\equiv \\neg q \\Rightarrow \\neg p",
+          "note": "Negace implikace: $\\neg(p \\Rightarrow q) \\equiv p \\land \\neg q$. Základ nepřímého důkazu."
+        },
+        {
+          "name": "Negace kvantifikátorů",
+          "latex": "\\neg(\\forall x\\, P(x)) \\equiv \\exists x\\, \\neg P(x), \\qquad \\neg(\\exists x\\, P(x)) \\equiv \\forall x\\, \\neg P(x)",
+          "note": "Pro vyvrácení obecného tvrzení stačí jediný protipříklad."
+        },
+        {
+          "name": "Matematická indukce",
+          "latex": "\\bigl(P(n_0) \\land \\forall k \\ge n_0\\,(P(k) \\Rightarrow P(k+1))\\bigr) \\implies \\forall n \\ge n_0\\, P(n)",
+          "note": "1. Základní krok $P(n_0)$, 2. Indukční předpoklad $P(k)$, 3. Indukční krok $P(k+1)$."
+        }
+      ]
+    },
+    {
+      "title": "3. Množiny, relace a zobrazení",
+      "items": [
+        {
+          "name": "Množinové operace a mohutnost",
+          "latex": "|\\mathcal{P}(A)| = 2^{|A|}, \\qquad |A \\times B| = |A| \\cdot |B|",
+          "note": "Potenční množina $\\mathcal{P}(A)$ je množina všech podmnožin $A$ včetně $\\emptyset$ a $A$."
+        },
+        {
+          "name": "Princip inkluze a exkluze",
+          "latex": "|A \\cup B| = |A| + |B| - |A \\cap B|",
+          "note": "Pro tři množiny: $|A \\cup B \\cup C| = |A|+|B|+|C| - |A\\cap B| - |A\\cap C| - |B\\cap C| + |A\\cap B\\cap C|$."
+        },
+        {
+          "name": "Vlastnosti binární relace",
+          "latex": "\\text{Refl.: } (a,a)\\in R, \\quad \\text{Sym.: } aRb \\Rightarrow bRa, \\quad \\text{Antisym.: } aRb \\land bRa \\Rightarrow a=b, \\quad \\text{Tranz.: } aRb \\land bRc \\Rightarrow aRc",
+          "note": "Ekvivalence = R + S + T (rozklad na třídy); částečné uspořádání = R + A + T (Hasseův diagram)."
+        },
+        {
+          "name": "Prosté, na a bijektivní zobrazení",
+          "latex": "\\text{Injekce: } f(x_1)=f(x_2) \\Rightarrow x_1=x_2, \\qquad \\text{Surjekce: } \\forall y\\in B\\,\\exists x\\in A\\, f(x)=y",
+          "note": "Bijekce = injekce + surjekce; mezi konečnými množinami existuje bijekce právě když $|A| = |B|$."
+        }
+      ]
+    },
+    {
+      "title": "4. Kombinatorika",
+      "items": [
+        {
+          "name": "Permutace bez opakování a s opakováním",
+          "latex": "P(n) = n!, \\qquad P'(k_1, \\dots, k_m) = \\frac{n!}{k_1!\\, k_2! \\cdots k_m!}",
+          "note": "Záleží na pořadí, vybíráme všech $n$ prvků ($k_1 + \\dots + k_m = n$)."
+        },
+        {
+          "name": "Variace bez opakování a s opakováním",
+          "latex": "V(k, n) = \\frac{n!}{(n-k)!}, \\qquad V'(k, n) = n^k",
+          "note": "Záleží na pořadí, vybíráme $k$-tici z $n$ prvků."
+        },
+        {
+          "name": "Kombinace bez opakování a s opakováním",
+          "latex": "C(k, n) = \\binom{n}{k} = \\frac{n!}{k!(n-k)!}, \\qquad C'(k, n) = \\binom{n + k - 1}{k}",
+          "note": "Nezáleží na pořadí; $C'(k, n)$ odpovídá metodě hvězdiček a čárek."
+        },
+        {
+          "name": "Binomická věta a Pascalova identita",
+          "latex": "(a + b)^n = \\sum_{k=0}^{n} \\binom{n}{k} a^{n-k} b^k, \\qquad \\binom{n}{k} = \\binom{n-1}{k-1} + \\binom{n-1}{k}",
+          "note": "Součet řádku Pascalova trojúhelníku: $\\sum_{k=0}^{n} \\binom{n}{k} = 2^n$."
+        },
+        {
+          "name": "Dirichletův (holubníkový) princip",
+          "latex": "\\left\\lceil \\frac{n}{k} \\right\\rceil",
+          "note": "Rozmístíme-li $n$ prvků do $k$ přihrádek, alespoň jedna obsahuje nejméně $\\lceil n/k \\rceil$ prvků."
+        }
+      ]
+    },
+    {
+      "title": "5. Formální jazyky a regulární výrazy",
+      "items": [
+        {
+          "name": "Abeceda, slova a Kleeneho iterace",
+          "latex": "\\Sigma^* = \\bigcup_{n=0}^{\\infty} \\Sigma^n = \\{\\varepsilon\\} \\cup \\Sigma^+, \\qquad |uv| = |u| + |v|",
+          "note": "Prázdné slovo $\\varepsilon$ má délku $|\\varepsilon| = 0$; $\\Sigma^+$ jsou neprázdná slova."
+        },
+        {
+          "name": "Operace nad regulárními jazyky",
+          "latex": "L_1 \\cup L_2, \\qquad L_1 \\cdot L_2 = \\{uv \\mid u \\in L_1,\\; v \\in L_2\\}, \\qquad L^* = \\bigcup_{i=0}^{\\infty} L^i",
+          "note": "Regulární jazyky jsou uzavřeny na sjednocení, zřetězení, iteraci, průnik, doplněk i reverzi."
+        },
+        {
+          "name": "Algebraické identity regulárních výrazů",
+          "latex": "r + \\emptyset = r, \\quad r \\cdot \\varepsilon = r, \\quad r \\cdot \\emptyset = \\emptyset, \\quad (r^*)^* = r^*, \\quad r^+ = r \\cdot r^*",
+          "note": "Priorita operátorů od nejvyšší: iterace ($^*$, $^+$) → zřetězení ($\\cdot$) → sjednocení ($+$, $|$)."
+        },
+        {
+          "name": "Chomského hierarchie jazyků",
+          "latex": "\\mathcal{L}_3\\;(\\text{REG}) \\subset \\mathcal{L}_2\\;(\\text{CF}) \\subset \\mathcal{L}_1\\;(\\text{CS}) \\subset \\mathcal{L}_0\\;(\\text{RE})",
+          "note": "REG = konečný automat, CF = zásobníkový automat, CS = lineárně ohraničený TS, RE = Turingův stroj."
+        }
+      ]
+    },
+    {
+      "title": "6. Konečné automaty (DKA a NKA)",
+      "items": [
+        {
+          "name": "Definice konečného automatu (pětice)",
+          "latex": "M = (Q, \\Sigma, \\delta, q_0, F)",
+          "note": "$Q$ konečná množina stavů, $\\Sigma$ vstupní abeceda, $\\delta$ přechodová funkce, $q_0 \\in Q$ počáteční stav, $F \\subseteq Q$ přijímající stavy."
+        },
+        {
+          "name": "Přechodová funkce DKA vs. NKA",
+          "latex": "\\delta_{\\text{DKA}} : Q \\times \\Sigma \\to Q, \\qquad \\delta_{\\text{NKA}} : Q \\times (\\Sigma \\cup \\{\\varepsilon\\}) \\to \\mathcal{P}(Q)",
+          "note": "DKA má pro každý stav a symbol právě jeden přechod; NKA může mít 0, 1 i více přechodů (i $\\varepsilon$-přechody)."
+        },
+        {
+          "name": "Jazyk přijímaný automatem",
+          "latex": "L(M) = \\{\\, w \\in \\Sigma^* \\mid \\hat{\\delta}(q_0, w) \\in F \\,\\}",
+          "note": "Pro NKA platí $w \\in L(M) \\iff \\hat{\\delta}(q_0, w) \\cap F \\neq \\emptyset$."
+        },
+        {
+          "name": "Podmnožinová konstrukce a Pumping lemma",
+          "latex": "|Q_{\\text{DKA}}| \\le 2^{|Q_{\\text{NKA}}|}, \\qquad w = xyz,\\; |xy| \\le p,\\; |y| \\ge 1,\\; \\forall i \\ge 0:\\; xy^i z \\in L",
+          "note": "Každý NKA lze převést na ekvivalentní DKA; Pumping lemma slouží k důkazu, že jazyk není regulární (např. $a^n b^n$)."
+        }
+      ]
+    }
+  ]
+}

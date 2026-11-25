@@ -1,0 +1,418 @@
+{% extends "base.html" %}
+{%- set _subj = subject or {'slug': 'num', 'code': 'KI/NUM', 'short': 'NUM', 'title': 'Předmět', 'description': ''} %}
+{%- set _topics = topics or [] %}
+{%- set _cells = binary_cells or [] %}
+{%- set _exam = exam_config or _subj.get('exam_config') or {'count': 15, 'minutes': 30, 'pass_pct': 60} %}
+{%- set _block_size = prefs.get('block_size', 10) if prefs else 10 %}
+{%- set _error_count = error_count or 0 %}
+{%- set _due_count = due_count or 0 %}
+{%- set _has_sandbox = _subj.get('sandbox') is not none and _subj.get('sandbox') %}
+{%- set _tools = _subj.get('tools') or [] %}
+{%- set _is_code = is_code_route or False %}
+
+{%- block extra_head %}
+  <link rel="stylesheet" href="/static/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="/static/css/engine.css">
+{%- if _is_code or _has_sandbox %}
+  <link rel="stylesheet" href="/static/css/sandbox.css">
+{%- endif %}
+{%- endblock %}
+
+{%- block rail_content %}
+          <div class="rail-header">
+            <div class="rail-brand">
+              <a href="/" class="rail-back">
+                <span aria-hidden="true">←</span>
+                <span>{{ site.title if site else 'UNI Suite' }}</span>
+              </a>
+              <span class="code-pill">{{ _subj.code }}</span>
+            </div>
+            <button type="button" id="rail-close-btn" class="icon-btn rail-close-btn" aria-label="Zavřít navigaci">
+              <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <div class="rail-sections">
+            <nav class="rail-group" aria-label="Moduly předmětu">
+              <span class="rail-group-label">Moduly předmětu</span>
+              <ul class="rail-list">
+                <li>
+                  <a href="/predmet/{{ _subj.slug }}" class="rail-item"{% if not _is_code %} aria-current="page"{% endif %}>
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>Procvičování</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="/predmet/{{ _subj.slug }}#nastroje" class="rail-item">
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                    <span>Teorie a glosář</span>
+                  </a>
+                </li>
+                <li>
+                  <button type="button" class="rail-item" data-open-reference data-close-drawer>
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <span>Přehled vzorců</span>
+                    <kbd class="rail-item-meta">F</kbd>
+                  </button>
+                </li>
+                <li>
+                  <a href="/predmet/{{ _subj.slug }}/code" class="rail-item"{% if _is_code %} aria-current="page"{% endif %}>
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <polyline points="4 17 10 11 4 5"></polyline>
+                      <line x1="12" y1="19" x2="20" y2="19"></line>
+                    </svg>
+                    <span>Lab a sandbox</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+
+            <nav class="rail-group" aria-label="Předměty">
+              <span class="rail-group-label">Předměty</span>
+              <ul class="rail-list">
+{%- for item in (subjects or []) %}
+{%- set is_ext = item.kind == 'external' and item.url %}
+                <li>
+                  <a href="{{ item.url if is_ext else '/predmet/' ~ item.slug }}" class="rail-item"{% if is_ext %} target="_blank" rel="noopener noreferrer"{% endif %}{% if item.slug == _subj.slug %} aria-current="page"{% endif %}>
+                    <span class="status-dot {{ 'status-dot-info' if item.slug == _subj.slug else ('status-dot-active' if item.status == 'active' else 'status-dot-preparing') }}" aria-hidden="true"></span>
+                    <span class="rail-subject-code">{{ item.short or item.code }}</span>
+                    <span class="rail-subject-title">{{ item.title }}</span>
+                  </a>
+                </li>
+{%- endfor %}
+              </ul>
+            </nav>
+{%- if user and user.role == 'admin' %}
+            <nav class="rail-group" aria-label="Správa">
+              <span class="rail-group-label">Správa</span>
+              <ul class="rail-list">
+                <li>
+                  <a href="/admin" class="rail-item">
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <span>Správa platformy</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+{%- endif %}
+          </div>
+{%- endblock %}
+
+{%- block topbar_context %}
+          <span class="code-pill">{{ _subj.code }}</span>
+          <span class="topbar-title">{{ _subj.title }}{% if _is_code %} · Sandbox{% endif %}</span>
+{%- endblock %}
+
+{%- block content %}
+        <div class="page-header">
+          <div class="page-heading">
+            <div class="page-title-row">
+              <span class="code-pill">{{ _subj.code }}</span>
+              <h1>{{ _subj.title }}</h1>
+            </div>
+{%- if _subj.description %}
+            <p class="page-subtitle">{{ _subj.description }}</p>
+{%- endif %}
+          </div>
+          <div class="page-tools">
+{%- if _is_code %}
+            <a href="/predmet/{{ _subj.slug }}" class="btn btn-secondary btn-sm">Zpět na předmět</a>
+{%- elif _has_sandbox %}
+            <a href="/predmet/{{ _subj.slug }}/code" class="btn btn-secondary btn-sm">Code Sandbox</a>
+{%- endif %}
+            <button type="button" class="btn btn-secondary btn-sm" data-open-reference>
+              <span>Tahák</span>
+              <kbd>F</kbd>
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" data-open-scratchpad>
+              <span>Škrabák</span>
+              <kbd>S</kbd>
+            </button>
+          </div>
+        </div>
+{%- if _is_code %}
+        <div class="tab-strip sandbox-mobile-tabs" role="tablist" aria-label="Přepínač panelů sandboxu">
+          <button type="button" class="tab-pill" role="tab" aria-selected="true" data-sandbox-pane-tab="task">Zadání</button>
+          <button type="button" class="tab-pill" role="tab" aria-selected="false" data-sandbox-pane-tab="code">Kód</button>
+          <button type="button" class="tab-pill" role="tab" aria-selected="false" data-sandbox-pane-tab="output">Výstup</button>
+        </div>
+
+        <section class="sandbox-shell" aria-label="Code Sandbox">
+          <article class="card sandbox-pane" data-sandbox-pane="task" data-mobile-hidden="false">
+            <div class="card-header">
+              <span class="eyebrow">Zadání · {{ _subj.code }}</span>
+              <span class="status-inline">
+                <span class="status-dot status-dot-active" aria-hidden="true"></span>
+                <span>WebR WASM · izolováno</span>
+              </span>
+            </div>
+            <div id="sandbox-task-picker" class="tab-strip" role="group" aria-label="Výběr programovací úlohy"></div>
+            <h2 id="sandbox-task-title">Interaktivní laboratoř</h2>
+            <p id="sandbox-task-desc" class="page-subtitle">Vyber cvičnou úlohu a ověř řešení v lokálním WASM sandboxu bez odesílání kódu na server.</p>
+            <section id="sandbox-task-formula" class="formula-box" tabindex="0" aria-label="Ukázkový vzorec">
+              I ≈ (h / 2) · [f(a) + 2 · Σ f(x_i) + f(b)]
+            </section>
+            <details class="disclosure-box">
+              <summary>Nápověda a vzorec</summary>
+              <div id="sandbox-task-hints" class="disclosure-body">
+                <p>Rozděl interval na n podintervalů délky h = (b − a) / n, spočítej funkční hodnoty v uzlech a sečti krajní body s vahou 1 a vnitřní body s vahou 2.</p>
+              </div>
+            </details>
+            <p class="daily-meta">Jazyk: R (WebR) · Limit: 5 s · Síť: izolováno</p>
+          </article>
+
+          <div class="subject-col">
+            <article class="card sandbox-pane" data-sandbox-pane="code" data-mobile-hidden="true">
+              <div class="code-editor-header">
+                <h2 class="mono">solution.R</h2>
+                <div class="page-tools">
+                  <button type="button" id="sandbox-reset-btn" class="btn btn-ghost btn-sm">Reset kódu</button>
+                  <button type="button" id="sandbox-run-btn" class="btn btn-secondary btn-sm">Spustit kód</button>
+                  <button type="button" id="sandbox-test-btn" class="btn btn-primary btn-sm">Spustit testy</button>
+                </div>
+              </div>
+              <div id="code-editor-host" class="field">
+                <label for="code-textarea" class="visually-hidden">Editor kódu</label>
+                <textarea id="code-textarea" class="code-textarea" rows="10" spellcheck="false" autocapitalize="none" lang="en"># Pripraveno pro WebR WASM runner (Faze 2)
+trapezoid &lt;- function(f, a, b, n) {
+  h &lt;- (b - a) / n
+  x &lt;- seq(a, b, length.out = n + 1)
+  y &lt;- f(x)
+  (h / 2) * (y[1] + 2 * sum(y[2:n]) + y[n + 1])
+}
+</textarea>
+              </div>
+            </article>
+
+            <article class="card sandbox-pane" data-sandbox-pane="output" data-mobile-hidden="true">
+              <h3 class="visually-hidden">Výstup spuštění</h3>
+              <div class="tab-strip" role="tablist" aria-label="Záložky výstupu">
+                <button type="button" class="tab-pill" role="tab" aria-selected="true" data-output-tab="tests">Testy</button>
+                <button type="button" class="tab-pill" role="tab" aria-selected="false" data-output-tab="console">Konzole</button>
+                <button type="button" class="tab-pill" role="tab" aria-selected="false" data-output-tab="diff">Tabulka (Diff)</button>
+                <button type="button" class="tab-pill" role="tab" aria-selected="false" data-output-tab="plots">Grafy</button>
+              </div>
+              <div id="sandbox-out-tests" data-output-panel="tests">
+                <p class="page-subtitle">Po spuštění se zde zobrazí výsledky viditelných i skrytých testů.</p>
+              </div>
+              <section id="sandbox-out-console" data-output-panel="console" tabindex="0" aria-label="Výstup konzole" hidden>
+                <pre><code>Připraveno ke spuštění.</code></pre>
+              </section>
+              <div id="sandbox-out-diff" data-output-panel="diff" hidden>
+                <p class="page-subtitle">Porovnání očekávaného a skutečného výstupu.</p>
+              </div>
+              <div id="sandbox-out-plots" data-output-panel="plots" hidden>
+                <p class="page-subtitle">Vygenerované grafy se zobrazí zde.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <div class="mobile-sticky-bar" role="toolbar" aria-label="Rychlé akce sandboxu">
+          <button type="button" class="btn btn-primary btn-block" data-sandbox-run-mobile>Spustit testy</button>
+          <button type="button" class="btn btn-secondary" data-open-reference>Tahák</button>
+          <button type="button" class="btn btn-secondary" data-open-scratchpad>Škrabák</button>
+        </div>
+{%- else %}
+        <section class="subject-grid" aria-label="Přehled předmětu">
+          <div class="subject-col">
+            <article class="card">
+              <div class="card-header">
+                <h2>Okruhy a přednášky</h2>
+{%- if _subj.mastery_label %}
+                <span class="mastery-badge mastery-{{ _subj.mastery_level or 'unstarted' }}">{{ _subj.mastery_label }}</span>
+{%- endif %}
+              </div>
+{%- if _topics %}
+              <ul class="topic-list">
+{%- for topic in _topics %}
+{%- set t_idx = '%02d' | format(loop.index) %}
+{%- set t_count = topic.count if topic.count is defined else (topic.question_count if topic.question_count is defined else 0) %}
+{%- set t_title = topic.title or topic.name or ('Okruh ' ~ t_idx) %}
+                <li class="topic-item">
+                  <button
+                    type="button"
+                    class="topic-row"
+                    data-topic-select="{{ topic.id or loop.index }}"
+                    data-topic-label="Okruh {{ t_idx }} · {{ t_count }} otázek"
+                    aria-pressed="{{ 'true' if loop.first else 'false' }}"
+                  >
+                    <span class="topic-index">{{ t_idx }}</span>
+                    <span class="topic-title">{{ t_title }}</span>
+                    <span class="topic-meta">
+{%- if topic.mastery_label %}
+                      <span class="mastery-badge mastery-{{ topic.mastery_level or 'unstarted' }}">{{ topic.mastery_label }}</span>
+{%- endif %}
+                      <span class="topic-count">{{ t_count }}</span>
+                    </span>
+                  </button>
+                </li>
+{%- endfor %}
+              </ul>
+{%- else %}
+              <p class="page-subtitle">Banka okruhů pro {{ _subj.code }} se připravuje. Jakmile budou zařazeny úlohy, zobrazí se zde se stavem zvládnutí.</p>
+{%- endif %}
+            </article>
+
+            <article class="card matrix-only">
+              <div class="card-header">
+                <h2>Binární postup · Bloky po {{ _block_size }}</h2>
+{%- if _subj.readiness_pct is defined %}
+                <span class="mono daily-meta">Připravenost {{ _subj.readiness_pct }} %</span>
+{%- endif %}
+              </div>
+{%- set display_cells = _cells if _cells else ['.', '.', '.', '.', '.', '.', '.', '.', '.', '.'] %}
+              <section class="matrix-scroller" tabindex="0" aria-label="Binární matice postupu">
+                <div class="binary-matrix binary-matrix-wrap">
+{%- for cell in display_cells %}
+{%- set state_val = cell.state if cell is mapping else cell %}
+                  <span class="bin-cell{% if state_val == '1' or state_val == 1 %} bin-cell-1{% elif state_val == '0' or state_val == 0 %} bin-cell-0{% endif %}">{{ '1' if (state_val == '1' or state_val == 1) else ('0' if (state_val == '0' or state_val == 0) else '·') }}</span>
+{%- endfor %}
+                </div>
+              </section>
+
+              <div class="matrix-legend">
+                <span class="legend-ok mono">1 správně</span>
+                <span class="legend-err mono">0 chyba</span>
+                <span class="mono">· nová</span>
+              </div>
+            </article>
+          </div>
+
+          <div class="subject-col">
+            <div class="tab-strip" role="group" aria-label="Filtr typu úloh">
+              <button type="button" class="tab-pill" data-filter-type="all" aria-pressed="true">Vše</button>
+              <button type="button" class="tab-pill" data-filter-type="choice" aria-pressed="false">Teorie (A/B/C/D)</button>
+              <button type="button" class="tab-pill" data-filter-type="input_numeric" aria-pressed="false">Výpočty (ε)</button>
+              <button type="button" class="tab-pill" data-filter-type="recall" aria-pressed="false">Doplňovačka</button>
+{%- if _has_sandbox %}
+              <button type="button" class="tab-pill" data-filter-type="code_task" aria-pressed="false">Kód</button>
+{%- endif %}
+            </div>
+
+            <button type="button" id="start-practice-btn" class="cta-hero" data-start-mode="blocks">
+              <span>
+                <span class="cta-hero-title">Pokračovat v procvičování</span>
+                <span id="subject-cta-sub" class="cta-hero-sub">{% if _topics %}Okruh 01 · {{ _topics[0].title or _topics[0].name }}{% else %}Režim po blocích ({{ _block_size }} otázek){% endif %}</span>
+              </span>
+              <span aria-hidden="true">→</span>
+            </button>
+
+            <article class="card">
+              <h2>Režimy</h2>
+              <ul class="mode-list">
+                <li class="mode-item">
+                  <button type="button" class="mode-row" data-start-mode="blocks">
+                    <span>Po blocích ({{ _block_size }})</span>
+                    <span class="mode-meta">bloky</span>
+                  </button>
+                </li>
+                <li class="mode-item">
+                  <button type="button" class="mode-row" data-start-mode="study_then_test">
+                    <span>Studuj, pak testuj</span>
+                    <span class="mode-meta">výklad + test</span>
+                  </button>
+                </li>
+                <li class="mode-item">
+                  <button type="button" class="mode-row" data-start-mode="fsrs_review">
+                    <span>FSRS opakování</span>
+                    <span class="mode-meta">{{ _due_count }} k opakování</span>
+                  </button>
+                </li>
+                <li class="mode-item">
+                  <button type="button" class="mode-row{% if _error_count > 0 %} mode-row-danger{% endif %}" data-start-mode="error_log">
+                    <span>Chybovník</span>
+                    <span class="mode-meta">{{ _error_count }}</span>
+                  </button>
+                </li>
+                <li class="mode-item">
+                  <button type="button" class="mode-row" data-start-mode="exam">
+                    <span>Ostrý test</span>
+                    <span class="mode-meta">{{ _exam.count }} ot. · {{ _exam.minutes }} min</span>
+                  </button>
+                </li>
+                <li class="mode-item">
+                  <button type="button" class="mode-row" data-start-mode="sudden_death">
+                    <span>Náhlá smrt</span>
+                    <span class="mode-meta">1 chyba končí</span>
+                  </button>
+                </li>
+              </ul>
+            </article>
+
+            <article id="nastroje" class="card">
+              <h2>Nástroje předmětu {{ _subj.code }}</h2>
+              <div class="tool-chip-grid">
+                <button type="button" class="btn btn-secondary btn-sm" data-open-reference>
+                  <span>Přehled vzorců (F)</span>
+                  <span aria-hidden="true">→</span>
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" data-open-scratchpad>
+                  <span>Škrabák (S)</span>
+                  <span aria-hidden="true">→</span>
+                </button>
+{%- if _has_sandbox %}
+                <a href="/predmet/{{ _subj.slug }}/code" class="btn btn-secondary btn-sm">
+                  <span>Otevřít Code Sandbox</span>
+                  <span aria-hidden="true">→</span>
+                </a>
+{%- endif %}
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="quiz-workspace" class="card" hidden aria-label="Aktivní procvičování"></section>
+{%- if 'numeric_lab' in _tools or 'dist_tables' in _tools %}
+        <div id="mini-lab-host" data-lab-kind="{{ 'pas' if 'dist_tables' in _tools else 'num' }}"></div>
+{%- endif %}
+{%- if 'automata' in _tools %}
+        <div id="automata-host"></div>
+{%- endif %}
+{%- endif %}
+{%- endblock %}
+
+{%- block state_json %}{{ {
+  'user': {'username': user.username, 'is_authenticated': user.is_authenticated} if user else None,
+  'prefs': prefs or {},
+  'subject': {'slug': _subj.slug, 'code': _subj.code, 'short': _subj.short, 'title': _subj.title, 'tools': _tools},
+  'is_code_route': _is_code
+} | tojson }}{% endblock %}
+
+{%- block extra_scripts %}
+  <script src="/static/vendor/katex/katex.min.js" defer></script>
+  <script src="/static/js/engine/katex_render.js" defer></script>
+  <script src="/static/js/engine/hints.js" defer></script>
+  <script src="/static/js/engine/modes.js" defer></script>
+  <script src="/static/js/engine/renderers/choice.js" defer></script>
+  <script src="/static/js/engine/renderers/exact.js" defer></script>
+  <script src="/static/js/engine/renderers/numeric.js" defer></script>
+  <script src="/static/js/engine/renderers/recall.js" defer></script>
+  <script src="/static/js/engine/renderers/multi_step.js" defer></script>
+  <script src="/static/js/engine/renderers/code_lab.js" defer></script>
+  <script src="/static/js/engine/host.js" defer></script>
+  <script src="/static/js/tools/reference_drawer.js" defer></script>
+{%- if 'numeric_lab' in _tools or 'dist_tables' in _tools %}
+  <script src="/static/js/tools/mini_lab.js" defer></script>
+{%- endif %}
+{%- if 'automata' in _tools %}
+  <script src="/static/js/tools/automata.js" defer></script>
+{%- endif %}
+{%- if _is_code or _has_sandbox %}
+  <script type="module" src="/static/js/sandbox/sandbox_page.js"></script>
+{%- endif %}
+{%- endblock %}
