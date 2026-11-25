@@ -1,0 +1,31 @@
+{
+  "slug": "tzi",
+  "code": "KI/TIN",
+  "short": "TZI",
+  "title": "Teoretická informatika",
+  "description": "Číselné soustavy, logika, množiny, relace, důkazy, kombinatorika, regulární jazyky a konečné automaty",
+  "visibility": "public",
+  "provider": {
+    "type": "upstream_git",
+    "repo": "zdenax/TZI-TIN-APP"
+  },
+  "engines": [
+    "choice",
+    "input_exact",
+    "recall",
+    "composite_tool"
+  ],
+  "tools": [
+    "glossary",
+    "automata"
+  ],
+  "gamification": {
+    "xp": true,
+    "daily_goal": true
+  },
+  "exam_config": {
+    "count": 15,
+    "minutes": 30,
+    "pass_pct": 60
+  }
+}

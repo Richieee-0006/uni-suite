@@ -1,0 +1,205 @@
+{
+  "title": "03 · Bodové odhady a intervaly spolehlivosti",
+  "lecture": 3,
+  "date": "2026-10-16",
+  "questions": [
+    {
+      "id": "pas-03-q01",
+      "number": 1,
+      "type": "choice",
+      "text": "Proč se ve vzorci pro **výběrový rozptyl** $s^2 = \\frac{1}{n - 1}\\sum_{i=1}^n (x_i - \\bar{x})^2$ dělí hodnotou $n - 1$ místo $n$ (tzv. Besselova korekce)?",
+      "options": {
+        "A": "Aby rozptyl nemohl vyjít záporný",
+        "B": "Aby byl výběrový rozptyl $s^2$ **nestranným odhadem** populačního rozptylu $\\sigma^2$, protože jsme spotřebovali 1 stupeň volnosti na odhad průměru $\\bar{x}$",
+        "C": "Aby měl rozptyl stejné jednotky jako původní data",
+        "D": "Pouze kvůli snazšímu dělení v jazyce R"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Odchylky od výběrového průměru $\\bar{x}$ jsou v průměru menší než odchylky od skutečného $\\mu$.",
+        "Krok 2: Dělení $n$ by systematicky podhodnocovalo skutečný rozptyl $\\sigma^2$ faktorem $\\frac{n-1}{n}$.",
+        "Vysvětlení: Dělením $n - 1$ dostaneme $E(s^2) = \\sigma^2$, tedy nestranný (nevychýlený) odhad."
+      ],
+      "explanation": "Protože $\\sum (x_i - \\bar{x}) = 0$, zbývá jen $n - 1$ nezávislých odchylek. Dělením $n - 1$ se vyrovná podhodnocení rozptylu a zajistí se nestrannost $E(s^2) = \\sigma^2$."
+    },
+    {
+      "id": "pas-03-q02",
+      "number": 2,
+      "type": "choice",
+      "text": "Jakou vlastnost má bodový odhad $\\hat{\\theta}_n$, o kterém říkáme, že je **konzistentní**?",
+      "options": {
+        "A": "Pro každé pevné $n$ je $E(\\hat{\\theta}_n) = \\theta$",
+        "B": "S rostoucím rozsahem výběru $n \\to \\infty$ se odhad $\\hat{\\theta}_n$ pravděpodobnostně přibližuje ke skutečnému parametru $\\theta$",
+        "C": "Odhad nabývá vždy celočíselných hodnot",
+        "D": "Rozptyl odhadu roste s $n$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Nestrannost mluví o střední hodnotě $E(\\hat{\\theta}) = \\theta$ i pro malá $n$.",
+        "Krok 2: Konzistence je asymptotická vlastnost při shromažďování stále většího množství dat.",
+        "Vysvětlení: Konzistentní odhad konverguje v pravděpodobnosti k $\\theta$ ($\\forall \\varepsilon > 0: \\lim_{n\\to\\infty} P(|\\hat{\\theta}_n - \\theta| > \\varepsilon) = 0$)."
+      ],
+      "explanation": "Konzistence zaručuje, že zvětšováním vzorku $n$ lze chybu odhadu udělat libovolně malou. Nestranný odhad, jehož rozptyl klesá k 0, je automaticky konzistentní."
+    },
+    {
+      "id": "pas-03-q03",
+      "number": 3,
+      "type": "choice",
+      "text": "Chceme zmenšit šířku $95\\,\\%$ intervalu spolehlivosti pro průměr **na polovinu** při stejné hladině spolehlivosti. Kolikrát více pozorování $n$ potřebujeme?",
+      "options": {
+        "A": "$2\\times$ více dat",
+        "B": "$4\\times$ více dat",
+        "C": "$\\sqrt{2}\\times$ více dat",
+        "D": "$8\\times$ více dat"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Poloviční šířka (mez chyby) intervalu spolehlivosti je úměrná směrodatné chybě $\\frac{\\sigma}{\\sqrt{n}}$.",
+        "Krok 2: Chcete-li zlomek $\\frac{1}{\\sqrt{n}}$ zmenšit na polovinu, čím musíte vynásobit $n$ pod odmocninou?",
+        "Vysvětlení: $\\frac{1}{\\sqrt{4n}} = \\frac{1}{2}\\cdot\\frac{1}{\\sqrt{n}}$, takže pro dvojnásobnou přesnost potřebujeme čtyřnásobný rozsah výběru."
+      ],
+      "explanation": "Směrodatná chyba průměru klesá pouze s $\\sqrt{n}$. Zúžení intervalu spolehlivosti $k$-krát vyžaduje $k^2$-krát větší vzorek."
+    },
+    {
+      "id": "pas-03-q04",
+      "number": 4,
+      "type": "multi_step",
+      "text": "U výběru $n = 36$ měření z populace se známou směrodatnou odchylkou $\\sigma = 12$ vyšel výběrový průměr $\\bar{x} = 100$. Pro $95\\,\\%$ spolehlivost použijte kvantil $u_{0{,}975} = 1{,}96$.",
+      "steps": [
+        {
+          "prompt": "Krok 1: Spočítejte směrodatnou chybu průměru $\\text{SE} = \\frac{\\sigma}{\\sqrt{n}}$.",
+          "type": "input_numeric",
+          "answer": 2,
+          "tolerance": 0.01,
+          "tolerance_mode": "abs",
+          "unit": ""
+        },
+        {
+          "prompt": "Krok 2: Určete **horní mez** $95\\,\\%$ oboustranného intervalu spolehlivosti pro $\\mu$.",
+          "type": "input_numeric",
+          "answer": 103.92,
+          "tolerance": 0.05,
+          "tolerance_mode": "abs",
+          "unit": ""
+        }
+      ],
+      "hints": [
+        "Krok 1: $\\text{SE} = 12 / \\sqrt{36} = 12 / 6 = 2$.",
+        "Krok 2: Mez chyby je $u_{0{,}975} \\cdot \\text{SE} = 1{,}96 \\cdot 2 = 3{,}92$.",
+        "Vysvětlení: $95\\,\\%$ interval spolehlivosti je $[100 - 3{,}92,\\; 100 + 3{,}92] = [96{,}08,\\; 103{,}92]$."
+      ],
+      "explanation": "Při známém $\\sigma$ je $95\\,\\%$ IS roven $\\bar{x} \\pm 1{,}96 \\cdot \\frac{\\sigma}{\\sqrt{n}} = 100 \\pm 3{,}92$, tedy horní mez je $103{,}92$."
+    },
+    {
+      "id": "pas-03-q05",
+      "number": 5,
+      "type": "choice",
+      "text": "Který vzorec správně určuje $100(1 - \\alpha)\\,\\%$ oboustranný interval spolehlivosti pro populační průměr $\\mu$ normálního rozdělení při **neznámém** $\\sigma$?",
+      "options": {
+        "A": "$\\bar{x} \\pm u_{1 - \\alpha/2} \\cdot \\frac{s}{n}$",
+        "B": "$\\bar{x} \\pm t_{1 - \\alpha/2,\\; n - 1} \\cdot \\frac{s}{\\sqrt{n}}$",
+        "C": "$\\bar{x} \\pm t_{1 - \\alpha,\\; n} \\cdot s$",
+        "D": "$\\bar{x} \\pm \\chi^2_{1 - \\alpha/2,\\; n - 1} \\cdot \\frac{s}{\\sqrt{n}}$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Při neznámém $\\sigma$ nahrazujeme $\\sigma$ výběrovým $s$ a normální kvantil $u$ Studentovým kvantilem $t$.",
+        "Krok 2: Pro oboustranný interval dělíme hladinu $\\alpha$ na dvě poloviny ($1 - \\alpha/2$) a stupně volnosti jsou $n - 1$.",
+        "Vysvětlení: Správný vzorec je $\\bar{x} \\pm t_{1 - \\alpha/2,\\; n - 1} \\cdot \\frac{s}{\\sqrt{n}}$."
+      ],
+      "explanation": "Neznámý rozptyl vede k použití Studentova rozdělení s $n - 1$ stupni volnosti a kvantilem $t_{1 - \\alpha/2, n - 1}$."
+    },
+    {
+      "id": "pas-03-q06",
+      "number": 6,
+      "type": "choice",
+      "text": "Jak zní statisticky **přesná frekventistická interpretace** $95\\,\\%$ intervalu spolehlivosti $[173{,}2;\\; 176{,}8]\\text{ cm}$ pro průměrnou výšku populace $\\mu$?",
+      "options": {
+        "A": "$95\\,\\%$ jednotlivců v populaci má výšku mezi $173{,}2$ a $176{,}8\\text{ cm}$",
+        "B": "Metoda konstrukce intervalu má vlastnost, že při mnohonásobném opakování náhodného výběru z téže populace pokryje $95\\,\\%$ takto spočtených intervalů neznámou pevnou hodnotu $\\mu$",
+        "C": "Neznámé $\\mu$ je náhodná veličina, která se mění mezi $173{,}2$ a $176{,}8\\text{ cm}$",
+        "D": "S $95\\,\\%$ jistotou padne příští naměřený člověk do tohoto intervalu"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Populační parametr $\\mu$ je pevné neznámé číslo; náhodné jsou meze intervalu vypočtené ze vzorku.",
+        "Krok 2: Nepleťte si interval spolehlivosti pro průměr s rozsahem jednotlivých hodnot v populaci.",
+        "Vysvětlení: Hladina spolehlivosti $95\\,\\%$ vyjadřuje dlouhodobou úspěšnost procedury při opakovaném vzorkování."
+      ],
+      "explanation": "Interval spolehlivosti odhaduje pevný parametr $\\mu$, nikoli rozptyl jednotlivců. Spolehlivost $1 - \\alpha$ popisuje podíl intervalů, které při opakování pokusu skutečné $\\mu$ obsahují."
+    },
+    {
+      "id": "pas-03-q07",
+      "number": 7,
+      "type": "choice",
+      "text": "Jak se změní šířka intervalu spolehlivosti, když zvýšíme hladinu spolehlivosti z $95\\,\\%$ na $99\\,\\%$ (při stejném výběru dat)?",
+      "options": {
+        "A": "Interval se zúží",
+        "B": "Interval se rozšíří (větší jistota vyžaduje širší toleranci, např. $u_{0{,}995} \\approx 2{,}576 > u_{0{,}975} \\approx 1{,}96$)",
+        "C": "Šířka zůstane totožná",
+        "D": "Interval se posune směrem k nule"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Porovnejte kvantily normovaného normálního rozdělení pro $95\\,\\%$ ($1{,}96$) a $99\\,\\%$ ($2{,}576$).",
+        "Krok 2: Vyšší jistota pokrytí neznámého parametru musí být vykoupena nižší přesností (širším intervalem).",
+        "Vysvětlení: Zvýšení spolehlivosti zvětšuje kritický kvantil a tedy rozšiřuje interval."
+      ],
+      "explanation": "Mezi spolehlivostí a přesností (úzkostí intervalu) existuje přímý kompromis: pro $99\\,\\%$ spolehlivost je kvantil $2{,}576$ místo $1{,}96$, takže interval je širší."
+    },
+    {
+      "id": "pas-03-q08",
+      "number": 8,
+      "type": "input_numeric",
+      "text": "V průzkumu mezi $n = 100$ studenty uvedlo $60$ studentů, že používá Linux ($\\hat{p} = 0{,}60$). Spočítejte standardní chybu podílu $\\text{SE}(\\hat{p}) = \\sqrt{\\frac{\\hat{p}(1 - \\hat{p})}{n}}$ (zaokrouhlete na 3 des. místa).",
+      "answer": 0.049,
+      "tolerance": 0.002,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Dosaďte $\\hat{p} = 0{,}6$ a $1 - \\hat{p} = 0{,}4$ do čitatele: $0{,}6 \\cdot 0{,}4 = 0{,}24$.",
+        "Krok 2: Vydělte $n = 100$: $0{,}24 / 100 = 0{,}0024$.",
+        "Vysvětlení: $\\sqrt{0{,}0024} \\approx 0{,}04899 \\approx 0{,}049$."
+      ],
+      "explanation": "Směrodatná chyba výběrového podílu je $\\sqrt{\\frac{0{,}6 \\cdot 0{,}4}{100}} = \\sqrt{0{,}0024} \\approx 0{,}049$ (Walduv $95\\,\\%$ IS pak je $0{,}60 \\pm 1{,}96\\cdot 0{,}049 \\approx [0{,}504;\\; 0{,}696]$)."
+    },
+    {
+      "id": "pas-03-q09",
+      "number": 9,
+      "type": "choice",
+      "text": "Který příkaz v jazyce **R** přímo spočítá $95\\,\\%$ interval spolehlivosti pro průměr datového vektoru `x` při neznámém rozptylu?",
+      "options": {
+        "A": "`t.test(x, conf.level = 0.95)$conf.int`",
+        "B": "`sd(x, conf.level = 0.95)`",
+        "C": "`pnorm(x, 0.95)`",
+        "D": "`var.test(x)$conf.int`"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Jednovýběrový Studentův $t$-test v R automaticky vrací i interval spolehlivosti pro průměr.",
+        "Krok 2: Výsledný seznam obsahuje položku `$conf.int`.",
+        "Vysvětlení: `t.test(x, conf.level = 0.95)$conf.int` vrátí přímo dolní a horní mez intervalu."
+      ],
+      "explanation": "V R vrací funkce `t.test(x)` jak testovou statistiku a $p$-hodnotu, tak oboustranný interval spolehlivosti pro průměr ve složce `$conf.int`."
+    },
+    {
+      "id": "pas-03-q10",
+      "number": 10,
+      "type": "choice",
+      "text": "Který ze dvou nestranných odhadů $\\hat{\\theta}_1$ a $\\hat{\\theta}_2$ téhož parametru $\\theta$ považujeme za **vydatnější (efektivnější)**?",
+      "options": {
+        "A": "Ten, který má větší rozptyl",
+        "B": "Ten, který má **menší rozptyl** $\\operatorname{Var}(\\hat{\\theta})$",
+        "C": "Ten, který používá méně dat",
+        "D": "Ten, který má větší vychýlení (bias)"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Oba odhady jsou nestranné — v průměru míří přesně na střed terče $\\theta$.",
+        "Krok 2: Který střelec je přesnější? Ten s menším rozptylem zásahů kolem středu!",
+        "Vysvětlení: Vydatnost (efektivita) porovnává rozptyly nestranných odhadů; spodní mez rozptylu udává Rao–Cramérova nerovnost."
+      ],
+      "explanation": "Z nestranných odhadů je vydatnější (efektivnější) ten s menším rozptylem (např. u normálního rozdělení je výběrový průměr vydatnější než výběrový medián)."
+    }
+  ]
+}

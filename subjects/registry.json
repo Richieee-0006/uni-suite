@@ -15,14 +15,7 @@
     },
     {
       "slug": "tzi",
-      "kind": "external",
-      "code": "KI/TIN",
-      "short": "TZI",
-      "title": "Teoretická informatika",
-      "description": "Banky otázek, doplňovačka, glosář a návrhář automatů",
-      "url": "https://tzi.rutterle.eu",
-      "status": "active",
-      "visibility": "public"
+      "kind": "local"
     }
   ]
 }

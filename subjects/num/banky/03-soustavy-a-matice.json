@@ -1,0 +1,205 @@
+{
+  "title": "03 · Soustavy lineárních rovnic a matice",
+  "lecture": 3,
+  "date": "2026-10-15",
+  "questions": [
+    {
+      "id": "num-03-q01",
+      "number": 1,
+      "type": "choice",
+      "text": "Proč se při **Gaussově eliminační metodě (GEM)** v praxi používá **částečný výběr hlavního prvku (částečná pivotace)**?",
+      "options": {
+        "A": "Aby se snížila asymptotická složitost z $O(n^3)$ na $O(n^2)$",
+        "B": "Aby se zabránilo dělení nulou nebo velmi malým diagonálním prvkem, které by prudce zesílilo zaokrouhlovací chyby",
+        "C": "Aby se z husté matice stala řídká matice",
+        "D": "Aby matice zůstala vždy symetrická"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: V přímém chodu GEM počítáme násobitel $s_{ik} = -a_{ik} / a_{kk}$.",
+        "Krok 2: Co se stane, když je pivot $a_{kk}$ velmi malý oproti ostatním prvkům ve sloupci?",
+        "Vysvětlení: Prohozením řádků tak, aby $|a_{kk}|$ bylo největší ve sloupci pod diagonálou, zaručíme $|s_{ik}| \\le 1$ a numerickou stabilitu."
+      ],
+      "explanation": "Částečná pivotace vybírá v aktivním sloupci řádek s největším prvkem v absolutní hodnotě a prohodí jej na diagonálu. Tím brání dělení nulou i růstu zaokrouhlovacích chyb (násobitele splňují $|s_{ik}| \\le 1$)."
+    },
+    {
+      "id": "num-03-q02",
+      "number": 2,
+      "type": "choice",
+      "text": "Kdy se nejvíce vyplatí použít **LU rozklad** ($A = L \\cdot U$) oproti opakované Gaussově eliminaci?",
+      "options": {
+        "A": "Když potřebujeme řešit soustavu $A\\vec{x} = \\vec{b}_j$ pro mnoho různých pravých stran $\\vec{b}_1, \\dots, \\vec{b}_m$ se stejnou maticí $A$",
+        "B": "Když je matice $A$ singulární",
+        "C": "Když se matice $A$ mění v každém kroku a pravá strana zůstává stejná",
+        "D": "Pouze pro matice $2 \\times 2$"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Porovnejte cenu samotného rozkladu $A = LU$ a cenu řešení trojúhelníkových soustav $L\\vec{y} = \\vec{b}$, $U\\vec{x} = \\vec{y}$.",
+        "Krok 2: Rozklad stojí $O(n^3)$, zatímco dopředná a zpětná substituce stojí jen $O(n^2)$.",
+        "Vysvětlení: Pro $m$ různých pravých stran zaplatíme $O(n^3)$ jen jednou a každé další řešení stojí pouze $O(n^2)$."
+      ],
+      "explanation": "LU rozklad oddělí úpravu matice $A$ ($O(n^3)$) od zpracování pravé strany $\\vec{b}$ ($O(n^2)$). Při řešení desítek či stovek pravých stran přináší dramatické zrychlení."
+    },
+    {
+      "id": "num-03-q03",
+      "number": 3,
+      "type": "choice",
+      "text": "Jakou asymptotickou časovou složitost má přímý chod Gaussovy eliminace (i LU rozklad) pro hustou matici rozměru $n \\times n$?",
+      "options": {
+        "A": "$O(n)$",
+        "B": "$O(n^2)$",
+        "C": "$O(n^3)$ (přesněji přibližně $\\frac{2}{3}n^3$ operací)",
+        "D": "$O(2^n)$"
+      },
+      "correct": ["C"],
+      "hints": [
+        "Krok 1: Podívejte se na vnořené cykly v přímém chodu GEM (`for k`, `for i`, vektorová operace přes `j`).",
+        "Krok 2: Tři vnořené cykly přes rozměr $n$ vedou na kubickou složitost.",
+        "Vysvětlení: Přímý chod vyžaduje $\\approx \\frac{2}{3}n^3$ FLOPů, zpětná substituce pak už jen $O(n^2)$."
+      ],
+      "explanation": "Hustá Gaussova eliminace a LU rozklad mají složitost $O(n^3)$ ($\\approx \\frac{2}{3}n^3$ aritmetických operací). Zpětná substituce je $O(n^2)$."
+    },
+    {
+      "id": "num-03-q04",
+      "number": 4,
+      "type": "choice",
+      "text": "Která z následujících podmínek na matici $A$ je **postačující podmínkou** pro zaručenou konvergenci Jacobiho i Gaussovy–Seidelovy iterační metody z libovolného počátečního odhadu?",
+      "options": {
+        "A": "Všechny prvky matice $A$ jsou kladné",
+        "B": "Matice $A$ je **ostře diagonálně dominantní**: $|a_{ii}| > \\sum_{j \\neq i} |a_{ij}|$ pro každý řádek $i$",
+        "C": "Determinant matice $A$ je rovný jedné",
+        "D": "Matice $A$ má na diagonále samé nuly"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Při iteraci dělíme každou rovnici diagonálním prvkem $a_{ii}$ a převádíme mimodiagonální členy na pravou stranu.",
+        "Krok 2: Aby iterační matice byla kontrakcí v $\\infty$-normě, musí součet absolutních hodnot mimo diagonálu být menší než $|a_{ii}|$.",
+        "Vysvětlení: Ostrá řádková diagonální dominance ($|a_{ii}| > \\sum_{j\\neq i}|a_{ij}|$) garantuje spektrální poloměr iterační matice $\\rho(B) < 1$ a tedy konvergenci."
+      ],
+      "explanation": "Ostrá diagonální dominance je snadno ověřitelná postačující podmínka konvergence pro Jacobiho i Gaussovu–Seidelovu metodu. (Konvergují také např. pro symetrické pozitivně definitní matice u GS.)"
+    },
+    {
+      "id": "num-03-q05",
+      "number": 5,
+      "type": "choice",
+      "text": "Jaký je hlavní implementační rozdíl mezi **Jacobiho** a **Gaussovou–Seidelovou** iterační metodou?",
+      "options": {
+        "A": "Jacobiho metoda používá LU rozklad, Gaussova–Seidelova ne",
+        "B": "Jacobi počítá celý nový vektor $\\vec{x}^{(k+1)}$ pouze ze starého $\\vec{x}^{(k)}$, zatímco Gauss–Seidel okamžitě využívá nově spočtené složky $x_1^{(k+1)}, \\dots, x_{i-1}^{(k+1)}$ už v témže kroku",
+        "C": "Jacobiho metoda konverguje vždy rychleji než Gaussova–Seidelova",
+        "D": "Gaussova–Seidelova metoda je triviálně paralelizovatelná přes všechny řádky současně"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Porovnejte, odkud berou hodnoty proměnných při výpočtu $x_2^{(k+1)}$, když už znáte nové $x_1^{(k+1)}$.",
+        "Krok 2: Okamžité použití nových hodnot obvykle urychlí konvergenci, ale vytváří datovou závislost mezi řádky.",
+        "Vysvětlení: Jacobi se snadno paralelizuje (všechny složky závisí jen na $\\vec{x}^{(k)}$), zatímco Gauss–Seidel využívá aktuální složky ihned a zpravidla potřebuje méně iterací."
+      ],
+      "explanation": "Jacobiho metoda aktualizuje všechny složky současně ze staré iterace (snadná paralelizace). Gaussova–Seidelova metoda používá nově spočítané složky okamžitě v témže průchodu, čímž často výrazně snižuje počet potřebných iterací."
+    },
+    {
+      "id": "num-03-q06",
+      "number": 6,
+      "type": "multi_step",
+      "text": "Máme diagonálně dominantní soustavu:\n$$4x_1 + x_2 = 9$$\n$$x_1 + 3x_2 = 7$$\nZačínáme z počátečního odhadu $\\vec{x}^{(0)} = (0, 0)^T$.",
+      "steps": [
+        {
+          "prompt": "Krok 1: Určete $x_1^{(1)}$ po 1. iteraci Jacobiho (i Gaussovy–Seidelovy) metody.",
+          "type": "input_numeric",
+          "answer": 2.25,
+          "tolerance": 0.01,
+          "tolerance_mode": "abs",
+          "unit": ""
+        },
+        {
+          "prompt": "Krok 2: Určete $x_2^{(1)}$ po 1. iteraci **Gaussovy–Seidelovy** metody (využijte čerstvě spočtené $x_1^{(1)}$; zaokrouhlete na 3 des. místa).",
+          "type": "input_numeric",
+          "answer": 1.583,
+          "tolerance": 0.005,
+          "tolerance_mode": "abs",
+          "unit": ""
+        }
+      ],
+      "hints": [
+        "Krok 1: Z první rovnice vyjádřete $x_1 = (9 - x_2)/4$, z druhé $x_2 = (7 - x_1)/3$.",
+        "Krok 2: Pro $x^{(0)} = (0,0)$ je $x_1^{(1)} = (9 - 0)/4 = 2{,}25$.",
+        "Vysvětlení: V Gaussově–Seidelově metodě dosadíme do druhé rovnice rovnou $x_1^{(1)} = 2{,}25$: $x_2^{(1)} = (7 - 2{,}25)/3 = 4{,}75/3 \\approx 1{,}5833$ (Jacobi by dal $7/3 \\approx 2{,}333$)."
+      ],
+      "explanation": "První krok dává $x_1^{(1)} = 9/4 = 2{,}25$. Gauss–Seidel ihned použije tuto hodnotu: $x_2^{(1)} = (7 - 2{,}25)/3 \\approx 1{,}5833$ (přesné řešení soustavy je $x_1 = 20/11 \\approx 1{,}818$, $x_2 = 19/11 \\approx 1{,}727$)."
+    },
+    {
+      "id": "num-03-q07",
+      "number": 7,
+      "type": "choice",
+      "text": "Kdy dáváme přednost **iteračním metodám** (Jacobi, Gauss–Seidel) před přímými metodami (GEM, LU)?",
+      "options": {
+        "A": "U velmi velkých a řídkých matic (např. z diskretizace parciálních diferenciálních rovnic), kde přímý LU rozklad způsobí zaplnění (fill-in) a stojí příliš paměti i času",
+        "B": "U malých hustých matic rozměru $5 \\times 5$",
+        "C": "Když chceme přesné řešení bez jakékoli tolerance a bez ohledu na paměť",
+        "D": "Když je matice silně singulární"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Představte si matici $100\\,000 \\times 100\\,000$, která má jen 5 nenulových prvků v řádku.",
+        "Krok 2: Hustý LU rozklad by vyžadoval $O(n^3)$ operací a gigabajty paměti kvůli zaplnění nulových pozic.",
+        "Vysvětlení: Iterační metody pracují jen s nenulovými prvky (násobení matice vektorem stojí $O(\\text{nnz})$) a nevyžadují modifikaci matice."
+      ],
+      "explanation": "Pro velké řídké soustavy jsou iterační metody nezastupitelné: zachovávají řídkost, mají nízké paměťové nároky a dovolují zastavit výpočet v okamžiku dosažení požadované přesnosti."
+    },
+    {
+      "id": "num-03-q08",
+      "number": 8,
+      "type": "choice",
+      "text": "Proč je známá **Hilbertova matice** $H_{ij} = \\frac{1}{i + j - 1}$ v numerických metodách obávaným testovacím příkladem?",
+      "options": {
+        "A": "Je vždy singulární (má nulový determinant)",
+        "B": "Je extrémně špatně podmíněná — její číslo podmíněnosti $\\kappa(H_n)$ roste exponenciálně s rozměrem $n$",
+        "C": "Neexistuje k ní inverzní matice ani pro $n = 2$",
+        "D": "Nelze ji uložit v jazyce R"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Hilbertova matice je symetrická a pozitivně definitní, takže formálně je vždy regulární.",
+        "Krok 2: Přesto už pro $n = 12$ překračuje $\\kappa(H_{12}) > 10^{16}$, což přesahuje přesnost IEEE 754 double.",
+        "Vysvětlení: Při $\\kappa(A) \\approx 10^k$ ztrácíme v řešení přibližně $k$ platných desítkových cifer."
+      ],
+      "explanation": "Hilbertova matice je učebnicovým příkladem extrémně špatně podmíněné matice (objevuje se např. při aproximaci metodou nejmenších čtverců v monomiální bázi $1, x, x^2, \\dots$)."
+    },
+    {
+      "id": "num-03-q09",
+      "number": 9,
+      "type": "choice",
+      "text": "Která funkce v základním jazyce **R** přímo řeší soustavu lineárních rovnic $A\\vec{x} = \\vec{b}$ (bez zbytečného výpočtu inverzní matice `solve(A) %*% b`)?",
+      "options": {
+        "A": "`solve(A, b)`",
+        "B": "`inv(A) * b`",
+        "C": "`gauss(A, b)`",
+        "D": "`det(A, b)`"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: V R má funkce `solve` jeden nebo dva argumenty.",
+        "Krok 2: Volání se dvěma argumenty provede LU rozklad s částečnou pivotací (LAPACK `dgesv`) a přímo vrátí $\\vec{x}$.",
+        "Vysvětlení: `solve(A, b)` je rychlejší i numericky přesnější než explicitní výpočet inverze `solve(A) %*% b`."
+      ],
+      "explanation": "V R řešíme soustavu $A\\vec{x} = \\vec{b}$ funkcí `solve(A, b)`. Explicitní výpočet inverze `solve(A)` je pomalejší a přináší větší zaokrouhlovací chybu."
+    },
+    {
+      "id": "num-03-q10",
+      "number": 10,
+      "type": "input_numeric",
+      "text": "Máme soustavu $A\\vec{x} = \\vec{b}$ s maticí $A = \\begin{pmatrix} 2 & 1 \\\\ 1 & 3 \\end{pmatrix}$ a pravou stranou $\\vec{b} = \\begin{pmatrix} 5 \\\\ 10 \\end{pmatrix}$. Určete složku $x_2$ přesného řešení.",
+      "answer": 3,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Eliminujte $x_1$ z druhé rovnice odečtením poloviny první rovnice: $(3 - 0{,}5)x_2 = 10 - 2{,}5$.",
+        "Krok 2: Dostáváte rovnici $2{,}5 x_2 = 7{,}5$.",
+        "Vysvětlení: $x_2 = 7{,}5 / 2{,}5 = 3$ (a zpětnou substitucí $x_1 = (5 - 3)/2 = 1$)."
+      ],
+      "explanation": "Gaussovou eliminací: z druhé rovnice odečteme $0{,}5$-násobek první, což dává $2{,}5 x_2 = 7{,}5 \\implies x_2 = 3$ a následně $x_1 = 1$."
+    }
+  ]
+}

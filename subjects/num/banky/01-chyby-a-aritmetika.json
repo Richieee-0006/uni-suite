@@ -1,0 +1,205 @@
+{
+  "title": "01 · Chyby výpočtu, podmíněnost a stabilita",
+  "lecture": 1,
+  "date": "2026-10-01",
+  "questions": [
+    {
+      "id": "num-01-q01",
+      "number": 1,
+      "type": "choice",
+      "text": "Přibližně kolik platných desítkových cifer uchovává standardní 64bitové číslo s plovoucí řádovou čárkou (IEEE 754 `double`)?",
+      "options": {
+        "A": "6 až 7 platných cifer",
+        "B": "10 až 11 platných cifer",
+        "C": "15 až 17 platných cifer",
+        "D": "32 platných cifer"
+      },
+      "correct": ["C"],
+      "hints": [
+        "Krok 1: IEEE 754 double používá 52 bitů pro mantisu (plus 1 skrytý bit = 53 bitů přesnosti).",
+        "Krok 2: Převod bitů na desítkové cifry je přibližně $53 \\cdot \\log_{10}(2) \\approx 15{,}95$.",
+        "Vysvětlení: Strojové epsilon pro IEEE 754 double je $\\varepsilon_M = 2^{-52} \\approx 2{,}22 \\cdot 10^{-16}$, což odpovídá 15–17 platným desítkovým cifrám."
+      ],
+      "explanation": "Standard IEEE 754 binary64 (`double`) má 1 znaménkový bit, 11 bitů exponentu a 52 bitů mantisy (53 bitů efektivně). To poskytuje strojové epsilon $\\varepsilon_M \\approx 2{,}22 \\cdot 10^{-16}$, tedy 15 až 17 platných desítkových číslic."
+    },
+    {
+      "id": "num-01-q02",
+      "number": 2,
+      "type": "input_numeric",
+      "text": "Skutečná hodnota je $x = \\pi \\approx 3{,}14159265$ a aproximace je $\\tilde{x} = 3{,}14$. Spočítejte **relativní chybu** $\\delta x = \\frac{|\\tilde{x} - x|}{|x|}$ (uveďte jako desetinné číslo, nikoli v procentech, s přesností na 5 desetinných míst).",
+      "answer": 0.000507,
+      "tolerance": 0.00001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Nejprve určete absolutní chybu $\\Delta x = |3{,}14 - 3{,}14159265| \\approx 0{,}00159265$.",
+        "Krok 2: Absolutní chybu vydělte velikostí přesné hodnoty $|x| = \\pi$.",
+        "Vysvětlení: $\\delta x = \\frac{0{,}00159265}{3{,}14159265} \\approx 0{,}000507$ (tj. přibližně $0{,}0507\\,\\%$)."
+      ],
+      "explanation": "Relativní chyba je definována jako $\\delta x = \\frac{|\\tilde{x} - x|}{|x|} = \\frac{|3{,}14 - \\pi|}{\\pi} \\approx 0{,}000507$. Je bezrozměrná a lépe než absolutní chyba vyjadřuje kvalitu aproximace."
+    },
+    {
+      "id": "num-01-q03",
+      "number": 3,
+      "type": "choice",
+      "text": "Která situace je typickou příčinou tzv. **katastrofického krácení** (ztráty platných cifer) v aritmetice s plovoucí řádovou čárkou?",
+      "options": {
+        "A": "Násobení dvou velmi rozdílných kladných čísel",
+        "B": "Odčítání dvou téměř stejně velkých zaokrouhlených čísel",
+        "C": "Dělení čísla mocninou dvojky ($2^k$)",
+        "D": "Sčítání dvou kladných čísel stejného řádu"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Zamyslete se, co se stane s předními shodnými ciframi mantisy při operaci $a - b$, když $a \\approx b$.",
+        "Krok 2: Shodné nejvýznamnější cifry se odečtou na nuly a zbylý výsledek obsahuje převážně zaokrouhlovací šum z posledních bitů.",
+        "Vysvětlení: Při odčítání téměř rovných čísel dojde k prudkému poklesu počtu platných cifer — například ve výrazu $\\sqrt{x^2 + 1} - x$ pro velké $x$, kde je nutné výraz přepsat na $\\frac{1}{\\sqrt{x^2 + 1} + x}$."
+      ],
+      "explanation": "Katastrofické krácení (catastrophic cancellation) nastává při odčítání dvou přibližných čísel téměř stejné hodnoty. Leading platné cifry se vyruší a relativní chyba výsledku dramaticky vzroste."
+    },
+    {
+      "id": "num-01-q04",
+      "number": 4,
+      "type": "choice",
+      "text": "Jaký je zásadní rozdíl mezi **špatně podmíněnou úlohou** a **numericky nestabilním algoritmem**?",
+      "options": {
+        "A": "Jsou to synonyma — špatná podmíněnost se dá vždy opravit volbou lepšího algoritmu",
+        "B": "Špatná podmíněnost je vlastnost samotné matematické úlohy (citlivost na data), zatímco nestabilita je vlastnost konkrétního výpočetního postupu",
+        "C": "Nestabilní algoritmus nastává pouze u iteračních metod, špatná podmíněnost jen u přímých metod",
+        "D": "Špatná podmíněnost souvisí jen s volbou programovacího jazyka"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Podmíněnost úlohy vyjadřuje, jak moc se změní přesné řešení při malé perturbaci vstupních dat.",
+        "Krok 2: Stabilita algoritmu popisuje, zda samotný postup zbytečně zesiluje zaokrouhlovací chyby i u dobře podmíněného problému.",
+        "Vysvětlení: Špatně podmíněná úloha má vysoké číslo podmíněnosti $\\kappa$ nezávisle na kódu; nestabilní algoritmus (např. Gaussova eliminace bez pivotace) pokazí i dobře podmíněnou úlohu."
+      ],
+      "explanation": "Podmíněnost je vnitřní vlastnost matematického problému (malá změna vstupu způsobí velkou změnu řešení). Numerická stabilita je vlastnost algoritmu — stabilní algoritmus dává u dobře podmíněné úlohy přesný výsledek."
+    },
+    {
+      "id": "num-01-q05",
+      "number": 5,
+      "type": "choice",
+      "text": "Co se děje s **celkovou chybou** při zmenšování kroku $h \\to 0$ u numerického derivování $f'(x) \\approx \\frac{f(x+h)-f(x)}{h}$ v konečné přesnosti?",
+      "options": {
+        "A": "Celková chyba monotónně klesá k nule až na hranici podtečení exponentu",
+        "B": "Chyba metody (diskretizační) klesá jako $O(h)$, ale od určitého $h$ začne dominovat zaokrouhlovací chyba rostoucí jako $O(\\varepsilon_M / h)$",
+        "C": "Zaokrouhlovací chyba klesá spolu s $h$, zatímco chyba metody roste",
+        "D": "Krok $h$ nemá na zaokrouhlovací chybu žádný vliv"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Rozdělte celkovou chybu na diskretizační chybu (z Taylorova rozvoje) a zaokrouhlovací chybu v čitateli $f(x+h) - f(x)$.",
+        "Krok 2: Pro velmi malé $h$ jsou $f(x+h)$ a $f(x)$ téměř stejné (katastrofické krácení) a pak jejich chybu ještě dělíte malým $h$.",
+        "Vysvětlení: Celková chyba má tvar $c_1 h + c_2 \\varepsilon_M / h$, takže existuje optimální krok $h_{\\text{opt}} \\approx \\sqrt{\\varepsilon_M} \\approx 10^{-8}$ pro dopřednou diferenci."
+      ],
+      "explanation": "Zmenšování kroku $h$ sice snižuje chybu metody (truncation error), ale současně zvyšuje zaokrouhlovací chybu vlivem katastrofického krácení a dělení malým $h$. Celková chyba má proto charakteristický tvar písmene U."
+    },
+    {
+      "id": "num-01-q06",
+      "number": 6,
+      "type": "choice",
+      "text": "Jakou časovou složitost (počet násobení) má vyhodnocení polynomu stupně $n$ v bodě $x_0$ pomocí **Hornerova schématu**?",
+      "options": {
+        "A": "$O(n^2)$",
+        "B": "$O(n \\log n)$",
+        "C": "$O(n)$ — přesně $n$ násobení a $n$ sčítání",
+        "D": "$O(1)$"
+      },
+      "correct": ["C"],
+      "hints": [
+        "Krok 1: Přepište polynom $P_3(x) = a_3 x^3 + a_2 x^2 + a_1 x + a_0$ vytýkáním $x$: $((a_3 x + a_2)x + a_1)x + a_0$.",
+        "Krok 2: Spočítejte, kolikrát násobíte proměnnou $x$ pro stupeň $n = 3$.",
+        "Vysvětlení: Hornerovo schéma vnořuje mocniny do závorek, takže potřebuje přesně $n$ násobení a $n$ sčítání — navíc je numericky přesnější než naivní umocňování."
+      ],
+      "explanation": "Hornerovo schéma převádí $P_n(x) = \\sum_{i=0}^n a_i x^i$ do vnořeného tvaru $(\\dots((a_n x + a_{n-1})x + a_{n-2})\\dots)x + a_0$, čímž snižuje počet násobení z $O(n^2)$ na přesně $n$ (tedy $O(n)$)."
+    },
+    {
+      "id": "num-01-q07",
+      "number": 7,
+      "type": "input_numeric",
+      "text": "Vyhodnoťte polynom $P(x) = 2x^3 - 3x^2 + 4x - 5$ v bodě $x_0 = 2$ pomocí Hornerova schématu.",
+      "answer": 7,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Začněte od nejvyššího koeficientu $b_3 = 2$.",
+        "Krok 2: Postupně počítejte $b_2 = 2\\cdot 2 - 3 = 1$, $b_1 = 1\\cdot 2 + 4 = 6$.",
+        "Vysvětlení: Poslední krok dává $b_0 = 6\\cdot 2 - 5 = 7$, tedy $P(2) = 7$."
+      ],
+      "explanation": "Hornerovo schéma pro koeficienty $(2, -3, 4, -5)$ a $x_0 = 2$: $2 \\to 2\\cdot 2 - 3 = 1 \\to 1\\cdot 2 + 4 = 6 \\to 6\\cdot 2 - 5 = 7$."
+    },
+    {
+      "id": "num-01-q08",
+      "number": 8,
+      "type": "multi_step",
+      "text": "Pro velké $x = 10^6$ chceme v počítači s konečnou přesností spočítat hodnotu výrazu $f(x) = \\sqrt{x^2 + 1} - x$.",
+      "steps": [
+        {
+          "prompt": "Krok 1: Jaký numerický problém hrozí při přímém vyhodnocení `sqrt(x^2 + 1) - x` pro velmi velké $x$?",
+          "type": "choice",
+          "options": {
+            "A": "Dělení nulou",
+            "B": "Katastrofické krácení při odečítání téměř stejných čísel",
+            "C": "Nekonečná rekurze",
+            "D": "Ztráta asociativity násobení"
+          },
+          "correct": ["B"]
+        },
+        {
+          "prompt": "Krok 2: Jaký algebraicky ekvivalentní tvar je numericky stabilní?",
+          "type": "choice",
+          "options": {
+            "A": "$\\frac{1}{\\sqrt{x^2 + 1} + x}$",
+            "B": "$\\sqrt{x^2 + 1} - \\sqrt{x^2}$",
+            "C": "$\\frac{x^2 + 1 - x^2}{\\sqrt{x^2 + 1} - x}$",
+            "D": "$x \\cdot (\\sqrt{1 + x^{-2}} - 1)$"
+          },
+          "correct": ["A"]
+        }
+      ],
+      "hints": [
+        "Krok 1: Pro velké $x$ se $\\sqrt{x^2+1}$ liší od $x$ až daleko za desetinnou čárkou.",
+        "Krok 2: Rozšiřte zlomek sdruženým výrazem $\\frac{\\sqrt{x^2+1} + x}{\\sqrt{x^2+1} + x}$.",
+        "Vysvětlení: Po rozšíření dostaneme $\\frac{(x^2+1)-x^2}{\\sqrt{x^2+1}+x} = \\frac{1}{\\sqrt{x^2+1}+x}$, kde se sčítají dvě kladná čísla bez ztráty platných cifer."
+      ],
+      "explanation": "Přímý rozdíl $\\sqrt{x^2+1} - x$ trpí katastrofickým krácením. Rozšířením sdruženým výrazem odstraníme odčítání a získáme stabilní vzorec $\\frac{1}{\\sqrt{x^2+1}+x}$."
+    },
+    {
+      "id": "num-01-q09",
+      "number": 9,
+      "type": "choice",
+      "text": "Co přesně definuje **strojové epsilon** ($\\varepsilon_M$) v aritmetice s plovoucí řádovou čárkou?",
+      "options": {
+        "A": "Nejmenší kladné nenormalizované číslo, které počítač umí uložit",
+        "B": "Nejmenší kladné číslo $\\varepsilon$, pro které v dané aritmetice stále platí $1 + \\varepsilon > 1$",
+        "C": "Maximální absolutní chyba jakéhokoli výpočtu",
+        "D": "Rozdíl mezi dvěma libovolnými po sobě jdoucími reálnými čísly"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Strojové epsilon charakterizuje relativní rozlišení mantisy kolem čísla $1$.",
+        "Krok 2: Pozor na záměnu s nejmenším kladným číslem (min subnormal $\\approx 5 \\cdot 10^{-324}$).",
+        "Vysvětlení: Strojové epsilon je mezera mezi $1$ a nejbližším větším reprezentovatelným číslem, tedy nejmenší kladné $\\varepsilon$, pro něž platí $\\text{fl}(1 + \\varepsilon) > 1$."
+      ],
+      "explanation": "Strojové epsilon $\\varepsilon_M$ je nejmenší kladné číslo takové, že ve strojové aritmetice platí $1 + \\varepsilon_M > 1$. V R je dostupné v `.Machine$double.eps` ($\\approx 2{,}22 \\cdot 10^{-16}$)."
+    },
+    {
+      "id": "num-01-q10",
+      "number": 10,
+      "type": "input_numeric",
+      "text": "Číslo podmíněnosti matice v $\\infty$-normě pro diagonální matici $A = \\operatorname{diag}(100,\\; 0{,}5)$ je dáno vztahem $\\kappa_\\infty(A) = \\|A\\|_\\infty \\cdot \\|A^{-1}\\|_\\infty$. Určete přesnou hodnotu $\\kappa_\\infty(A)$.",
+      "answer": 200,
+      "tolerance": 0.01,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Inverzní matice k diagonální matici $\\operatorname{diag}(d_1, d_2)$ je $\\operatorname{diag}(1/d_1, 1/d_2) = \\operatorname{diag}(0{,}01,\\; 2)$.",
+        "Krok 2: Řádková norma $\\|A\\|_\\infty = \\max(100, 0{,}5) = 100$ a $\\|A^{-1}\\|_\\infty = \\max(0{,}01, 2) = 2$.",
+        "Vysvětlení: $\\kappa_\\infty(A) = 100 \\cdot 2 = 200$ (obecně u diagonální matice poměr největšího a nejmenšího $|d_i|$)."
+      ],
+      "explanation": "Pro regulární diagonální matici platí $\\kappa_\\infty(A) = \\frac{\\max_i |d_i|}{\\min_i |d_i|} = \\frac{100}{0{,}5} = 200$."
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "title": "Doplňovačka pojmů · KI/PAS",
+  "lecture": 1,
+  "date": "2026-10-02",
+  "questions": [
+    {
+      "id": "pas-rec-01",
+      "number": 1,
+      "type": "recall",
+      "category": "Pravděpodobnost",
+      "text": "Vztah $P(A \\mid B) = \\frac{P(B \\mid A)\\,P(A)}{P(B)}$ umožňující obrátit podmíněnou pravděpodobnost z apriorní znalosti na aposteriorní se nazývá ____.",
+      "accept": ["Bayesova věta", "Bayesova veta", "Bayesův vzorec", "Bayesuv vzorec"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Pojmenována po anglickém statistikovi a duchovním z 18. století.",
+        "Krok 2: Používá se ve spam filtrech, lékařských testech i detekci útoků (IDS).",
+        "Vysvětlení: Jedná se o Bayesovu větu."
+      ],
+      "explanation": "Bayesova věta aktualizuje apriorní pravděpodobnost hypotézy na základě pozorovaného důkazu."
+    },
+    {
+      "id": "pas-rec-02",
+      "number": 2,
+      "type": "recall",
+      "category": "Náhodné veličiny",
+      "text": "Funkce $F(x) = P(X \\le x)$ přiřazující každému reálnému číslu kumulativní pravděpodobnost (v R funkce s prefixem `p`) se nazývá ____.",
+      "accept": ["distribuční funkce", "distribucni funkce"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Je neklesající, zprava spojitá, v $-\\infty$ jde k $0$ a v $+\\infty$ k $1$.",
+        "Krok 2: Její derivací u spojité veličiny je hustota pravděpodobnosti.",
+        "Vysvětlení: Správný pojem je distribuční funkce."
+      ],
+      "explanation": "Distribuční funkce $F(x) = P(X \\le x)$ jednoznačně určuje pravděpodobnostní rozdělení každé náhodné veličiny."
+    },
+    {
+      "id": "pas-rec-03",
+      "number": 3,
+      "type": "recall",
+      "category": "Popisná statistika",
+      "text": "Rozdíl třetího a prvního kvartilu $Q_3 - Q_1$, který vyjadřuje šířku prostředních $50\\,\\%$ dat a je odolný vůči outlierům, se nazývá ____.",
+      "accept": ["mezikvartilové rozpětí", "mezikvartilove rozpeti", "IQR"],
+      "words": 2,
+      "hints": [
+        "Krok 1: V angličtině a v R nese třípísmennou zkratku `IQR`.",
+        "Krok 2: Používá se při kreslení krabicového grafu (`boxplot`).",
+        "Vysvětlení: Jde o mezikvartilové rozpětí (IQR)."
+      ],
+      "explanation": "Mezikvartilové rozpětí (IQR) je robustní míra variability a základ Tukeyho pravidla $1{,}5\\cdot\\text{IQR}$ pro detekci odlehlých hodnot."
+    },
+    {
+      "id": "pas-rec-04",
+      "number": 4,
+      "type": "recall",
+      "category": "Popisná statistika",
+      "text": "Bezrozměrná standardizovaná hodnota $z = \\frac{x - \\bar{x}}{s}$, udávající počet směrodatných odchylek od průměru, se nazývá ____.",
+      "accept": ["Z-skór", "Z-skor", "z-skór", "z-skor", "standardizovaná hodnota", "standardizovana hodnota"],
+      "words": 1,
+      "hints": [
+        "Krok 1: V R ji spočítá funkce `scale(x)`.",
+        "Krok 2: Nese v názvu písmeno $Z$.",
+        "Vysvětlení: Správný pojem je Z-skór."
+      ],
+      "explanation": "Z-skór umožňuje porovnávat pozorování z různých měřítek a jednotek na společné škále s průměrem 0 a směrodatnou odchylkou 1."
+    },
+    {
+      "id": "pas-rec-05",
+      "number": 5,
+      "type": "recall",
+      "category": "Popisná statistika",
+      "text": "Kvantil rozdělující seřazený datový soubor přesně na dvě stejně početné poloviny ($50\\,\\%$ kvantil) je ____.",
+      "accept": ["medián", "median"],
+      "words": 1,
+      "hints": [
+        "Krok 1: Na rozdíl od aritmetického průměru ho neovlivní jedna extrémně velká hodnota.",
+        "Krok 2: Shoduje se s druhým kvartilem $Q_2$.",
+        "Vysvětlení: Jedná se o medián."
+      ],
+      "explanation": "Medián je robustní charakteristika polohy; u šikmých rozdělení (např. příjmů) lépe vystihuje typickou hodnotu než průměr."
+    },
+    {
+      "id": "pas-rec-06",
+      "number": 6,
+      "type": "recall",
+      "category": "Rozdělení",
+      "text": "Zásadní věta pravděpodobnosti říkající, že výběrový průměr z $n$ nezávislých měření se při větším $n$ blíží normálnímu rozdělení $N(\\mu, \\sigma^2/n)$, se nazývá ____.",
+      "accept": ["centrální limitní věta", "centralni limitni veta", "CLV"],
+      "words": 3,
+      "hints": [
+        "Krok 1: Zkracuje se třemi písmeny CLV (anglicky CLT).",
+        "Krok 2: Vysvětluje, proč má normální rozdělení ve statistice výsadní postavení.",
+        "Vysvětlení: Jde o centrální limitní větu."
+      ],
+      "explanation": "Centrální limitní věta zaručuje asymptotickou normalitu výběrových průměrů a součtů i pro nenormální podkladová data."
+    },
+    {
+      "id": "pas-rec-07",
+      "number": 7,
+      "type": "recall",
+      "category": "Rozdělení",
+      "text": "Vlastnost exponenciálního a geometrického rozdělení $P(X > s + t \\mid X > s) = P(X > t)$, kdy uplynulá doba čekání neovlivňuje budoucí čekání, se nazývá ____.",
+      "accept": ["bezpaměťovost", "bezpametovost", "vlastnost bezpaměťovosti", "vlastnost bezpametovosti"],
+      "words": 1,
+      "hints": [
+        "Krok 1: Rozdělení „zapomíná“, jak dlouho už pokus běží.",
+        "Krok 2: Jednoslovné podstatné jméno odvozené od „bez paměti“.",
+        "Vysvětlení: Správná odpověď je bezpaměťovost."
+      ],
+      "explanation": "Exponenciální rozdělení je jediné spojité rozdělení s vlastností bezpaměťovosti."
+    },
+    {
+      "id": "pas-rec-08",
+      "number": 8,
+      "type": "recall",
+      "category": "Odhady",
+      "text": "Směrodatná odchylka výběrového průměru $\\frac{\\sigma}{\\sqrt{n}}$ (příp. $\\frac{s}{\\sqrt{n}}$) se v angličtině značí SE a česky se nazývá ____.",
+      "accept": ["směrodatná chyba průměru", "smerodatna chyba prumeru", "směrodatná chyba", "smerodatna chyba", "standardní chyba", "standardni chyba"],
+      "words": 3,
+      "hints": [
+        "Krok 1: Zkratka SE pochází z anglického Standard Error.",
+        "Krok 2: Na rozdíl od směrodatné odchylky dat $s$ klesá s rostoucím rozsahem výběru $n$ jako $1/\\sqrt{n}$.",
+        "Vysvětlení: Jedná se o směrodatnou chybu průměru."
+      ],
+      "explanation": "Směrodatná chyba průměru měří přesnost odhadu populačního průměru a přímo určuje šířku intervalu spolehlivosti."
+    },
+    {
+      "id": "pas-rec-09",
+      "number": 9,
+      "type": "recall",
+      "category": "Odhady",
+      "text": "Vlastnost bodového odhadu, při které je jeho střední hodnota rovna skutečnému neznámému parametru ($E(\\hat{\\theta}) = \\theta$), se nazývá ____.",
+      "accept": ["nestrannost", "nevychýlenost", "nevychylenost"],
+      "words": 1,
+      "hints": [
+        "Krok 1: Důvod, proč se u výběrového rozptylu $s^2$ dělí $n - 1$ místo $n$.",
+        "Krok 2: Anglicky unbiasedness.",
+        "Vysvětlení: Jde o nestrannost (nevychýlenost)."
+      ],
+      "explanation": "Nestranný odhad se systematicky neodchyluje ani nahoru, ani dolů od pravé hodnoty odhadovaného parametru."
+    },
+    {
+      "id": "pas-rec-10",
+      "number": 10,
+      "type": "recall",
+      "category": "Odhady",
+      "text": "Náhodný interval $[L, U]$ zkonstruovaný z výběru tak, aby s pravděpodobností $1 - \\alpha$ pokryl neznámý populační parametr, se nazývá ____.",
+      "accept": ["interval spolehlivosti", "konfidenční interval", "konfidencni interval"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Zkracuje se IS (anglicky CI — confidence interval).",
+        "Krok 2: Pro průměr při neznámém $\\sigma$ má tvar $\\bar{x} \\pm t_{1-\\alpha/2,\\,n-1}\\frac{s}{\\sqrt{n}}$.",
+        "Vysvětlení: Správný pojem je interval spolehlivosti."
+      ],
+      "explanation": "Interval spolehlivosti doplňuje bodový odhad o kvantifikovanou míru nejistoty."
+    },
+    {
+      "id": "pas-rec-11",
+      "number": 11,
+      "type": "recall",
+      "category": "Testování hypotéz",
+      "text": "Pravděpodobnost naměření alespoň tak extrémní testové statistiky, jaká byla pozorována v datech, za předpokladu platnosti $H_0$, se nazývá ____.",
+      "accept": ["p-hodnota", "p hodnota", "p-value"],
+      "words": 1,
+      "hints": [
+        "Krok 1: Porovnává se s hladinou významnosti $\\alpha$ (typicky $0{,}05$).",
+        "Krok 2: Je-li menší než $\\alpha$, zamítáme $H_0$.",
+        "Vysvětlení: Jedná se o p-hodnotu."
+      ],
+      "explanation": "p-hodnota vyjadřuje míru slučitelnosti pozorovaných dat s nulovou hypotézou $H_0$."
+    },
+    {
+      "id": "pas-rec-12",
+      "number": 12,
+      "type": "recall",
+      "category": "Testování hypotéz",
+      "text": "Chybné zamítnutí ve skutečnosti pravdivé nulové hypotézy $H_0$ (falešný poplach, pravděpodobnost $\\alpha$) se nazývá ____.",
+      "accept": ["chyba prvního druhu", "chyba prvniho druhu", "chyba I. druhu", "chyba 1. druhu"],
+      "words": 3,
+      "hints": [
+        "Krok 1: V soudní analogii odpovídá odsouzení nevinného.",
+        "Krok 2: Její maximální přípustnou míru volíme před testem jako hladinu významnosti $\\alpha$.",
+        "Vysvětlení: Jde o chybu prvního druhu (chybu I. druhu)."
+      ],
+      "explanation": "Pravděpodobnost chyby I. druhu kontroluje hladina významnosti $\\alpha$."
+    },
+    {
+      "id": "pas-rec-13",
+      "number": 13,
+      "type": "recall",
+      "category": "Testování hypotéz",
+      "text": "Pravděpodobnost $1 - \\beta$, že statistický test správně zamítne nepravdivou nulovou hypotézu $H_0$, se nazývá ____.",
+      "accept": ["síla testu", "sila testu"],
+      "words": 2,
+      "hints": [
+        "Krok 1: $\\beta$ je pravděpodobnost chyby II. druhu (přehlédnutí efektu).",
+        "Krok 2: Roste s rozsahem výběru $n$ a velikostí skutečného efektu.",
+        "Vysvětlení: Správný pojem je síla testu."
+      ],
+      "explanation": "Síla testu $1 - \\beta$ měří schopnost testu detekovat skutečně existující rozdíl nebo efekt."
+    },
+    {
+      "id": "pas-rec-14",
+      "number": 14,
+      "type": "recall",
+      "category": "Testování hypotéz",
+      "text": "Standardní statistický test v R (`shapiro.test`) ověřující nulovou hypotézu, že výběr pochází z normálního rozdělení, je ____.",
+      "accept": ["Shapiro-Wilkův test", "Shapiro-Wilkuv test", "Shapirův-Wilkův test", "Shapiro-Wilk test"],
+      "words": 2,
+      "hints": [
+        "Krok 1: V praxi se kombinuje s normálním Q-Q grafem.",
+        "Krok 2: Nese jména dvou statistiků začínajících na S a W.",
+        "Vysvětlení: Jde o Shapiro–Wilkův test."
+      ],
+      "explanation": "Shapiro–Wilkův test patří k nejsilnějším testům normality pro malé a střední rozsahy výběru."
+    },
+    {
+      "id": "pas-rec-15",
+      "number": 15,
+      "type": "recall",
+      "category": "Regrese a korelace",
+      "text": "Podíl celkové variability vysvětlované proměnné $y$, který dokáže vysvětlit lineární regresní model (značí se $R^2$), se nazývá ____.",
+      "accept": ["koeficient determinace", "index determinace"],
+      "words": 2,
+      "hints": [
+        "Krok 1: V jednoduché regresi platí přesně $R^2 = r^2$.",
+        "Krok 2: Nabývá hodnot od $0$ do $1$ (neboli $0\\,\\%$ až $100\\,\\%$).",
+        "Vysvětlení: Jedná se o koeficient determinace."
+      ],
+      "explanation": "Koeficient determinace $R^2$ vyjadřuje kvalitu proložení regresního modelu na škále $0$ až $1$."
+    },
+    {
+      "id": "pas-rec-16",
+      "number": 16,
+      "type": "recall",
+      "category": "Testování hypotéz",
+      "text": "Grafické srovnání empirických kvantilů vzorku proti teoretickým kvantilům normálního rozdělení (`qqnorm` + `qqline`) se nazývá ____.",
+      "accept": ["Q-Q graf", "QQ graf", "Q-Q plot", "QQ plot", "kvantilový graf", "kvantilovy graf"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Zkratka vychází z anglického Quantile–Quantile.",
+        "Krok 2: U normálních dat leží body přibližně na přímce.",
+        "Vysvětlení: Správný pojem je Q-Q graf (kvantilový graf)."
+      ],
+      "explanation": "Q-Q graf vizuálně odhalí šikmost, těžké chvosty i odlehlé hodnoty mnohem spolehlivěji než samotný histogram."
+    }
+  ]
+}

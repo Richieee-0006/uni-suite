@@ -1,0 +1,243 @@
+{
+  "title": "04 · Testování hypotéz, korelace a lineární regrese",
+  "lecture": 4,
+  "date": "2026-10-23",
+  "questions": [
+    {
+      "id": "pas-04-q01",
+      "number": 1,
+      "type": "choice",
+      "text": "Co přesně vyjadřuje **$p$-hodnota** při statistickém testování hypotéz?",
+      "options": {
+        "A": "Pravděpodobnost, že nulová hypotéza $H_0$ je pravdivá",
+        "B": "Pravděpodobnost, že za předpokladu platnosti $H_0$ naměříme testovou statistiku alespoň tak extrémní, jakou jsme pozorovali v datech",
+        "C": "Pravděpodobnost, že jsme udělali chybu II. druhu",
+        "D": "Velikost efektu (rozdílu průměrů) v procentech"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: $p$-hodnota je podmíněná pravděpodobnost $P(\\text{takto extrémní data} \\mid H_0\\text{ platí})$, NIKOLI $P(H_0 \\mid \\text{data})$!",
+        "Krok 2: Čím menší je $p$-hodnota, tím méně jsou naměřená data slučitelná s $H_0$.",
+        "Vysvětlení: Když $p < \\alpha$, zamítáme $H_0$ na hladině významnosti $\\alpha$."
+      ],
+      "explanation": "$p$-hodnota je pravděpodobnost získání alespoň tak extrémního výsledku čistě náhodou, pokud platí nulová hypotéza $H_0$. Nikdy neznamená „pravděpodobnost, že platí $H_0$“."
+    },
+    {
+      "id": "pas-04-q02",
+      "number": 2,
+      "type": "choice",
+      "text": "Co je **chyba I. druhu** ($\\alpha$) a co je **chyba II. druhu** ($\\beta$)?",
+      "options": {
+        "A": "Chyba I. druhu: zamítneme pravdivou $H_0$ (falešný poplach); chyba II. druhu: nezamítneme nepravdivou $H_0$ (přehlédnutý efekt)",
+        "B": "Chyba I. druhu: nezamítneme nepravdivou $H_0$; chyba II. druhu: zamítneme pravdivou $H_0$",
+        "C": "Obě chyby nastávají pouze tehdy, když je $H_0$ pravdivá",
+        "D": "Chyba I. druhu je chyba měření, chyba II. druhu je zaokrouhlovací chyba"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Analogie soudního procesu ($H_0$: obžalovaný je nevinný).",
+        "Krok 2: Odsouzení nevinného = chyba I. druhu ($\\alpha$). Propuštění viníka = chyba II. druhu ($\\beta$).",
+        "Vysvětlení: Pravděpodobnost správného odhalení existujícího efektu je síla testu $1 - \\beta$."
+      ],
+      "explanation": "Chyba I. druhu ($\\alpha$, hladina významnosti) je falešné zamítnutí platné $H_0$. Chyba II. druhu ($\\beta$) je nezamítnutí nepravdivé $H_0$; síla testu je $1 - \\beta$."
+    },
+    {
+      "id": "pas-04-q03",
+      "number": 3,
+      "type": "choice",
+      "text": "V testu na hladině významnosti $\\alpha = 0{,}05$ vyšlo $p = 0{,}23$. Jaký je statisticky správný závěr?",
+      "options": {
+        "A": "Dokázali jsme, že nulová hypotéza $H_0$ je stoprocentně pravdivá",
+        "B": "Na hladině významnosti $5\\,\\%$ **nezamítáme $H_0$** — data neposkytují dostatečný důkaz proti $H_0$",
+        "C": "Zamítáme $H_0$ a přijímáme alternativní hypotézu $H_1$",
+        "D": "Test je chybně spočítán, protože $p$ musí být pod $0{,}05$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Porovnejte $p = 0{,}23$ s hladinou $\\alpha = 0{,}05$: zde platí $p \\ge \\alpha$.",
+        "Krok 2: Pozor na formulaci: statistický test nikdy „nedokazuje pravdivost $H_0$“.",
+        "Vysvětlení: Správná formulace zní „nezamítáme $H_0$“ — absence důkazu není důkazem absence."
+      ],
+      "explanation": "Protože $p = 0{,}23 \\ge 0{,}05$, nulovou hypotézu $H_0$ nezamítáme. Nezamítnutí neznamená důkaz platnosti $H_0$, pouze nedostatek důkazů pro její vyvrácení."
+    },
+    {
+      "id": "pas-04-q04",
+      "number": 4,
+      "type": "input_numeric",
+      "text": "Testujeme jednovýběrovým $t$-testem hypotézu $H_0: \\mu = 50$. Ze vzorku $n = 16$ měření jsme získali průměr $\\bar{x} = 52$ a výběrovou směrodatnou odchylku $s = 4$. Spočítejte hodnotu testové statistiky $t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}}$.",
+      "answer": 2,
+      "tolerance": 0.01,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Nejprve spočítejte směrodatnou chybu průměru $s / \\sqrt{n} = 4 / \\sqrt{16} = 4 / 4 = 1$.",
+        "Krok 2: Čitatel je rozdíl $\\bar{x} - \\mu_0 = 52 - 50 = 2$.",
+        "Vysvětlení: $t = 2 / 1 = 2{,}0$ (při $df = 15$ je kritický kvantil $t_{0{,}975, 15} \\approx 2{,}131$, takže na $\\alpha = 0{,}05$ oboustranně $H_0$ těsně nezamítneme!)."
+      ],
+      "explanation": "Testová statistika je $t = \\frac{52 - 50}{4 / \\sqrt{16}} = 2{,}0$ s $15$ stupni volnosti."
+    },
+    {
+      "id": "pas-04-q05",
+      "number": 5,
+      "type": "choice",
+      "text": "Který test v R primárně použijete pro ověření předpokladu **normality dat** a jaká je jeho nulová hypotéza $H_0$?",
+      "options": {
+        "A": "`shapiro.test(x)` — $H_0$: data pocházejí z normálního rozdělení",
+        "B": "`shapiro.test(x)` — $H_0$: data NEpocházejí z normálního rozdělení",
+        "C": "`chisq.test(x)` — $H_0$: průměr je roven nule",
+        "D": "`cor.test(x)` — $H_0$: data jsou normální"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Shapiro–Wilkův test doplňujeme vizuálně Q-Q grafem (`qqnorm(x); qqline(x)`).",
+        "Krok 2: Pokud vyjde $p > 0{,}05$, normalitu nezamítáme a můžeme použít parametrický $t$-test.",
+        "Vysvětlení: `shapiro.test(x)` testuje $H_0$: výběr pochází z normálního rozdělení."
+      ],
+      "explanation": "Shapiro–Wilkův test (`shapiro.test(x)`) testuje nulovou hypotézu normality. Při jejím zamítnutí ($p < 0{,}05$) u malých vzorků přecházíme na neparametrický Wilcoxonův test (`wilcox.test`)."
+    },
+    {
+      "id": "pas-04-q06",
+      "number": 6,
+      "type": "choice",
+      "text": "Chceme porovnat dvě malé skupiny dat, u kterých jsme **zamítli normalitu** a data obsahují výrazné outliery. Který neparametrický test v R zvolíme místo dvouvýběrového $t$-testu?",
+      "options": {
+        "A": "`wilcox.test(x, y)` (Wilcoxonův / Mann–Whitneyho pořadový test)",
+        "B": "`lm(y ~ x)`",
+        "C": "`var.test(x, y)`",
+        "D": "`dnorm(x, y)`"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Neparametrické testy pracují s pořadími (ranks) hodnot místo původních měření, takže jim outliery nevadí.",
+        "Krok 2: V R pokrývá jednovýběrovou, párovou i dvouvýběrovou variantu jediná funkce.",
+        "Vysvětlení: `wilcox.test(x, y)` provede Mann–Whitneyho (Wilcoxonův dvouvýběrový) test bez požadavku normality."
+      ],
+      "explanation": "Wilcoxonův test (`wilcox.test`) je standardní neparametrickou alternativou k $t$-testu pro šikmá data, ordinální škály a malé výběry s odlehlými hodnotami."
+    },
+    {
+      "id": "pas-04-q07",
+      "number": 7,
+      "type": "choice",
+      "text": "Jaký test použijete pro ověření **nezávislosti dvou kategoriálních proměnných** zapsaných v kontingenční tabulce (např. kouření vs. pohlaví)?",
+      "options": {
+        "A": "Studentův $t$-test (`t.test`)",
+        "B": "Pearsonův $\\chi^2$ test nezávislosti (`chisq.test(tabulka)`)",
+        "C": "Shapiro–Wilkův test (`shapiro.test`)",
+        "D": "Lineární regrese (`lm`)"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Porovnáváme pozorované četnosti $O_{ij}$ v buňkách tabulky s očekávanými četnostmi $E_{ij}$ za předpokladu nezávislosti.",
+        "Krok 2: Testová statistika má tvar $\\chi^2 = \\sum \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}$.",
+        "Vysvětlení: V R se pro tabulku absolutních četností volá `chisq.test(table(a, b))` (při malých očekávaných četnostech $< 5$ pak `fisher.test`)."
+      ],
+      "explanation": "Nezávislost kategoriálních proměnných v kontingenční tabulce testuje Pearsonův $\\chi^2$ test (`chisq.test`), pro malé četnosti Fisherův exaktní test (`fisher.test`)."
+    },
+    {
+      "id": "pas-04-q08",
+      "number": 8,
+      "type": "choice",
+      "text": "Který rozdíl mezi **Pearsonovým** ($r$) a **Spearmanovým** ($\\rho$) korelačním koeficientem je pravdivý?",
+      "options": {
+        "A": "Pearsonův $r$ měří sílu **lineární** závislosti (citlivý na outliery), zatímco Spearmanův $\\rho$ měří jakoukoli **monotónní** závislost přes pořadí (robustní vůči outlierům)",
+        "B": "Pearsonův $r$ dokazuje příčinnou souvislost (kauzalitu), Spearmanův ne",
+        "C": "Spearmanův $\\rho$ nabývá hodnot pouze v $[0, 1]$",
+        "D": "Oba koeficienty odhalí i symetrickou kvadratickou závislost $y = x^2$ na $[-5, 5]$ hodnotou $1$"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Oba koeficienty leží v $[-1, 1]$ a žádný z nich sám o sobě nedokazuje kauzalitu.",
+        "Krok 2: Spearman počítá Pearsonovu korelaci z pořadí (`rank(x)`, `rank(y)`), takže zachytí i nelineární monotónní růst (např. exponenciálu).",
+        "Vysvětlení: V R zvolíme `cor(x, y, method = 'pearson')` nebo `method = 'spearman'`."
+      ],
+      "explanation": "Pearsonův korelační koeficient měří lineární vztah, Spearmanův pořadový koeficient zachycuje obecnou monotónní vazbu a lépe odolává odlehlým hodnotám. Korelace nikdy neznamená kauzalitu."
+    },
+    {
+      "id": "pas-04-q09",
+      "number": 9,
+      "type": "input_numeric",
+      "text": "V jednoduché lineární regresi mezi dvěma proměnnými vyšel Pearsonův korelační koeficient $r = -0{,}8$. Jakou hodnotu má **koeficient determinace** $R^2$ (jako desetinné číslo v $[0, 1]$)?",
+      "answer": 0.64,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: V jednoduché lineární regresi s jedním prediktorem platí přesně $R^2 = r^2$.",
+        "Krok 2: Záporné znaménko se druhou mocninou ztratí — $R^2$ je vždy nezáporné.",
+        "Vysvětlení: $R^2 = (-0{,}8)^2 = 0{,}64$, což znamená, že regresní přímka vysvětluje $64\\,\\%$ celkové variability odezvy $y$."
+      ],
+      "explanation": "Pro jednoduchou lineární regresi platí $R^2 = r^2 = (-0{,}8)^2 = 0{,}64$ ($64\\,\\%$ vysvětlené variability)."
+    },
+    {
+      "id": "pas-04-q10",
+      "number": 10,
+      "type": "choice",
+      "text": "V jazyce **R** jsme proložili jednoduchý lineární model `m <- lm(y ~ x)` a vyšly odhady `(Intercept) = 12.5`, `x = 3.2`. Jak správně interpretujete směrnici $b_1 = 3{,}2$?",
+      "options": {
+        "A": "Když vzroste $y$ o 1 jednotku, $x$ vzroste o $3{,}2$",
+        "B": "Při nárůstu vysvětlující proměnné $x$ o 1 jednotku vzroste očekávaná hodnota odezvy $y$ v průměru o $3{,}2$ jednotky",
+        "C": "Korelace mezi $x$ a $y$ je přesně $3{,}2$",
+        "D": "Když je $x = 0$, pak je $y = 3{,}2$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Regresní rovnice má tvar $\\hat{y} = b_0 + b_1 x = 12{,}5 + 3{,}2 x$.",
+        "Krok 2: Úsek $b_0 = 12{,}5$ je predikce pro $x = 0$; směrnice $b_1 = 3{,}2$ udává změnu $\\hat{y}$ při $\\Delta x = +1$.",
+        "Vysvětlení: Směrnice $b_1$ vyjadřuje průměrnou změnu odezvy $y$ na jednotkový přírůstek prediktoru $x$."
+      ],
+      "explanation": "V modelu $\\hat{y} = 12{,}5 + 3{,}2 x$ znamená koeficient $b_1 = 3{,}2$, že zvětšení $x$ o 1 jednotku odpovídá průměrnému nárůstu $\\hat{y}$ o $3{,}2$ jednotky."
+    },
+    {
+      "id": "pas-04-q11",
+      "number": 11,
+      "type": "choice",
+      "text": "Kdy použijeme **párový $t$-test** (`t.test(pred, po, paired = TRUE)`) místo běžného dvouvýběrového $t$-testu?",
+      "options": {
+        "A": "Když máme dvě zcela nezávislé skupiny lidí",
+        "B": "Když měříme tutéž skupinu subjektů dvakrát (např. krevní tlak před a po léčbě) a testujeme průměrný rozdíl $d_i = x_{i,\\text{po}} - x_{i,\\text{před}}$",
+        "C": "Pouze když mají obě skupiny různý počet pozorování",
+        "D": "Když data obsahují více než tři skupiny"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Měření na téže osobě před a po zákroku nejsou nezávislá — každá dvojice tvoří přirozený pár.",
+        "Krok 2: Párový $t$-test převede úlohu na jednovýběrový $t$-test na rozdílech $d_i$, čímž odstraní rozptyl mezi jednotlivci.",
+        "Vysvětlení: Díky odstranění individuální variability má párový test mnohem vyšší sílu než nezávislý dvouvýběrový test."
+      ],
+      "explanation": "Párový $t$-test analyzuje závislé dvojice pozorování (před/po, levá/pravá ruka) pomocí jednovýběrového testu na rozdílech $d_i$."
+    },
+    {
+      "id": "pas-04-q12",
+      "number": 12,
+      "type": "multi_step",
+      "text": "Vypočítali jsme lineární regresní model `lm(body ~ hodiny)` s výsledkem $\\widehat{\\text{body}} = 30 + 5{,}5 \\cdot \\text{hodiny}$ a $p$-hodnotou pro směrnici $p = 0{,}0012$.",
+      "steps": [
+        {
+          "prompt": "Krok 1: Jaký počet bodů model předpovídá pro studenta, který studoval $8$ hodin?",
+          "type": "input_numeric",
+          "answer": 74,
+          "tolerance": 0.1,
+          "tolerance_mode": "abs",
+          "unit": "bodů"
+        },
+        {
+          "prompt": "Krok 2: Je lineární vliv hodin studia na body statisticky významný na hladině $\\alpha = 0{,}01$?",
+          "type": "choice",
+          "options": {
+            "A": "Ano, protože $p = 0{,}0012 < 0{,}01$, zamítáme $H_0: \\beta_1 = 0$",
+            "B": "Ne, protože $p = 0{,}0012$ je příliš malé",
+            "C": "Nelze určit bez znalosti šikmosti",
+            "D": "Ne, protože úsek $30$ je nenulový"
+          },
+          "correct": ["A"]
+        }
+      ],
+      "hints": [
+        "Krok 1: Dosaďte `hodiny = 8`: $30 + 5{,}5 \\cdot 8 = 30 + 44 = 74$.",
+        "Krok 2: Test nulovosti směrnice ověřuje $H_0: \\beta_1 = 0$; porovnejte $p = 0{,}0012$ s $\\alpha = 0{,}01$.",
+        "Vysvětlení: Protože $p < 0{,}01$, je směrnice statisticky významně nenulová i na přísnější $1\\,\\%$ hladině."
+      ],
+      "explanation": "Predikce pro $8$ hodin je $30 + 5{,}5\\cdot 8 = 74$ bodů. Protože $p = 0{,}0012 < 0{,}01$, zamítáme hypotézu nulové směrnice."
+    }
+  ]
+}

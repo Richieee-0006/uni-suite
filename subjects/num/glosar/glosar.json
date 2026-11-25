@@ -1,0 +1,130 @@
+{
+  "banks": {
+    "01-chyby-a-aritmetika": [
+      {
+        "term": "Absolutní chyba",
+        "body": "Velikost odchylky přibližné hodnoty od přesné: $\\Delta x = |\\tilde{x} - x|$. Má stejné jednotky jako veličina $x$."
+      },
+      {
+        "term": "Relativní chyba",
+        "body": "Poměr absolutní chyby k přesné hodnotě: $\\delta x = \\frac{|\\tilde{x} - x|}{|x|}$ (pro $x \\neq 0$). Bezrozměrná míra přesnosti, často v procentech."
+      },
+      {
+        "term": "Strojové epsilon",
+        "body": "Nejmenší kladné číslo $\\varepsilon_M$, pro které ve strojové aritmetice platí $\\text{fl}(1 + \\varepsilon_M) > 1$. V IEEE 754 `double` je $\\varepsilon_M = 2^{-52} \\approx 2{,}22 \\cdot 10^{-16}$."
+      },
+      {
+        "term": "Katastrofické krácení",
+        "body": "Dramatická ztráta platných cifer při odečítání dvou téměř stejně velkých zaokrouhlených čísel; vede k prudkému nárůstu relativní chyby."
+      },
+      {
+        "term": "Podmíněnost úlohy",
+        "body": "Vlastnost samotného matematického problému měřená číslem podmíněnosti $\\kappa$. U špatně podmíněné úlohy malá změna vstupu způsobí velkou změnu výsledku."
+      },
+      {
+        "term": "Numerická stabilita",
+        "body": "Vlastnost konkrétního algoritmu: stabilní algoritmus zbytečně nezvětšuje zaokrouhlovací chyby vzniklé během výpočtu."
+      },
+      {
+        "term": "Hornerovo schéma",
+        "body": "Vnořené vyhodnocení polynomu $P_n(x) = (\\dots(a_n x + a_{n-1})x + \\dots)x + a_0$ v čase $O(n)$ (přesně $n$ násobení a $n$ sčítání)."
+      }
+    ],
+    "02-hledani-korenu": [
+      {
+        "term": "Bisekce (půlení intervalu)",
+        "body": "Spolehlivá metoda hledání kořene na $[a, b]$ při $f(a)\\cdot f(b) < 0$. Konverguje lineárně (1 bit za krok) s jistotou z Bolzanovy věty."
+      },
+      {
+        "term": "Regula falsi",
+        "body": "Ohraničená metoda sečen: nahrazuje graf sečnou mezi kraji s opačnými znaménky. Konvergence je zaručena, ale jeden kraj může uvíznout."
+      },
+      {
+        "term": "Metoda prostých iterací",
+        "body": "Přepis $f(x)=0$ na rovnici pevného bodu $x = \\varphi(x)$ a iterace $x_{k+1} = \\varphi(x_k)$. Konverguje lineárně, pokud je $\\varphi$ kontrakcí ($|\\varphi'(x)| < 1$)."
+      },
+      {
+        "term": "Newtonova metoda tečen",
+        "body": "Iterace $x_{k+1} = x_k - f(x_k)/f'(x_k)$. Pro jednoduché kořeny má kvadratickou konvergenci, ale selhává poblíž $f'(x) \\approx 0$."
+      },
+      {
+        "term": "Kvadratická konvergence",
+        "body": "Rychlost konvergence, při níž $|e_{k+1}| \\le C|e_k|^2$ — počet platných desetinných cifer se v každém kroku přibližně zdvojnásobí."
+      },
+      {
+        "term": "Newtonova–Hornerova metoda",
+        "body": "Spojení Newtonovy metody s dvojitým Hornerovým schématem: v čase $O(n)$ získá $P(x_k)$ i $P'(x_k)$ a následně defluje polynom."
+      }
+    ],
+    "03-soustavy-a-matice": [
+      {
+        "term": "Gaussova eliminační metoda (GEM)",
+        "body": "Přímá metoda řešení $A\\vec{x} = \\vec{b}$ v čase $O(n^3)$ převedením matice na horní trojúhelníkový tvar a následnou zpětnou substitucí."
+      },
+      {
+        "term": "Částečná pivotace",
+        "body": "Výběr největšího prvku v absolutní hodnotě v aktivním sloupci pod diagonálou a prohození řádků pro zajištění numerické stability GEM."
+      },
+      {
+        "term": "LU rozklad",
+        "body": "Rozklad $A = L\\cdot U$ (příp. $PA = LU$) na dolní a horní trojúhelníkovou matici; umožňuje řešit mnoho pravých stran v čase $O(n^2)$."
+      },
+      {
+        "term": "Jacobiho metoda",
+        "body": "Iterační metoda pro $A\\vec{x} = \\vec{b}$, která počítá všechny nové složky $\\vec{x}^{(k+1)}$ výhradně ze staré iterace $\\vec{x}^{(k)}$ (snadná paralelizace)."
+      },
+      {
+        "term": "Gaussova–Seidelova metoda",
+        "body": "Iterační metoda, která čerstvě vypočtené složky $x_i^{(k+1)}$ okamžitě používá při výpočtu dalších složek téhož kroku."
+      },
+      {
+        "term": "Ostrá diagonální dominance",
+        "body": "Vlastnost matice $|a_{ii}| > \\sum_{j \\neq i} |a_{ij}|$ v každém řádku — postačující podmínka konvergence Jacobiho i Gaussovy–Seidelovy metody."
+      }
+    ],
+    "04-interpolace-integrace-aproximace": [
+      {
+        "term": "Lagrangeův interpolační polynom",
+        "body": "Explicitní tvar polynomu procházejícího všemi uzly $(x_i, y_i)$ přes bázové polynomy $L_i(x)$ nabývající hodnoty 1 v $x_i$ a 0 v ostatních uzlech."
+      },
+      {
+        "term": "Newtonův interpolační polynom",
+        "body": "Inkrementální tvar interpolačního polynomu postavený přes poměrné diference; přidání nového uzlu pouze připojí jeden nový člen."
+      },
+      {
+        "term": "Rungeho fenomén",
+        "body": "Silné kmitání interpolačního polynomu vysokého stupně u krajů intervalu na ekvidistantních uzlech. Řeší se spliny nebo Čebyševovými uzly."
+      },
+      {
+        "term": "Metoda nejmenších čtverců (MNC)",
+        "body": "Aproximace zašuměných dat minimalizující součet čtverců svislých odchylek řešením normálních rovnic $A^T A \\vec{c} = A^T \\vec{y}$."
+      },
+      {
+        "term": "Lichoběžníkové a Simpsonovo pravidlo",
+        "body": "Newtonovy–Cotesovy kvadratury: lichoběžníkové má chybu $O(h^2)$ (přesné pro přímky), Simpsonovo $O(h^4)$ (přesné až pro kubiky)."
+      },
+      {
+        "term": "Rombergova integrace",
+        "body": "Kombinace složeného lichoběžníkového pravidla s Richardsonovou extrapolací postupně rušící chyby $O(h^2), O(h^4), O(h^6), \\dots$"
+      },
+      {
+        "term": "Eulerova metoda a RK4",
+        "body": "Jednokrokové metody pro ODR $y' = f(x, y)$: Euler má globální chybu $O(h)$, klasická Runge–Kutta 4. řádu (RK4) má chybu $O(h^4)$."
+      }
+    ],
+    "05-r-code-tasks": [
+      {
+        "term": "solve(A, b) v R",
+        "body": "Základní funkce R pro přímé řešení soustavy lineárních rovnic $A\\vec{x} = \\vec{b}$ pomocí LU rozkladu s částečnou pivotací."
+      },
+      {
+        "term": "Vektorové indexování x[-i]",
+        "body": "Zápis `x[-i]` v R vrátí vektor `x` bez $i$-tého prvku — ideální pro stručný výpočet Lagrangeových bázových polynomů."
+      },
+      {
+        "term": "curve() a lines() v R",
+        "body": "Funkce `curve(expr, from, to)` vykreslí spojitou křivku, parametr `add = TRUE` nebo funkce `lines(x, y)` přidá další křivku do aktivního grafu."
+      }
+    ]
+  }
+}

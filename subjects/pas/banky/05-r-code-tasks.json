@@ -1,0 +1,289 @@
+{
+  "title": "05 · Praktické úlohy v R (Sandbox)",
+  "lecture": 5,
+  "date": "2026-10-30",
+  "questions": [
+    {
+      "id": "pas-code-01",
+      "number": 1,
+      "type": "code_task",
+      "language": "r",
+      "title": "Normální rozdělení v R (`pnorm`, `qnorm`)",
+      "text": "Výška dospělých mužů má normální rozdělení $X \\sim N(\\mu, \\sigma^2)$ (výchozí $\\mu = 180$, **rozptyl** $\\sigma^2 = 49$). Napište funkci `height_probs(mu = 180, var_val = 49)`, která vrátí pojmenovaný seznam `list(p_over_200, p_175_180, q10)`, kde `p_over_200` $= P(X > 200)$, `p_175_180` $= P(175 \\le X \\le 180)$ a `q10` je $10\\,\\%$ kvantil výšky.",
+      "formula": "P(X > 200) = 1 - \\Phi\\!\\left(\\frac{200 - \\mu}{\\sigma}\\right), \\quad \\sigma = \\sqrt{\\sigma^2}",
+      "starter_code": "height_probs <- function(mu = 180, var_val = 49) {\n  sigma <- sqrt(var_val)\n  # Spočítejte p_over_200, p_175_180 a q10 pomocí pnorm() a qnorm()\n  \n}\n",
+      "solution_code": "height_probs <- function(mu = 180, var_val = 49) {\n  sigma <- sqrt(var_val)\n  list(\n    p_over_200 = 1 - pnorm(200, mean = mu, sd = sigma),\n    p_175_180 = pnorm(180, mean = mu, sd = sigma) - pnorm(175, mean = mu, sd = sigma),\n    q10 = qnorm(0.10, mean = mu, sd = sigma)\n  )\n}\n",
+      "produces_plot": false,
+      "visible_tests": [
+        {
+          "name": "P(X > 200) pro N(180, 49)",
+          "code": "height_probs(180, 49)$p_over_200",
+          "expected": 0.002137367,
+          "tolerance": 1e-5
+        },
+        {
+          "name": "P(175 <= X <= 180) pro N(180, 49)",
+          "code": "height_probs(180, 49)$p_175_180",
+          "expected": 0.2624747,
+          "tolerance": 1e-5
+        },
+        {
+          "name": "10% kvantil výšky pro N(180, 49)",
+          "code": "height_probs(180, 49)$q10",
+          "expected": 171.02914,
+          "tolerance": 1e-3
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "Jiný parametr N(175, 64) -> P(X > 200)",
+          "code": "height_probs(175, 64)$p_over_200",
+          "expected": 0.0008890253,
+          "tolerance": 1e-5
+        },
+        {
+          "name": "Jiný parametr N(175, 64) -> 10% kvantil",
+          "code": "height_probs(175, 64)$q10",
+          "expected": 164.74759,
+          "tolerance": 1e-3
+        }
+      ],
+      "hints": [
+        "Krok 1: Nezapomeňte převést rozptyl `var_val` na směrodatnou odchylku `sigma <- sqrt(var_val)`.",
+        "Krok 2: Pravděpodobnost intervalu $[175, 180]$ je rozdíl distribučních funkcí `pnorm(180, mu, sigma) - pnorm(175, mu, sigma)`.",
+        "Vysvětlení: $10\\,\\%$ kvantil vrátí `qnorm(0.10, mean = mu, sd = sigma)`."
+      ],
+      "explanation": "Funkce `pnorm` a `qnorm` přijímají směrodatnou odchylku `sd = sqrt(var_val)`, nikoli rozptyl. Správná práce s tímto parametrem je základ práce s normálním rozdělením v R."
+    },
+    {
+      "id": "pas-code-02",
+      "number": 2,
+      "type": "code_task",
+      "language": "r",
+      "title": "Binomické rozdělení a Bayesova věta v R",
+      "text": "Implementujte dvě funkce:\n1. `bayes_posterior(prior, sens, fpr)` vracející aposteriorní pravděpodobnost $P(A \\mid +)$ z apriorní pravděpodobnosti `prior`, citlivosti `sens` $= P(+ \\mid A)$ a míry falešných poplachů `fpr` $= P(+ \\mid A^c)$.\n2. `binom_at_least(k, n, p)` vracející $P(X \\ge k)$ pro $X \\sim \\operatorname{Bi}(n, p)$ pomocí `pbinom()`.",
+      "formula": "P(A \\mid +) = \\frac{\\text{sens}\\cdot\\text{prior}}{\\text{sens}\\cdot\\text{prior} + \\text{fpr}\\cdot(1 - \\text{prior})}, \\quad P(X \\ge k) = 1 - F(k - 1)",
+      "starter_code": "bayes_posterior <- function(prior, sens, fpr) {\n  # Doplňte Bayesův vzorec\n  \n}\n\nbinom_at_least <- function(k, n, p) {\n  # Doplňte P(X >= k) pomocí pbinom()\n  \n}\n",
+      "solution_code": "bayes_posterior <- function(prior, sens, fpr) {\n  num <- sens * prior\n  num / (num + fpr * (1 - prior))\n}\n\nbinom_at_least <- function(k, n, p) {\n  if (k <= 0) return(1)\n  1 - pbinom(k - 1, size = n, prob = p)\n}\n",
+      "produces_plot": false,
+      "visible_tests": [
+        {
+          "name": "Bayes spam filter: prior=0.4, sens=0.8, fpr=0.05",
+          "code": "bayes_posterior(0.4, 0.8, 0.05)",
+          "expected": 0.9142857,
+          "tolerance": 1e-5
+        },
+        {
+          "name": "Alespoň 3 jedničky v 10 hodech kostkou: P(X >= 3)",
+          "code": "binom_at_least(3, 10, 1 / 6)",
+          "expected": 0.2247732,
+          "tolerance": 1e-5
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "Bayes IDS detektor: prior=0.001, sens=0.99, fpr=0.02",
+          "code": "bayes_posterior(0.001, 0.99, 0.02)",
+          "expected": 0.0472103,
+          "tolerance": 1e-5
+        },
+        {
+          "name": "Alespoň 5 hlav v 8 hodech mincí: P(X >= 5)",
+          "code": "binom_at_least(5, 8, 0.5)",
+          "expected": 0.36328125,
+          "tolerance": 1e-6
+        }
+      ],
+      "hints": [
+        "Krok 1: U diskrétního rozdělení platí $P(X \\ge k) = 1 - P(X \\le k - 1)$, nikoli $1 - P(X \\le k)$!",
+        "Krok 2: V R tedy napište `1 - pbinom(k - 1, size = n, prob = p)`.",
+        "Vysvětlení: V Bayesově funkci je jmenovatelem úplná pravděpodobnost `sens * prior + fpr * (1 - prior)`."
+      ],
+      "explanation": "U diskrétních rozdělení je klíčové nezapomenout na posun `k - 1` v `1 - pbinom(k - 1, n, p)`, aby byla zahrnuta i samotná hodnota $X = k$."
+    },
+    {
+      "id": "pas-code-03",
+      "number": 3,
+      "type": "code_task",
+      "language": "r",
+      "title": "Jednovýběrový t-test a interval spolehlivosti (`t.test`)",
+      "text": "Implementujte funkci `run_ttest_summary(x, mu0 = 0, conf_level = 0.95)`, která spustí oboustranný jednovýběrový Studentův `t.test()` na vektoru `x` proti hypotéze `mu = mu0` na hladině spolehlivosti `conf_level` a vrátí seznam `list(t_stat, p_value, ci_low, ci_high)` (číselné hodnoty bez jmen).",
+      "formula": "t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}} \\sim t_{n-1}, \\qquad \\bar{x} \\pm t_{1-\\alpha/2,\\,n-1}\\frac{s}{\\sqrt{n}}",
+      "starter_code": "run_ttest_summary <- function(x, mu0 = 0, conf_level = 0.95) {\n  # Zavolejte t.test() a vytáhněte t_stat, p_value, ci_low, ci_high\n  \n}\n",
+      "solution_code": "run_ttest_summary <- function(x, mu0 = 0, conf_level = 0.95) {\n  tt <- t.test(x, mu = mu0, conf.level = conf_level)\n  list(\n    t_stat = unname(as.numeric(tt$statistic)),\n    p_value = as.numeric(tt$p.value),\n    ci_low = as.numeric(tt$conf.int[1]),\n    ci_high = as.numeric(tt$conf.int[2])\n  )\n}\n",
+      "produces_plot": false,
+      "visible_tests": [
+        {
+          "name": "Testová statistika t proti mu0 = 100",
+          "code": "run_ttest_summary(c(102, 98, 105, 101, 99, 104, 103, 100, 106, 102), 100)$t_stat",
+          "expected": 2.4494897,
+          "tolerance": 1e-4
+        },
+        {
+          "name": "p-hodnota oboustranného testu",
+          "code": "run_ttest_summary(c(102, 98, 105, 101, 99, 104, 103, 100, 106, 102), 100)$p_value",
+          "expected": 0.03678747,
+          "tolerance": 1e-4
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "Dolní mez 95% intervalu spolehlivosti",
+          "code": "run_ttest_summary(c(102, 98, 105, 101, 99, 104, 103, 100, 106, 102), 100)$ci_low",
+          "expected": 100.15296,
+          "tolerance": 1e-3
+        },
+        {
+          "name": "Horní mez 95% intervalu spolehlivosti",
+          "code": "run_ttest_summary(c(102, 98, 105, 101, 99, 104, 103, 100, 106, 102), 100)$ci_high",
+          "expected": 103.84704,
+          "tolerance": 1e-3
+        }
+      ],
+      "hints": [
+        "Krok 1: Uložte si objekt testu `tt <- t.test(x, mu = mu0, conf.level = conf_level)`.",
+        "Krok 2: Statistiku získáte přes `tt$statistic`, $p$-hodnotu přes `tt$p.value` a meze IS přes `tt$conf.int[1]` a `tt$conf.int[2]`.",
+        "Vysvětlení: Funkce `unname(as.numeric(...))` odstraní atribut jména `t` ze statistiky."
+      ],
+      "explanation": "Výstup `t.test()` v R je strukturovaný seznam třídy `htest`, ze kterého lze programově vyčíst statistiku, $p$-hodnotu i interval spolehlivosti."
+    },
+    {
+      "id": "pas-code-04",
+      "number": 4,
+      "type": "code_task",
+      "language": "r",
+      "title": "Lineární regrese a předpověď (`lm`)",
+      "text": "Implementujte funkci `fit_regression(x, y, x_new)`, která pomocí `lm(y ~ x)` proloží jednoduchou regresní přímku a vrátí seznam `list(intercept, slope, r_squared, pred)`, kde `pred` je předpovězená hodnota odezvy pro `x = x_new`.",
+      "formula": "\\hat{y} = b_0 + b_1 x, \\qquad R^2 = 1 - \\frac{\\sum (y_i - \\hat{y}_i)^2}{\\sum (y_i - \\bar{y})^2}",
+      "starter_code": "fit_regression <- function(x, y, x_new) {\n  # Proložte model lm(y ~ x), získejte koeficienty, R^2 a predikci v x_new\n  \n}\n",
+      "solution_code": "fit_regression <- function(x, y, x_new) {\n  model <- lm(y ~ x)\n  sm <- summary(model)\n  coefs <- coef(model)\n  pred_val <- predict(model, newdata = data.frame(x = x_new))\n  list(\n    intercept = unname(as.numeric(coefs[1])),\n    slope = unname(as.numeric(coefs[2])),\n    r_squared = as.numeric(sm$r.squared),\n    pred = unname(as.numeric(pred_val))\n  )\n}\n",
+      "produces_plot": false,
+      "visible_tests": [
+        {
+          "name": "Směrnice přímky b1 pro x = 1:5, y = c(2.2, 4.0, 5.8, 8.1, 9.9)",
+          "code": "fit_regression(1:5, c(2.2, 4.0, 5.8, 8.1, 9.9), 6)$slope",
+          "expected": 1.95,
+          "tolerance": 1e-6
+        },
+        {
+          "name": "Predikce pro x_new = 6",
+          "code": "fit_regression(1:5, c(2.2, 4.0, 5.8, 8.1, 9.9), 6)$pred",
+          "expected": 11.85,
+          "tolerance": 1e-6
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "Úsek b0",
+          "code": "fit_regression(1:5, c(2.2, 4.0, 5.8, 8.1, 9.9), 6)$intercept",
+          "expected": 0.15,
+          "tolerance": 1e-6
+        },
+        {
+          "name": "Koeficient determinace R^2",
+          "code": "fit_regression(1:5, c(2.2, 4.0, 5.8, 8.1, 9.9), 6)$r_squared",
+          "expected": 0.9980315,
+          "tolerance": 1e-4
+        }
+      ],
+      "hints": [
+        "Krok 1: Model vytvoříte `model <- lm(y ~ x)` a souhrn `sm <- summary(model)` obsahuje `sm$r.squared`.",
+        "Krok 2: Koeficienty vrací `coef(model)` — první prvek je `(Intercept)`, druhý směrnice `x`.",
+        "Vysvětlení: Pro predikci použijte `predict(model, newdata = data.frame(x = x_new))` (název sloupce musí odpovídat proměnné v modelu!)."
+      ],
+      "explanation": "Funkce `lm()` odhadne parametry metodou nejmenších čtverců; `summary(model)$r.squared` dává koeficient determinace $R^2$ a `predict()` spočítá bodovou předpověď."
+    },
+    {
+      "id": "pas-code-05",
+      "number": 5,
+      "type": "code_task",
+      "language": "r",
+      "title": "Diagnostika normality: Histogram a Q-Q graf (`hist`, `qqnorm`)",
+      "text": "Pro zadaný vektor výšek `heights` spočítejte:\n- $p$-hodnotu Shapiro–Wilkova testu normality do proměnné `shapiro_p`,\n- vektor Z-skórů do `z_scores` a maximální absolutní Z-skór do `max_abs_z`.\nZároveň vykreslete vedle sebe (`par(mfrow = c(1, 2))`) histogram hustoty `hist(heights, probability = TRUE)` s překreslenou křivkou normální hustoty `curve(dnorm(...), add = TRUE)` a normální Q-Q graf pomocí `qqnorm()` + `qqline()`.",
+      "formula": "z_i = \\frac{x_i - \\bar{x}}{s}, \\qquad H_0\\text{ (Shapiro–Wilk)}: X \\sim N(\\mu, \\sigma^2)",
+      "starter_code": "heights <- c(172, 175, 178, 180, 181, 179, 183, 185, 176, 177,\n             182, 184, 174, 188, 171, 180, 179, 181, 186, 177)\n\n# Spočítejte shapiro_p, z_scores, max_abs_z a vykreslete histogram + Q-Q graf\n",
+      "solution_code": "heights <- c(172, 175, 178, 180, 181, 179, 183, 185, 176, 177,\n             182, 184, 174, 188, 171, 180, 179, 181, 186, 177)\n\nshapiro_p <- as.numeric(shapiro.test(heights)$p.value)\nz_scores <- (heights - mean(heights)) / sd(heights)\nmax_abs_z <- max(abs(z_scores))\n\npar(mfrow = c(1, 2))\nhist(heights, probability = TRUE, col = \"#38bdf8\", border = \"#1e293b\",\n     main = \"Histogram vysek + N(mu, s^2)\", xlab = \"Vyska [cm]\", ylab = \"Hustota\")\ncurve(dnorm(x, mean = mean(heights), sd = sd(heights)),\n      add = TRUE, col = \"#f43f5e\", lwd = 2)\n\nqqnorm(heights, pch = 19, col = \"#10b981\", main = \"Q-Q graf normality\")\nqqline(heights, col = \"#f43f5e\", lwd = 2)\npar(mfrow = c(1, 1))\n",
+      "produces_plot": true,
+      "visible_tests": [
+        {
+          "name": "p-hodnota Shapiro–Wilkova testu normality",
+          "code": "shapiro_p",
+          "expected": 0.9972059,
+          "tolerance": 1e-4
+        },
+        {
+          "name": "Maximální absolutní Z-skór v souboru",
+          "code": "max_abs_z",
+          "expected": 1.8866298,
+          "tolerance": 1e-4
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "Průměr Z-skórů je roven 0",
+          "code": "mean(z_scores)",
+          "expected": 0.0,
+          "tolerance": 1e-10
+        },
+        {
+          "name": "Směrodatná odchylka Z-skórů je rovna 1",
+          "code": "sd(z_scores)",
+          "expected": 1.0,
+          "tolerance": 1e-10
+        }
+      ],
+      "hints": [
+        "Krok 1: $p$-hodnotu testu získáte přes `shapiro.test(heights)$p.value`.",
+        "Krok 2: Pro překreslení hustoty na histogram je nutné v `hist()` nastavit parametr `probability = TRUE` (jinak je osa $y$ v četnostech!).",
+        "Vysvětlení: Q-Q graf vytvoříte dvojicí `qqnorm(heights); qqline(heights)` — body ležící blízko přímky potvrzují normalitu."
+      ],
+      "explanation": "Kombinace Shapiro–Wilkova testu ($p \\approx 0{,}99 \\gg 0{,}05$), histogramu s hustotou a Q-Q grafu je standardní diagnostikou normality před nasazením parametrických testů."
+    },
+    {
+      "id": "pas-code-06",
+      "number": 6,
+      "type": "code_task",
+      "language": "r",
+      "title": "Bodový graf, korelace a regresní přímka (`plot`, `abline`)",
+      "text": "Pro data `study_h` (hodiny studia) a `exam_pts` (body ze zkoušky) sestrojte lineární model `reg_model <- lm(exam_pts ~ study_h)`, spočítejte Pearsonův korelační koeficient `pearson_r` a koeficient determinace `r_squared`. Vykreslete bodový graf `plot(study_h, exam_pts)` a proložte jej regresní přímkou pomocí `abline(reg_model)`.",
+      "formula": "r = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sqrt{\\sum (x_i - \\bar{x})^2 \\sum (y_i - \\bar{y})^2}}, \\qquad R^2 = r^2",
+      "starter_code": "study_h <- c(2, 3, 4, 5, 6, 7, 8, 9, 10, 12)\nexam_pts <- c(42, 48, 55, 61, 66, 70, 77, 81, 86, 94)\n\n# Vytvořte reg_model, pearson_r, r_squared a vykreslete bodový graf s abline()\n",
+      "solution_code": "study_h <- c(2, 3, 4, 5, 6, 7, 8, 9, 10, 12)\nexam_pts <- c(42, 48, 55, 61, 66, 70, 77, 81, 86, 94)\n\nreg_model <- lm(exam_pts ~ study_h)\npearson_r <- cor(study_h, exam_pts)\nr_squared <- summary(reg_model)$r.squared\n\nplot(study_h, exam_pts, pch = 19, col = \"#38bdf8\",\n     main = \"Zavislost bodu ze zkousky na hodinach studia\",\n     xlab = \"Hodiny studia\", ylab = \"Body ze zkousky\")\nabline(reg_model, col = \"#f43f5e\", lwd = 2)\nlegend(\"topleft\",\n       legend = sprintf(\"r = %.4f, R^2 = %.4f\", pearson_r, r_squared),\n       col = \"#f43f5e\", lty = 1, lwd = 2, bty = \"n\")\n",
+      "produces_plot": true,
+      "visible_tests": [
+        {
+          "name": "Pearsonův korelační koeficient r",
+          "code": "pearson_r",
+          "expected": 0.9967105,
+          "tolerance": 1e-4
+        },
+        {
+          "name": "Koeficient determinace R^2",
+          "code": "r_squared",
+          "expected": 0.9934319,
+          "tolerance": 1e-4
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "Shoda R^2 == r^2 pro jednoduchou regresi",
+          "code": "abs(r_squared - pearson_r^2)",
+          "expected": 0.0,
+          "tolerance": 1e-10
+        },
+        {
+          "name": "Směrnice regresní přímky",
+          "code": "unname(coef(reg_model)[2])",
+          "expected": 5.2380952,
+          "tolerance": 1e-4
+        }
+      ],
+      "hints": [
+        "Krok 1: Model vytvoříte příkazem `reg_model <- lm(exam_pts ~ study_h)`.",
+        "Krok 2: Korelaci spočítá `cor(study_h, exam_pts)` a $R^2$ vytáhnete ze `summary(reg_model)$r.squared`.",
+        "Vysvětlení: Funkce `abline(reg_model)` umí přijmout přímo objekt `lm` a vykreslí proloženou přímku do aktivního grafu."
+      ],
+      "explanation": "Vizuální kontrola bodovým grafem s regresní přímkou (`plot` + `abline`) rychle ukáže těsnost lineárního vztahu i případné odlehlé body."
+    }
+  ]
+}

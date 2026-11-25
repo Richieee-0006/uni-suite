@@ -1,0 +1,223 @@
+{
+  "title": "04 · Interpolace, aproximace, integrace a ODR",
+  "lecture": 4,
+  "date": "2026-10-22",
+  "questions": [
+    {
+      "id": "num-04-q01",
+      "number": 1,
+      "type": "choice",
+      "text": "Jaký je hlavní rozdíl mezi **interpolací** a **aproximací metodou nejmenších čtverců (MNC)**?",
+      "options": {
+        "A": "Interpolace musí projít všemi zadanými uzly přesně, zatímco MNC prokládá jednodušší trend (např. přímku) tak, aby minimalizovala součet čtverců svislých odchylek u zašuměných dat",
+        "B": "Interpolace funguje jen pro přímky, MNC pouze pro polynomy vysokého stupně",
+        "C": "MNC prochází všemi body přesně, interpolace minimalizuje rozptyl",
+        "D": "Mezi interpolací a aproximací není žádný matematický rozdíl"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Zamyslete se, co se stane, když měříte reálná data s náhodným šumem.",
+        "Krok 2: Interpolační křivka přes 50 zašuměných bodů by musela zběsile kmitat, aby trefila každé měření.",
+        "Vysvětlení: Interpolace vynucuje $P(x_i) = y_i$ pro všechna $i$, zatímco MNC hledá $\\min \\sum (f(x_i) - y_i)^2$ a tlumí šum."
+      ],
+      "explanation": "Interpolace konstruuje funkci procházející přesně všemi zadanými body $(x_i, y_i)$. Aproximace metodou nejmenších čtverců vyhlazuje zašuměná data volbou parametrů minimalizujících $\\sum_{i=1}^m (f(x_i) - y_i)^2$."
+    },
+    {
+      "id": "num-04-q02",
+      "number": 2,
+      "type": "input_numeric",
+      "text": "Sestrojte Lagrangeův (nebo Newtonův) interpolační polynom pro uzly $(0, 1)$, $(1, 3)$, $(2, 7)$ a vyhodnoťte jeho hodnotu v bodě $x = 1{,}5$.",
+      "answer": 4.75,
+      "tolerance": 0.01,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Pro 3 uzly existuje jednoznačný polynom stupně nejvýše 2: zkuste rozpoznat nebo dopočítat koeficienty $P_2(x) = ax^2 + bx + c$.",
+        "Krok 2: Lagrangeovy báze v $x = 1{,}5$: $L_0 = \\frac{(0{,}5)(-0{,}5)}{(-1)(-2)} = -0{,}125$, $L_1 = \\frac{(1{,}5)(-0{,}5)}{(1)(-1)} = 0{,}75$, $L_2 = \\frac{(1{,}5)(0{,}5)}{(2)(1)} = 0{,}375$.",
+        "Vysvětlení: $P_2(1{,}5) = 1(-0{,}125) + 3(0{,}75) + 7(0{,}375) = 4{,}75$ (polynom je $x^2 + x + 1$)."
+      ],
+      "explanation": "Jednoznačný kvadratický interpolační polynom pro dané body je $P_2(x) = x^2 + x + 1$. V bodě $x = 1{,}5$ platí $P_2(1{,}5) = 2{,}25 + 1{,}5 + 1 = 4{,}75$."
+    },
+    {
+      "id": "num-04-q03",
+      "number": 3,
+      "type": "choice",
+      "text": "Jakou praktickou výhodu má **Newtonův interpolační polynom** oproti **Lagrangeovu tvaru** (přestože oba dávají matematicky totožný polynom)?",
+      "options": {
+        "A": "Má nižší stupeň než Lagrangeův polynom",
+        "B": "Při přidání nového uzlu $(x_{n+1}, y_{n+1})$ stačí připočítat jediný nový člen přes poměrné diference bez přepočítání předchozích koeficientů",
+        "C": "Úplně eliminuje Rungeho fenomén na ekvidistantních uzlech",
+        "D": "Nevyžaduje různé souřadnice $x_i$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Porovnejte strukturu $P_n(x) = a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) + \\dots$ s Lagrangeovým součtem.",
+        "Krok 2: U Lagrangeovy formy přidání uzlu $x_{n+1}$ změní každý bázový polynom $L_i(x)$.",
+        "Vysvětlení: Newtonův tvar je inkrementální — dosavadní koeficienty $a_0, \\dots, a_n$ zůstávají v platnosti a jen přibude $a_{n+1}\\prod_{j=0}^n(x - x_j)$."
+      ],
+      "explanation": "Oba tvary reprezentují tentýž jednoznačný interpolační polynom. Newtonův tvar využívající poměrné diference však umožňuje snadné přidávání nových uzlů a rychlé vyhodnocení upraveným Hornerovým schématem."
+    },
+    {
+      "id": "num-04-q04",
+      "number": 4,
+      "type": "choice",
+      "text": "Co je **Rungeho fenomén** a jak mu v numerických metodách spolehlivě předejít?",
+      "options": {
+        "A": "Přetečení exponentu při dělení nulou; řeší se pivotací",
+        "B": "Silné oscilace interpolačního polynomu vysokého stupně u okrajů intervalu při ekvidistantních uzlech; řeší se kubickými spliny nebo Čebyševovými uzly",
+        "C": "Pomalá konvergence bisekce; řeší se Newtonovou metodou",
+        "D": "Ztráta symetrie matice při LU rozkladu; řeší se Choleského rozkladem"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Vzpomeňte si na klasickou Rungeho funkci $f(x) = \\frac{1}{1 + 25x^2}$ na $[-1, 1]$.",
+        "Krok 2: Zvyšování počtu rovnoměrně rozmístěných uzlů zhoršuje chybu poblíž $x = \\pm 1$.",
+        "Vysvětlení: Místo jednoho polynomu stupně 20 použijeme po částech kubické spliny nebo zahustíme uzly u krajů (Čebyševovy uzly)."
+      ],
+      "explanation": "Rungeho fenomén ukazuje, že polynomiální interpolace vysokého stupně na ekvidistantních uzlech může u krajů intervalu divergovat. Řešením jsou spliny (po částech nízkostupňové polynomy) nebo Čebyševovy uzly."
+    },
+    {
+      "id": "num-04-q05",
+      "number": 5,
+      "type": "choice",
+      "text": "Jakou maticovou soustavu (**normální rovnice**) řešíme při hledání vektoru parametrů $\\vec{c}$ lineární aproximace metodou nejmenších čtverců $\\min \\|A\\vec{c} - \\vec{y}\\|_2^2$?",
+      "options": {
+        "A": "$A\\vec{c} = \\vec{y}$",
+        "B": "$A^T A \\vec{c} = A^T \\vec{y}$",
+        "C": "$A A^T \\vec{c} = \\vec{y}$",
+        "D": "$(A + A^T)\\vec{c} = \\vec{y}$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Přeurčená matice $A$ má rozměr $m \\times p$ ($m > p$), takže není čtvercová.",
+        "Krok 2: Položíme gradient funkce $S(\\vec{c}) = (A\\vec{c} - \\vec{y})^T(A\\vec{c} - \\vec{y})$ roven nule.",
+        "Vysvětlení: $\\nabla S(\\vec{c}) = 2A^T(A\\vec{c} - \\vec{y}) = \\vec{0} \\iff A^T A \\vec{c} = A^T \\vec{y}$."
+      ],
+      "explanation": "Normální soustava $A^T A \\vec{c} = A^T \\vec{y}$ převádí přeurčený problém ($m > p$) na čtvercovou symetrickou soustavu rozměru $p \\times p$. (Pro špatně podmíněné matice se používá QR rozklad.)"
+    },
+    {
+      "id": "num-04-q06",
+      "number": 6,
+      "type": "input_numeric",
+      "text": "Spočítejte přibližnou hodnotu integrálu $\\int_0^2 x^2\\,dx$ pomocí **složeného lichoběžníkového pravidla** pro $n = 2$ podintervaly (krok $h = 1$).",
+      "answer": 3,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Dělicí body jsou $x_0 = 0, x_1 = 1, x_2 = 2$ s hodnotami $f(0) = 0, f(1) = 1, f(2) = 4$.",
+        "Krok 2: Složené lichoběžníkové pravidlo: $T = \\frac{h}{2}\\big(f(x_0) + 2f(x_1) + f(x_2)\\big)$.",
+        "Vysvětlení: $T = \\frac{1}{2}(0 + 2\\cdot 1 + 4) = 3{,}0$ (přesný integrál je $\\frac{8}{3} \\approx 2{,}667$)."
+      ],
+      "explanation": "S krokem $h = 1$ dává složené lichoběžníkové pravidlo $T = \\frac{1}{2}(0 + 2\\cdot 1 + 4) = 3$. Protože je $x^2$ konvexní, sečny leží nad grafem a lichoběžníkové pravidlo výsledek nadhodnocuje."
+    },
+    {
+      "id": "num-04-q07",
+      "number": 7,
+      "type": "choice",
+      "text": "Jaký je stupeň přesnosti a řád chyby **složeného Simpsonova pravidla**?",
+      "options": {
+        "A": "Přesné pouze pro konstanty, chyba $O(h)$",
+        "B": "Přesné pro lineární funkce, chyba $O(h^2)$",
+        "C": "Přesné pro všechny polynomy až do stupně 3 (včetně kubik!), chyba $O(h^4)$",
+        "D": "Přesné pro libovolné funkce, chyba je vždy nulová"
+      },
+      "correct": ["C"],
+      "hints": [
+        "Krok 1: Simpsonovo pravidlo prokládá trojice bodů parabolou (stupně 2), ale díky symetrii se kubický chybový člen přesně vyruší!",
+        "Krok 2: Chybový člen obsahuje až čtvrtou derivaci $f^{(4)}(\\xi)$ a krok $h^4$.",
+        "Vysvětlení: Složené Simpsonovo pravidlo má chybu $O(h^4)$ a je algebraicky přesné pro polynomy stupně $\\le 3$."
+      ],
+      "explanation": "Ačkoli je Simpsonovo pravidlo odvozeno z kvadratického polynomu, díky symetrii integruje přesně i polynomy 3. stupně a jeho chyba pro hladkou funkci klesá velmi rychle jako $O(h^4)$."
+    },
+    {
+      "id": "num-04-q08",
+      "number": 8,
+      "type": "input_numeric",
+      "text": "Pomocí **Simpsonova pravidla** s $n = 2$ (krok $h = 1$, body $0, 1, 2$) vypočítejte $\\int_0^2 x^3\\,dx$.",
+      "answer": 4,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Simpsonův vzorec na 2 dílcích: $S = \\frac{h}{3}\\big(f(0) + 4f(1) + f(2)\\big)$.",
+        "Krok 2: Dosaďte $f(0) = 0$, $f(1) = 1$, $f(2) = 8$ a $h = 1$.",
+        "Vysvětlení: $S = \\frac{1}{3}(0 + 4\\cdot 1 + 8) = \\frac{12}{3} = 4{,}0$, což je přesná hodnota $\\left[\\frac{x^4}{4}\\right]_0^2 = 4$!"
+      ],
+      "explanation": "Simpsonovo pravidlo dává $\\frac{1}{3}(0 + 4 + 8) = 4$, což potvrzuje, že je přesné i pro kubické polynomy."
+    },
+    {
+      "id": "num-04-q09",
+      "number": 9,
+      "type": "choice",
+      "text": "Na jakém principu zvyšuje přesnost **Rombergova integrace**?",
+      "options": {
+        "A": "Mění lichoběžníkové pravidlo na náhodný výběr bodů (Monte Carlo)",
+        "B": "Kombinuje výsledky lichoběžníkového pravidla pro kroky $h, h/2, h/4, \\dots$ pomocí Richardsonovy extrapolace a postupně eliminuje chybové členy $O(h^2), O(h^4), O(h^6), \\dots$",
+        "C": "Používá pouze krajní body intervalu $[a, b]$ bez dalšího dělení",
+        "D": "Řeší integrál analyticky pomocí symbolické algebry"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Chyba složeného lichoběžníkového pravidla se rozvíjí v sudé mocniny $h$: $c_2 h^2 + c_4 h^4 + c_6 h^6 + \\dots$",
+        "Krok 2: Lineární kombinace $R_{k,1} = \\frac{4 T(h/2) - T(h)}{3}$ přesně zruší člen $c_2 h^2$ (a shoduje se se Simpsonovým pravidlem!).",
+        "Vysvětlení: Opakovanou Richardsonovou extrapolací Rombergova tabulka rychle dosahuje řádů $O(h^4), O(h^6), O(h^8)$."
+      ],
+      "explanation": "Rombergova metoda spojuje složené lichoběžníkové pravidlo s Richardsonovou extrapolací: opakovaným půlením kroku $h$ eliminuje vedoucí sudé mocniny chyby."
+    },
+    {
+      "id": "num-04-q10",
+      "number": 10,
+      "type": "choice",
+      "text": "Proč má **centrální diference** $f'(x) \\approx \\frac{f(x+h) - f(x-h)}{2h}$ výrazně menší diskretizační chybu než dopředná diference $\\frac{f(x+h) - f(x)}{h}$?",
+      "options": {
+        "A": "Protože nevyžaduje dělení krokem $h$",
+        "B": "Protože v Taylorově rozvoji se sudé členy (včetně $h^2 f''(x)$) odečtou a chyba klesne z $O(h)$ na $O(h^2)$",
+        "C": "Protože zcela eliminuje zaokrouhlovací chybu",
+        "D": "Protože vyžaduje pouze jedno vyhodnocení funkce $f$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Napište Taylorův rozvoj pro $f(x+h)$ a $f(x-h)$ do členu s $h^3$.",
+        "Krok 2: Odečtěte oba rozvoje — členy s $f(x)$ a $\\frac{h^2}{2}f''(x)$ mají stejné znaménko, takže zmizí!",
+        "Vysvětlení: Po vydělení $2h$ zbývá první chybový člen $\\frac{h^2}{6}f'''(x) = O(h^2)$."
+      ],
+      "explanation": "Symetrický rozdíl $f(x+h) - f(x-h)$ ruší kvadratický člen Taylorova rozvoje, čímž zvyšuje řád přesnosti numerické derivace z $O(h)$ na $O(h^2)$."
+    },
+    {
+      "id": "num-04-q11",
+      "number": 11,
+      "type": "input_numeric",
+      "text": "Řešíme ODR $y' = y$ s počáteční podmínkou $y(0) = 1$ pomocí **explicitní Eulerovy metody** s krokem $h = 0{,}5$. Jakou aproximaci $y_2 \\approx y(1)$ získáme po 2 krocích?",
+      "answer": 2.25,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Eulerův krok má tvar $y_{k+1} = y_k + h \\cdot f(x_k, y_k) = y_k + 0{,}5 y_k = 1{,}5 y_k$.",
+        "Krok 2: Po 1. kroku: $y_1 = 1 + 0{,}5 \\cdot 1 = 1{,}5$.",
+        "Vysvětlení: Po 2. kroku: $y_2 = 1{,}5 + 0{,}5 \\cdot 1{,}5 = 2{,}25$ (přesné řešení $e^1 \\approx 2{,}7183$, což ukazuje hrubou chybu $O(h)$ Eulerovy metody)."
+      ],
+      "explanation": "Eulerova metoda dává $y_1 = 1{,}5$ a $y_2 = 1{,}5^2 = 2{,}25$. Znatelná odchylka od $e \\approx 2{,}718$ je důvodem, proč se v praxi používá RK4."
+    },
+    {
+      "id": "num-04-q12",
+      "number": 12,
+      "type": "choice",
+      "text": "Jaký je globální řád přesnosti klasické **Rungeho–Kuttovy metody 4. řádu (RK4)** a jaké váhy používá pro sklony $k_1, k_2, k_3, k_4$?",
+      "options": {
+        "A": "Řád $O(h^2)$, váhy $\\frac{1}{4}(k_1 + k_2 + k_3 + k_4)$",
+        "B": "Řád $O(h^4)$, váhy $\\frac{1}{6}(k_1 + 2k_2 + 2k_3 + k_4)$",
+        "C": "Řád $O(h)$, váhy $k_1$",
+        "D": "Řád $O(h^3)$, váhy $\\frac{1}{3}(k_1 + k_2 + k_4)$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Sklony $k_2$ a $k_3$ se vyhodnocují ve středu kroku $x_k + h/2$, a proto dostávají dvojnásobnou váhu.",
+        "Krok 2: Součet vah musí být 1: $\\frac{1 + 2 + 2 + 1}{6} = 1$ (obdoba Simpsonova pravidla).",
+        "Vysvětlení: RK4 kombinuje 4 vyhodnocení pravé strany do váženého průměru $\\frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)$ a dosahuje globální chyby $O(h^4)$."
+      ],
+      "explanation": "Klasická RK4 metoda vyhodnotí směrnici na začátku ($k_1$), dvakrát uprostřed kroku ($k_2, k_3$) a na konci ($k_4$) a zkombinuje je váhami $(1, 2, 2, 1)/6$, což přináší globální řád přesnosti $O(h^4)$."
+    }
+  ]
+}

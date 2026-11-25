@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{%- block content %}
+{%- set _subjects = subjects or [] %}
+{%- set _daily = daily or {'done': 0, 'goal': 5, 'streak': 0, 'weak_count': 0} %}
+{%- set _daily_done = _daily.get('done', 0) %}
+{%- set _daily_goal = _daily.get('goal', (prefs.get('daily_goal', 5) if prefs else 5)) %}
+{%- set _daily_streak = _daily.get('streak', 0) %}
+{%- set _weak_count = _daily.get('weak_count', 0) %}
+{%- set active_list = _subjects | selectattr('status', 'equalto', 'active') | list %}
+{%- set featured = active_list[0] if active_list else (_subjects[0] if _subjects else None) %}
+{%- set local_list = _subjects | selectattr('kind', 'equalto', 'local') | list %}
+{%- set drill_target = local_list[0] if local_list else featured %}
+        <div class="page-header">
+          <div class="page-heading">
+            <h1>Přehled předmětů</h1>
+            <p class="page-subtitle">KI UJEP · {{ _subjects | length }} {% if (_subjects | length) == 1 %}předmět{% elif (_subjects | length) in [2, 3, 4] %}předměty{% else %}předmětů{% endif %}</p>
+          </div>
+        </div>
+
+        <section class="bento-grid" aria-label="Rychlý přehled">
+{%- if featured %}
+{%- set featured_ext = featured.kind == 'external' and featured.url %}
+{%- set preview_cells = (featured.binary_preview[:10] if featured.binary_preview else ['1', '1', '1', '0', '1', '1', '1', '1', '0', '1']) %}
+          <article class="card">
+            <span class="eyebrow">Pokračovat · {{ featured.short or featured.code }}</span>
+            <h2 class="featured-title">{{ featured.code }} — {{ featured.title }}</h2>
+
+            <section class="matrix-scroller matrix-only" tabindex="0" aria-label="Binární náhled postupu">
+              <div class="binary-matrix">
+{%- for cell in preview_cells %}
+{%- set state_val = cell.state if cell is mapping else cell %}
+                <span class="bin-cell{% if state_val == '1' or state_val == 1 %} bin-cell-1{% elif state_val == '0' or state_val == 0 %} bin-cell-0{% endif %}">{{ '1' if (state_val == '1' or state_val == 1) else ('0' if (state_val == '0' or state_val == 0) else '·') }}</span>
+{%- endfor %}
+              </div>
+            </section>
+
+            <div class="featured-actions">
+              <a href="{{ featured.url if featured_ext else '/predmet/' ~ featured.slug }}" class="btn btn-primary"{% if featured_ext %} target="_blank" rel="noopener noreferrer"{% endif %}>
+{%- if featured_ext %}
+                <span>Otevřít {{ featured.url | replace('https://', '') | replace('http://', '') }}</span>
+                <span aria-hidden="true">↗</span>
+{%- else %}
+                <span>Pokračovat v procvičování</span>
+                <span aria-hidden="true">→</span>
+{%- endif %}
+              </a>
+{%- if not featured_ext and featured.sandbox %}
+              <a href="/predmet/{{ featured.slug }}/code" class="btn btn-secondary">Otevřít sandbox</a>
+{%- endif %}
+            </div>
+          </article>
+{%- endif %}
+
+          <article class="card focus-hideable">
+            <div class="card-header">
+              <span class="eyebrow">Denní cíl</span>
+{%- if _weak_count > 0 %}
+              <span class="mastery-badge mastery-familiar">{{ _weak_count }} k zopakování</span>
+{%- endif %}
+            </div>
+
+            <h2 class="visually-hidden">Denní cíl procvičování</h2>
+
+            <p class="daily-stat">
+              <span class="visually-hidden">Splněno </span>
+              <span>{{ _daily_done }}</span>
+              <span class="daily-stat-sep" aria-hidden="true">/</span>
+              <span class="visually-hidden"> z </span>
+              <span>{{ _daily_goal }}</span>
+            </p>
+
+            <progress value="{{ _daily_done }}" max="{{ _daily_goal if _daily_goal > 0 else 1 }}" aria-label="Postup denního cíle">{{ _daily_done }} / {{ _daily_goal }}</progress>
+
+            <p class="daily-meta">
+              Streak {{ _daily_streak }} {% if _daily_streak == 1 %}den{% elif _daily_streak in [2, 3, 4] %}dny{% else %}dní{% endif %}{% if not (user and user.is_authenticated) %} · Přihlas se pro synchronizaci{% endif %}
+            </p>
+{%- if drill_target %}
+{%- set drill_ext = drill_target.kind == 'external' and drill_target.url %}
+            <a href="{{ drill_target.url if drill_ext else '/predmet/' ~ drill_target.slug ~ '?mode=quick_drill' }}" class="btn btn-secondary btn-block"{% if drill_ext %} target="_blank" rel="noopener noreferrer"{% endif %}>
+              <span>5min drill slabých míst</span>
+              <span aria-hidden="true">→</span>
+            </a>
+{%- endif %}
+          </article>
+        </section>
+
+        <section class="section-block" aria-labelledby="registry-heading">
+          <h2 id="registry-heading">Registr předmětů</h2>
+          <div class="table-frame">
+            <table class="registry-table">
+              <caption class="visually-hidden">Přehled dostupných předmětů, jejich stavu a úrovně zvládnutí</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Kód</th>
+                  <th scope="col">Předmět</th>
+                  <th scope="col">Stav</th>
+                  <th scope="col">Zvládnutí</th>
+                  <th scope="col">Postup</th>
+                  <th scope="col">Akce</th>
+                </tr>
+              </thead>
+              <tbody>
+{%- for item in _subjects %}
+{%- set is_ext = item.kind == 'external' and item.url %}
+{%- set m_level = item.mastery_level or 'unstarted' %}
+{%- set m_label = item.mastery_label or 'Neprobráno' %}
+{%- set pct = item.progress_pct if item.progress_pct is defined else 0 %}
+                <tr>
+                  <th scope="row" class="mono" data-label="Kód">{{ item.code }}</th>
+                  <td class="cell-subject-main" data-label="Předmět">
+                    <span class="subject-cell-title">{{ item.title }}</span>
+{%- if item.description %}
+                    <span class="subject-cell-desc">{{ item.description }}</span>
+{%- endif %}
+                  </td>
+                  <td data-label="Stav">
+                    <span class="status-inline">
+                      <span class="status-dot {{ 'status-dot-active' if item.status == 'active' else 'status-dot-preparing' }}" aria-hidden="true"></span>
+                      <span>{{ 'Aktivní' if item.status == 'active' else 'Připravuje se' }}</span>
+                    </span>
+                  </td>
+                  <td data-label="Zvládnutí">
+                    <span class="mastery-badge mastery-{{ m_level }}">{{ m_label }}</span>
+                  </td>
+                  <td class="tabular" data-label="Postup">
+{%- if item.binary_preview and (pct > 0) %}
+                    <span class="binary-inline matrix-only">{{ (item.binary_preview[:8] | join('')) if item.binary_preview is iterable and item.binary_preview is not string else item.binary_preview }}</span>
+{%- else %}
+                    <span class="mono">{{ pct }} %</span>
+{%- endif %}
+                  </td>
+                  <td class="table-action-cell" data-label="Akce">
+                    <a href="{{ item.url if is_ext else '/predmet/' ~ item.slug }}" class="text-link"{% if is_ext %} target="_blank" rel="noopener noreferrer"{% endif %}>
+{%- if is_ext %}
+                      <span>Spustit</span>
+                      <span aria-hidden="true">↗</span>
+{%- else %}
+                      <span>Detail</span>
+                      <span aria-hidden="true">→</span>
+{%- endif %}
+                    </a>
+                  </td>
+                </tr>
+{%- endfor %}
+              </tbody>
+            </table>
+          </div>
+        </section>
+{%- endblock %}

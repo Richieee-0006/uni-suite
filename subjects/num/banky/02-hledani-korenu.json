@@ -1,0 +1,202 @@
+{
+  "title": "02 · Hledání kořenů nelineárních rovnic",
+  "lecture": 2,
+  "date": "2026-10-08",
+  "questions": [
+    {
+      "id": "num-02-q01",
+      "number": 1,
+      "type": "choice",
+      "text": "Jakou postačující podmínku pro spojitou funkci $f$ na uzavřeném intervalu $[a, b]$ vyžaduje **metoda půlení intervalu (bisekce)** pro zaručenou existenci alespoň jednoho kořene?",
+      "options": {
+        "A": "$f'(a) \\cdot f'(b) < 0$",
+        "B": "$f(a) \\cdot f(b) < 0$",
+        "C": "$|f(a) + f(b)| < 1$",
+        "D": "$f''(x) > 0$ pro všechna $x \\in [a, b]$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Vzpomeňte si na Bolzanovu větu o nabývání mezihodnot pro spojitou funkci.",
+        "Krok 2: Funkce musí mít v krajních bodech intervalu opačná znaménka.",
+        "Vysvětlení: Opačná znaménka v $a$ a $b$ zapíšeme kompaktně jako $f(a) \\cdot f(b) < 0$; pak spojitá křivka nutně protne osu $x$ uvnitř $(a, b)$."
+      ],
+      "explanation": "Podle Bolzanovy věty má spojitá funkce $f$ na $[a, b]$ při $f(a)\\cdot f(b) < 0$ uvnitř intervalu alespoň jeden kořen. Bisekce v každém kroku tuto vlastnost zachovává a zkracuje interval na polovinu."
+    },
+    {
+      "id": "num-02-q02",
+      "number": 2,
+      "type": "input_numeric",
+      "text": "Hledáme kořen metodou bisekce na počátečním intervalu $[1, 2]$. Kolik nejméně iterací $n$ je potřeba, aby zaručená délka intervalu $\\frac{b - a}{2^n}$ nepřesáhla toleranci $10^{-3}$?",
+      "answer": 10,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "iterací",
+      "hints": [
+        "Krok 1: Po $n$ půleních má interval délku $\\frac{2 - 1}{2^n} = \\frac{1}{2^n}$.",
+        "Krok 2: Řešte nerovnici $2^n \\ge 1000$.",
+        "Vysvětlení: $2^9 = 512 < 1000$, ale $2^{10} = 1024 \\ge 1000$, proto stačí nejméně $n = 10$ iterací."
+      ],
+      "explanation": "Pro délku intervalu $L_n = \\frac{b-a}{2^n} \\le \\varepsilon$ platí $n \\ge \\lceil \\log_2(\\frac{b-a}{\\varepsilon}) \\rceil = \\lceil \\log_2(1000) \\rceil = 10$."
+    },
+    {
+      "id": "num-02-q03",
+      "number": 3,
+      "type": "input_numeric",
+      "text": "Aplikujte **jeden krok Newtonovy metody tečen** pro rovnici $f(x) = x^2 - 5 = 0$ z počátečního odhadu $x_0 = 2$. Jaká je hodnota $x_1$?",
+      "answer": 2.25,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Derivace funkce je $f'(x) = 2x$, takže $f(2) = -1$ a $f'(2) = 4$.",
+        "Krok 2: Dosaďte do vzorce $x_1 = x_0 - \\frac{f(x_0)}{f'(x_0)}$.",
+        "Vysvětlení: $x_1 = 2 - \\frac{-1}{4} = 2 + 0{,}25 = 2{,}25$ (pro srovnání $\\sqrt{5} \\approx 2{,}2361$)."
+      ],
+      "explanation": "Vzorec Newtonovy metody dává $x_1 = x_0 - \\frac{x_0^2 - 5}{2x_0} = 2 - \\frac{4 - 5}{4} = 2{,}25$."
+    },
+    {
+      "id": "num-02-q04",
+      "number": 4,
+      "type": "choice",
+      "text": "Jaký řád konvergence má **Newtonova metoda tečen** v okolí jednoduchého kořene ($f'(x^*) \\neq 0$)?",
+      "options": {
+        "A": "Lineární (řád 1)",
+        "B": "Superlineární (řád přibližně $1{,}618$)",
+        "C": "Kvadratická (řád 2) — počet platných cifer se v každém kroku zhruba zdvojnásobí",
+        "D": "Kubická (řád 3)"
+      },
+      "correct": ["C"],
+      "hints": [
+        "Krok 1: Chyba další iterace Newtonovy metody splňuje $|e_{k+1}| \\approx C \\cdot |e_k|^p$.",
+        "Krok 2: Pro jednoduchý kořen je exponent $p = 2$.",
+        "Vysvětlení: Kvadratická konvergence znamená, že pokud je chyba $10^{-3}$, v dalším kroku klesne zhruba k $10^{-6}$ (dvojnásobek platných cifer)."
+      ],
+      "explanation": "V okolí jednoduchého kořene má Newtonova metoda kvadratickou konvergenci ($p = 2$). Naopak metoda sečen má řád $\\varphi \\approx 1{,}618$, bisekce řád 1 a Halleyova metoda řád 3."
+    },
+    {
+      "id": "num-02-q05",
+      "number": 5,
+      "type": "choice",
+      "text": "Která situace může způsobit selhání nebo divergenci **Newtonovy metody**?",
+      "options": {
+        "A": "Funkce $f$ je lineární",
+        "B": "Počáteční odhad leží blízko bodu, kde $f'(x_k) \\approx 0$ (téměř vodorovná tečna)",
+        "C": "Interval $[a, b]$ splňuje $f(a) \\cdot f(b) < 0$",
+        "D": "Funkce má známou analytickou derivaci"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Podívejte se na jmenovatel zlomku ve vzorci $x_{k+1} = x_k - \\frac{f(x_k)}{f'(x_k)}$.",
+        "Krok 2: Co se stane, když je derivace téměř nulová (lokální extrém nebo sedlový bod)?",
+        "Vysvětlení: Dělení velmi malým $f'(x_k)$ vystřelí další aproximaci $x_{k+1}$ daleko od kořene, případně dojde k cyklování nebo divergenci."
+      ],
+      "explanation": "Pokud je $f'(x_k) \\approx 0$, tečna je téměř rovnoběžná s osou $x$ a její průsečík odletí do velké vzdálenosti. Dalším úskalím je násobný kořen, kde konvergence klesá na lineární."
+    },
+    {
+      "id": "num-02-q06",
+      "number": 6,
+      "type": "choice",
+      "text": "Jaká je postačující podmínka konvergence **metody prostých iterací** $x_{k+1} = \\varphi(x_k)$ na uzavřeném intervalu $I$, který $\\varphi$ zobrazuje do sebe?",
+      "options": {
+        "A": "$|\\varphi'(x)| > 1$ pro všechna $x \\in I$",
+        "B": "$|\\varphi'(x)| \\le q < 1$ pro všechna $x \\in I$ (kontrakce)",
+        "C": "$\\varphi(a) \\cdot \\varphi(b) < 0$",
+        "D": "$\\varphi''(x) = 0$ pro všechna $x \\in I$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Podmínka vychází z Banachovy věty o pevném bodě.",
+        "Krok 2: Zobrazení musí zkracovat vzdálenosti bodů: $|\\varphi(x) - \\varphi(y)| \\le q|x - y|$ s $q < 1$.",
+        "Vysvětlení: Díky Lagrangeově větě o střední hodnotě stačí, aby derivace splňovala $|\\varphi'(x)| \\le q < 1$ na celém intervalu $I$."
+      ],
+      "explanation": "Metoda prostých iterací konverguje k jedinému pevnému bodu $x^* = \\varphi(x^*)$, pokud je $\\varphi$ kontrakce, což pro diferencovatelnou funkci zaručuje $|\\varphi'(x)| \\le q < 1$."
+    },
+    {
+      "id": "num-02-q07",
+      "number": 7,
+      "type": "choice",
+      "text": "Čím se liší metoda **regula falsi** od obecné metody sečen?",
+      "options": {
+        "A": "Regula falsi vyžaduje analytický výpočet druhé derivace",
+        "B": "Regula falsi vždy udržuje interval se změnou znaménka $f(a)\\cdot f(b) < 0$, takže má zaručenou konvergenci, ale jeden kraj intervalu může uvíznout",
+        "C": "Regula falsi půlí interval vždy přesně v polovině",
+        "D": "Regula falsi nelze použít pro polynomy"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Obě metody nahrazují křivku sečnou, liší se ale výběrem dvou bodů pro další krok.",
+        "Krok 2: Regula falsi kombinuje princip sečny s ohraničením kořene jako u bisekce.",
+        "Vysvětlení: Protože regula falsi hlídá opačná znaménka na krajích, nemůže utéct od kořene; u konvexní/konkávní funkce však zůstává jeden kraj pevně ukotven."
+      ],
+      "explanation": "Metoda regula falsi zachovává podmínku $f(a)\\cdot f(b) < 0$, čímž garantuje konvergenci na rozdíl od neohraničené metody sečen. Nevýhodou je možné zpomalení (jednostranné přibližování)."
+    },
+    {
+      "id": "num-02-q08",
+      "number": 8,
+      "type": "input_numeric",
+      "text": "Proveďte jeden krok Newtonovy metody pro rovnici $f(x) = x^3 - 2x - 5 = 0$ z bodu $x_0 = 2$. Zadejte hodnotu $x_1$.",
+      "answer": 2.1,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Spočítejte $f(2) = 8 - 4 - 5 = -1$.",
+        "Krok 2: Derivace je $f'(x) = 3x^2 - 2$, takže $f'(2) = 3\\cdot 4 - 2 = 10$.",
+        "Vysvětlení: $x_1 = 2 - \\frac{-1}{10} = 2 + 0{,}1 = 2{,}1$."
+      ],
+      "explanation": "Pro $f(x) = x^3 - 2x - 5$ máme $f(2) = -1$ a $f'(2) = 10$, odkud $x_1 = 2 - (-1)/10 = 2{,}1$."
+    },
+    {
+      "id": "num-02-q09",
+      "number": 9,
+      "type": "choice",
+      "text": "Jakou hlavní výhodu přináší **Newtonova–Hornerova metoda** při hledání kořenů polynomu $P_n(x)$?",
+      "options": {
+        "A": "Nevyžaduje žádný počáteční odhad $x_0$",
+        "B": "Dvojitým průchodem Hornerova schématu spočítá zároveň $P(x_k)$ i $P'(x_k)$ v čase $O(n)$ a po nalezení kořene rovnou vydělí polynom kořenovým činitelem $(x - x^*)$",
+        "C": "Nalezne všechny komplexní kořeny najednou v jediném kroku",
+        "D": "Používá se jen pro kvadratické rovnice"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Hornerovo schéma při dělení polynomu $P(x)$ výrazem $(x - x_0)$ dává zbytek $P(x_0)$ i podíl $Q(x)$.",
+        "Krok 2: Znovu aplikované Hornerovo schéma na podíl $Q(x)$ v bodě $x_0$ dá přesně hodnotu derivace $P'(x_0)$!",
+        "Vysvětlení: Tím získáme oba vstupy pro Newtonův krok v čase $O(n)$ a po konvergenci rovnou pokračujeme s deflovaným polynomem nižšího stupně."
+      ],
+      "explanation": "Newtonova–Hornerova metoda efektivně kombinuje Newtonův krok s Hornerovým schématem: jedním průchodem získá $P(x_k)$ a koeficienty podílu $Q(x)$, druhým $Q(x_k) = P'(x_k)$, a nakonec provede deflaci polynomu."
+    },
+    {
+      "id": "num-02-q10",
+      "number": 10,
+      "type": "multi_step",
+      "text": "Řešíme rovnici $f(x) = x^2 - 5 = 0$ Newtonovou metodou od $x_0 = 2$ (kde už víme, že $x_1 = 2{,}25$).",
+      "steps": [
+        {
+          "prompt": "Krok 1: Spočítejte druhou iteraci $x_2$ (zaokrouhlete na 4 desetinná místa).",
+          "type": "input_numeric",
+          "answer": 2.2361,
+          "tolerance": 0.0005,
+          "tolerance_mode": "abs",
+          "unit": ""
+        },
+        {
+          "prompt": "Krok 2: Co ilustruje skok chyby z $|x_1 - \\sqrt{5}| \\approx 1{,}4\\cdot 10^{-2}$ na $|x_2 - \\sqrt{5}| \\approx 4{,}3\\cdot 10^{-5}$?",
+          "type": "choice",
+          "options": {
+            "A": "Lineární konvergenci",
+            "B": "Kvadratickou konvergenci Newtonovy metody",
+            "C": "Katastrofické krácení",
+            "D": "Oscilaci kolem lokálního extrému"
+          },
+          "correct": ["B"]
+        }
+      ],
+      "hints": [
+        "Krok 1: Použijte babylonský tvar Newtonovy iterace pro odmocninu: $x_2 = \\frac{1}{2}(x_1 + \\frac{5}{x_1})$.",
+        "Krok 2: $x_2 = \\frac{1}{2}(2{,}25 + 2{,}22222) \\approx 2{,}23611$.",
+        "Vysvětlení: Chyba klesla z řádu $10^{-2}$ na řád $10^{-5}$ — typický projev kvadratické konvergence."
+      ],
+      "explanation": "Druhý krok dává $x_2 = 2{,}25 - \\frac{2{,}25^2 - 5}{4{,}5} = 2{,}236111\\dots$, což je od $\\sqrt{5} \\approx 2{,}236068$ vzdáleno jen o $4{,}3 \\cdot 10^{-5}$."
+    }
+  ]
+}

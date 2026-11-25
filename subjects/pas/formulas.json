@@ -1,0 +1,114 @@
+{
+  "sections": [
+    {
+      "title": "1. Popisná statistika a standardizace",
+      "items": [
+        {
+          "name": "Výběrový průměr a rozptyl",
+          "latex": "\\bar{x} = \\frac{1}{n}\\sum_{i=1}^{n} x_i, \\qquad s^2 = \\frac{1}{n - 1}\\sum_{i=1}^{n} (x_i - \\bar{x})^2",
+          "note": "Dělení $n - 1$ (Besselova korekce) zajišťuje nestrannost odhadu $\\sigma^2$. V R: `mean(x)`, `var(x)`, `sd(x)`."
+        },
+        {
+          "name": "Mezikvartilové rozpětí a outliery",
+          "latex": "\\text{IQR} = Q_3 - Q_1, \\qquad [Q_1 - 1{,}5\\,\\text{IQR},\\; Q_3 + 1{,}5\\,\\text{IQR}]",
+          "note": "Robustní míra variability a Tukeyho hradby v `boxplot(x)`."
+        },
+        {
+          "name": "Z-skór (standardizace)",
+          "latex": "z_i = \\frac{x_i - \\bar{x}}{s}",
+          "note": "Převádí data na průměr $0$ a směrodatnou odchylku $1$ (`scale(x)`)."
+        }
+      ]
+    },
+    {
+      "title": "2. Pravděpodobnost, Bayes a momenty",
+      "items": [
+        {
+          "name": "Podmíněná pravděpodobnost a nezávislost",
+          "latex": "P(A \\mid B) = \\frac{P(A \\cap B)}{P(B)}, \\qquad A \\perp B \\iff P(A \\cap B) = P(A)\\,P(B)",
+          "note": "Sjednocení: $P(A \\cup B) = P(A) + P(B) - P(A \\cap B)$."
+        },
+        {
+          "name": "Bayesova věta",
+          "latex": "P(A_k \\mid B) = \\frac{P(B \\mid A_k)\\,P(A_k)}{\\sum_j P(B \\mid A_j)\\,P(A_j)}",
+          "note": "Jmenovatel je dán větou o úplné pravděpodobnosti $P(B)$."
+        },
+        {
+          "name": "Rozptyl a lineární transformace",
+          "latex": "\\operatorname{Var}(X) = E(X^2) - [E(X)]^2, \\qquad \\operatorname{Var}(aX + b) = a^2\\operatorname{Var}(X)",
+          "note": "Střední hodnota: $E(aX + b) = aE(X) + b$."
+        }
+      ]
+    },
+    {
+      "title": "3. Klíčová rozdělení a R funkce (d/p/q/r)",
+      "items": [
+        {
+          "name": "Binomické rozdělení Bi(n, p)",
+          "latex": "P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k}, \\qquad E(X) = np, \\quad \\operatorname{Var}(X) = np(1-p)",
+          "note": "R: `dbinom(k, n, p)`, `pbinom(k, n, p)`. Pozor: $P(X \\ge k) = 1 - \\text{pbinom}(k-1, n, p)$."
+        },
+        {
+          "name": "Poissonovo rozdělení Po(λ)",
+          "latex": "P(X = k) = \\frac{\\lambda^k}{k!} e^{-\\lambda}, \\qquad E(X) = \\operatorname{Var}(X) = \\lambda",
+          "note": "R: `dpois(k, lambda)`, `ppois(k, lambda)`."
+        },
+        {
+          "name": "Exponenciální rozdělení Exp(λ)",
+          "latex": "F(x) = 1 - e^{-\\lambda x}\\;(x \\ge 0), \\qquad E(X) = \\frac{1}{\\lambda}, \\quad \\operatorname{Var}(X) = \\frac{1}{\\lambda^2}",
+          "note": "Bezpaměťové rozdělení čekací doby. R: `dexp`, `pexp`, `qexp`."
+        },
+        {
+          "name": "Normální rozdělení N(μ, σ²) a CLV",
+          "latex": "U = \\frac{X - \\mu}{\\sigma} \\sim N(0, 1), \\qquad \\bar{X} \\approx N\\!\\left(\\mu, \\frac{\\sigma^2}{n}\\right)",
+          "note": "R bere $\\sigma$ (nikoli $\\sigma^2$!): `pnorm(x, mu, sigma)`, `qnorm(p, mu, sigma)`."
+        }
+      ]
+    },
+    {
+      "title": "4. Intervaly spolehlivosti a testy hypotéz",
+      "items": [
+        {
+          "name": "IS pro průměr (neznámé σ)",
+          "latex": "\\bar{x} \\pm t_{1 - \\alpha/2,\\; n - 1} \\cdot \\frac{s}{\\sqrt{n}}",
+          "note": "Při známém $\\sigma$ nahraďte $t$ kvantilem $u_{1-\\alpha/2}$ a $s$ hodnotou $\\sigma$."
+        },
+        {
+          "name": "IS pro podíl (Waldův)",
+          "latex": "\\hat{p} \\pm u_{1 - \\alpha/2} \\sqrt{\\frac{\\hat{p}(1 - \\hat{p})}{n}}",
+          "note": "Vhodný pro větší $n$ ($n\\hat{p} \\ge 5$ a $n(1-\\hat{p}) \\ge 5$)."
+        },
+        {
+          "name": "Jednovýběrový t-test",
+          "latex": "t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}} \\sim t_{n - 1}",
+          "note": "Zamítáme $H_0$, pokud $|t| > t_{1-\\alpha/2,\\,n-1}$ neboli $p < \\alpha$. R: `t.test(x, mu = mu0)`."
+        },
+        {
+          "name": "Pearsonův χ² test nezávislosti",
+          "latex": "\\chi^2 = \\sum_{i,j} \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}, \\qquad df = (r - 1)(c - 1)",
+          "note": "R: `chisq.test(tabulka)`. Pro malé očekávané četnosti $< 5$ použijte `fisher.test`."
+        },
+        {
+          "name": "Lineární regrese a koeficient determinace",
+          "latex": "\\hat{y} = b_0 + b_1 x, \\qquad b_1 = r\\frac{s_y}{s_x}, \\qquad R^2 = r^2",
+          "note": "R: `m <- lm(y ~ x)`, `summary(m)$r.squared`, `cor.test(x, y)`."
+        }
+      ]
+    },
+    {
+      "title": "5. Tabulka důležitých kvantilů (N(0,1) a Student t)",
+      "items": [
+        {
+          "name": "Normované normální rozdělení u_{1 - α/2}",
+          "latex": "\\begin{array}{c|ccc} 1 - \\alpha & 90\\,\\% & 95\\,\\% & 99\\,\\% \\\\ \\hline u_{1 - \\alpha/2} & 1{,}645 & 1{,}960 & 2{,}576 \\end{array}",
+          "note": "Jednostranný $95\\,\\%$ kvantil je $u_{0{,}95} = 1{,}645$; oboustranný $95\\,\\%$ je $u_{0{,}975} = 1{,}960$."
+        },
+        {
+          "name": "Studentovo rozdělení t_{0.975, ν} (95 % oboustranný)",
+          "latex": "\\begin{array}{c|cccccc} \\nu & 5 & 10 & 15 & 20 & 30 & \\infty \\\\ \\hline t_{0{,}975,\\,\\nu} & 2{,}571 & 2{,}228 & 2{,}131 & 2{,}086 & 2{,}042 & 1{,}960 \\end{array}",
+          "note": "V R libovolný kvantil získáte funkcí `qt(1 - alpha/2, df = n - 1)`."
+        }
+      ]
+    }
+  ]
+}
