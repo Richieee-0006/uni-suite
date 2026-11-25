@@ -4,9 +4,9 @@
       "title": "1. Chyby, podmíněnost a Hornerovo schéma",
       "items": [
         {
-          "name": "Absolutní a relativní chyba",
-          "latex": "\\Delta x = |\\tilde{x} - x|, \\qquad \\delta x = \\frac{|\\tilde{x} - x|}{|x|}",
-          "note": "IEEE 754 double: strojové epsilon $\\varepsilon_M = 2^{-52} \\approx 2{,}22 \\cdot 10^{-16}$ (15–17 platných cifer)."
+          "name": "Absolutní, relativní chyba a šíření chyb",
+          "latex": "\\Delta x = |\\tilde{x} - x|, \\quad \\delta x = \\frac{|\\tilde{x} - x|}{|x|}, \\quad \\delta(ab) \\approx \\delta a + \\delta b",
+          "note": "IEEE 754 double: strojové epsilon $\\varepsilon_M = 2^{-52} \\approx 2{,}22 \\cdot 10^{-16}$. Korektnost úlohy (Hadamard): existence, jednoznačnost, spojitá závislost na datech."
         },
         {
           "name": "Číslo podmíněnosti matice",
@@ -69,6 +69,11 @@
       "title": "4. Interpolace a metoda nejmenších čtverců",
       "items": [
         {
+          "name": "Po částech lineární interpolace",
+          "latex": "L(x) = y_i + \\frac{y_{i+1} - y_i}{x_{i+1} - x_i}(x - x_i), \\quad x \\in [x_i, x_{i+1}], \\quad |R| \\le \\frac{h^2}{8}\\max|f''|",
+          "note": "Spojitá ($C^0$), lokální a bez Rungeho oscilací."
+        },
+        {
           "name": "Lagrangeův interpolační polynom",
           "latex": "P_n(x) = \\sum_{i=0}^{n} y_i \\prod_{\\substack{j=0 \\\\ j \\neq i}}^{n} \\frac{x - x_j}{x_i - x_j}",
           "note": "Přidání nového uzlu vyžaduje přepočet všech bázových polynomů $L_i(x)$."
@@ -104,9 +109,9 @@
           "note": "Vyžaduje sudé $n$; přesné pro polynomy až do 3. stupně!"
         },
         {
-          "name": "Richardsonova extrapolace (Romberg)",
-          "latex": "R_{k,1} = \\frac{4 T(h/2) - T(h)}{3}",
-          "note": "První krok Rombergovy extrapolace z lichoběžníkového pravidla dává řád $O(h^4)$."
+          "name": "Rombergova kvadratura (Richardsonova extrapolace)",
+          "latex": "R_{k,j} = \\frac{4^j R_{k,j-1} - R_{k-1,j-1}}{4^j - 1}, \\qquad R_{k,1} = \\frac{4 T(h/2) - T(h)}{3}",
+          "note": "Postupně eliminuje sudé členy chyby $O(h^2), O(h^4), O(h^6), \\dots$"
         }
       ]
     },
@@ -116,7 +121,12 @@
         {
           "name": "Explicitní Eulerova metoda",
           "latex": "y_{k+1} = y_k + h\\, f(x_k, y_k), \\qquad E_{\\text{glob}} = O(h)",
-          "note": "Jednoduchá, ale vyžaduje velmi malý krok $h$ pro solidní přesnost."
+          "note": "Podmíněně stabilní: pro $y' = \\lambda y$ ($\\lambda < 0$) vyžaduje $|1 + h\\lambda| \\le 1$."
+        },
+        {
+          "name": "Heunova metoda (RK2)",
+          "latex": "k_1 = f(x_k, y_k), \\quad k_2 = f(x_k + h, y_k + h k_1), \\quad y_{k+1} = y_k + \\frac{h}{2}(k_1 + k_2)",
+          "note": "Jednokroková metoda řádu $O(h^2)$ (prediktor–korektor s průměrem sklonů)."
         },
         {
           "name": "Runge–Kutta 4. řádu (RK4)",

@@ -1,0 +1,185 @@
+{
+  "title": "06 · Numerické derivování a integrace, Romberg (T10–11)",
+  "lecture": 10,
+  "date": "2026-11-19",
+  "questions": [
+    {
+      "id": "num-04-q06",
+      "number": 1,
+      "type": "input_numeric",
+      "text": "Spočítejte přibližnou hodnotu integrálu $\\int_0^2 x^2\\,dx$ pomocí **složeného lichoběžníkového pravidla** pro $n = 2$ podintervaly (krok $h = 1$).",
+      "answer": 3,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Dělicí body jsou $x_0 = 0, x_1 = 1, x_2 = 2$ s hodnotami $f(0) = 0, f(1) = 1, f(2) = 4$.",
+        "Krok 2: Složené lichoběžníkové pravidlo: $T = \\frac{h}{2}\\big(f(x_0) + 2f(x_1) + f(x_2)\\big)$.",
+        "Vysvětlení: $T = \\frac{1}{2}(0 + 2\\cdot 1 + 4) = 3{,}0$ (přesný integrál je $\\frac{8}{3} \\approx 2{,}667$)."
+      ],
+      "explanation": "S krokem $h = 1$ dává složené lichoběžníkové pravidlo $T = \\frac{1}{2}(0 + 2\\cdot 1 + 4) = 3$. Protože je $x^2$ konvexní, sečny leží nad grafem a lichoběžníkové pravidlo výsledek nadhodnocuje."
+    },
+    {
+      "id": "num-04-q07",
+      "number": 2,
+      "type": "choice",
+      "text": "Jaký je stupeň přesnosti a řád chyby **složeného Simpsonova pravidla**?",
+      "options": {
+        "A": "Přesné pouze pro konstanty, chyba $O(h)$",
+        "B": "Přesné pro lineární funkce, chyba $O(h^2)$",
+        "C": "Přesné pro všechny polynomy až do stupně 3 (včetně kubik!), chyba $O(h^4)$",
+        "D": "Přesné pro libovolné funkce, chyba je vždy nulová"
+      },
+      "correct": ["C"],
+      "hints": [
+        "Krok 1: Simpsonovo pravidlo prokládá trojice bodů parabolou (stupně 2), ale díky symetrii se kubický chybový člen přesně vyruší!",
+        "Krok 2: Chybový člen obsahuje až čtvrtou derivaci $f^{(4)}(\\xi)$ a krok $h^4$.",
+        "Vysvětlení: Složené Simpsonovo pravidlo má chybu $O(h^4)$ a je algebraicky přesné pro polynomy stupně $\\le 3$."
+      ],
+      "explanation": "Ačkoli je Simpsonovo pravidlo odvozeno z kvadratického polynomu, díky symetrii integruje přesně i polynomy 3. stupně a jeho chyba pro hladkou funkci klesá velmi rychle jako $O(h^4)$."
+    },
+    {
+      "id": "num-04-q08",
+      "number": 3,
+      "type": "input_numeric",
+      "text": "Pomocí **Simpsonova pravidla** s $n = 2$ (krok $h = 1$, body $0, 1, 2$) vypočítejte $\\int_0^2 x^3\\,dx$.",
+      "answer": 4,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Simpsonův vzorec na 2 dílcích: $S = \\frac{h}{3}\\big(f(0) + 4f(1) + f(2)\\big)$.",
+        "Krok 2: Dosaďte $f(0) = 0$, $f(1) = 1$, $f(2) = 8$ a $h = 1$.",
+        "Vysvětlení: $S = \\frac{1}{3}(0 + 4\\cdot 1 + 8) = \\frac{12}{3} = 4{,}0$, což je přesná hodnota $\\left[\\frac{x^4}{4}\\right]_0^2 = 4$!"
+      ],
+      "explanation": "Simpsonovo pravidlo dává $\\frac{1}{3}(0 + 4 + 8) = 4$, což potvrzuje, že je přesné i pro kubické polynomy."
+    },
+    {
+      "id": "num-04-q09",
+      "number": 4,
+      "type": "choice",
+      "text": "Na jakém principu zvyšuje přesnost **Rombergova kvadratura**?",
+      "options": {
+        "A": "Mění lichoběžníkové pravidlo na náhodný výběr bodů (Monte Carlo)",
+        "B": "Kombinuje výsledky složeného lichoběžníkového pravidla pro kroky $h, h/2, h/4, \\dots$ pomocí Richardsonovy extrapolace a postupně eliminuje chybové členy $O(h^2), O(h^4), O(h^6), \\dots$",
+        "C": "Používá pouze krajní body intervalu $[a, b]$ bez dalšího dělení",
+        "D": "Řeší integrál analyticky pomocí symbolické algebry"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Chyba složeného lichoběžníkového pravidla se rozvíjí v sudé mocniny $h$: $c_2 h^2 + c_4 h^4 + c_6 h^6 + \\dots$",
+        "Krok 2: Lineární kombinace $R_{k,1} = \\frac{4 T(h/2) - T(h)}{3}$ přesně zruší člen $c_2 h^2$ (a shoduje se se Simpsonovým pravidlem!).",
+        "Vysvětlení: Opakovanou Richardsonovou extrapolací Rombergova tabulka rychle dosahuje řádů $O(h^4), O(h^6), O(h^8)$."
+      ],
+      "explanation": "Rombergova kvadratura spojuje složené lichoběžníkové pravidlo s Richardsonovou extrapolací: opakovaným půlením kroku $h$ eliminuje vedoucí sudé mocniny chyby."
+    },
+    {
+      "id": "num-04-q10",
+      "number": 5,
+      "type": "choice",
+      "text": "Proč má **centrální diference** $f'(x) \\approx \\frac{f(x+h) - f(x-h)}{2h}$ výrazně menší diskretizační chybu než dopředná diference $\\frac{f(x+h) - f(x)}{h}$?",
+      "options": {
+        "A": "Protože nevyžaduje dělení krokem $h$",
+        "B": "Protože v Taylorově rozvoji se sudé členy (včetně $h^2 f''(x)$) odečtou a chyba klesne z $O(h)$ na $O(h^2)$",
+        "C": "Protože zcela eliminuje zaokrouhlovací chybu",
+        "D": "Protože vyžaduje pouze jedno vyhodnocení funkce $f$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Napište Taylorův rozvoj pro $f(x+h)$ a $f(x-h)$ do členu s $h^3$.",
+        "Krok 2: Odečtěte oba rozvoje — členy s $f(x)$ a $\\frac{h^2}{2}f''(x)$ mají stejné znaménko, takže zmizí!",
+        "Vysvětlení: Po vydělení $2h$ zbývá první chybový člen $\\frac{h^2}{6}f'''(x) = O(h^2)$."
+      ],
+      "explanation": "Symetrický rozdíl $f(x+h) - f(x-h)$ ruší kvadratický člen Taylorova rozvoje, čímž zvyšuje řád přesnosti numerické derivace z $O(h)$ na $O(h^2)$."
+    },
+    {
+      "id": "num-06-q01",
+      "number": 6,
+      "type": "choice",
+      "text": "Proč v praxi místo jednoho **jednoduchého Newtonova–Cotesova vzorce** vysokého řádu ($n \\ge 8$) na celém intervalu $[a, b]$ používáme **složené vzorce** nízkého řádu (lichoběžníkové, Simpsonovo)?",
+      "options": {
+        "A": "Jednoduché vzorce pro $n \\ge 8$ neexistují",
+        "B": "U vysokých řádů se objevují záporné integrační váhy a Rungeho oscilace, takže vzorec ztrácí stabilitu a může divergovat",
+        "C": "Složené vzorce vyžadují méně vyhodnocení funkce než jednoduchý lichoběžník",
+        "D": "Jednoduché Newtonovy–Cotesovy vzorce fungují jen pro $a = 0$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Newtonovy–Cotesovy vzorce vznikají integrací Lagrangeova interpolačního polynomu na ekvidistantních uzlech.",
+        "Krok 2: Od $n = 8$ nabývají některé váhy $w_i$ záporných hodnot, což zesiluje zaokrouhlovací chyby i oscilace.",
+        "Vysvětlení: Složené vzorce dělí $[a, b]$ na malé dílky s kladnými váhami a garantují konvergenci při $h \\to 0$."
+      ],
+      "explanation": "Vysokořádové Newtonovy–Cotesovy vzorce mají záporné váhy a dědí nestabilitu ekvidistantní polynomiální interpolace. Složené vzorce s kladnými váhami jsou stabilní a spolehlivé."
+    },
+    {
+      "id": "num-06-q02",
+      "number": 7,
+      "type": "input_numeric",
+      "text": "V **Rombergově tabulce** pro určitý integrál vyšlo lichoběžníkové pravidlo pro $n=1$ jako $R_{0,0} = 4{,}0$ a pro $n=2$ jako $R_{1,0} = 3{,}0$. Spočítejte extrapolovanou hodnotu $R_{1,1}$ (řádu $O(h^4)$).",
+      "answer": 2.6667,
+      "tolerance": 0.005,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Obecný rekurentní vzorec Rombergovy tabulky je $R_{k,j} = \\frac{4^j R_{k,j-1} - R_{k-1,j-1}}{4^j - 1}$.",
+        "Krok 2: Pro $j = 1$ dostaneme $R_{1,1} = \\frac{4 R_{1,0} - R_{0,0}}{3}$.",
+        "Vysvětlení: $R_{1,1} = \\frac{4 \\cdot 3{,}0 - 4{,}0}{3} = \\frac{8}{3} \\approx 2{,}6667$ (přesně $\\int_0^2 x^2\\,dx$!)."
+      ],
+      "explanation": "První Richardsonova extrapolace $R_{1,1} = \\frac{4 \\cdot 3 - 4}{3} = \\frac{8}{3} \\approx 2{,}6667$ zcela odstranila chybu $O(h^2)$ lichoběžníkového pravidla a dala přesný integrál $\\int_0^2 x^2\\,dx$."
+    },
+    {
+      "id": "num-06-q03",
+      "number": 8,
+      "type": "input_numeric",
+      "text": "Odhadněte druhou derivaci $f''(1)$ pro $f(x) = x^3$ pomocí **centrální diference druhého řádu** $f''(x) \\approx \\frac{f(x+h) - 2f(x) + f(x-h)}{h^2}$ s krokem $h = 0{,}5$.",
+      "answer": 6,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Vyhodnoťte $f(1{,}5) = 3{,}375$, $f(1) = 1$, $f(0{,}5) = 0{,}125$.",
+        "Krok 2: Dosaďte do vzorce s $h^2 = 0{,}25$: $\\frac{3{,}375 - 2 + 0{,}125}{0{,}25}$.",
+        "Vysvětlení: $\\frac{1{,}5}{0{,}25} = 6{,}0$ (shoduje se přesně s analytickou derivací $f''(x) = 6x$, protože chyba je $O(h^2 f^{(4)})$ a $f^{(4)} \\equiv 0$)."
+      ],
+      "explanation": "Centrální diference pro 2. derivaci má chybu $\\frac{h^2}{12} f^{(4)}(\\xi) = O(h^2)$, takže pro kubiku $x^3$ je zcela přesná: $\\frac{3{,}375 - 2 + 0{,}125}{0{,}25} = 6$."
+    },
+    {
+      "id": "num-06-q04",
+      "number": 9,
+      "type": "choice",
+      "text": "Jaký řád přesnosti má **složené středové obdélníkové pravidlo** $M_n = h \\sum_{i=0}^{n-1} f\\left(x_i + \\frac{h}{2}\\right)$ (otevřený Newtonův–Cotesův vzorec)?",
+      "options": {
+        "A": "$O(h)$, stejně jako levé/pravé obdélníkové pravidlo",
+        "B": "$O(h^2)$ — přesné pro lineární funkce a dokonce s poloviční konstantou chyby oproti lichoběžníkovému pravidlu",
+        "C": "$O(h^4)$, stejně jako Simpsonovo pravidlo",
+        "D": "Nekonverguje pro spojité funkce"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Nad každým podintervalem se přebytek a nedostatek plochy u lineární funkce vůči středu přesně vyruší.",
+        "Krok 2: Globální chyba je $\\frac{b-a}{24} h^2 f''(\\xi)$ oproti $-\\frac{b-a}{12} h^2 f''(\\xi)$ u lichoběžníkového pravidla.",
+        "Vysvětlení: Středové obdélníkové pravidlo je řádu $O(h^2)$ a nevyhodnocuje funkci v krajních bodech $a, b$ (hodí se u nevlastních integrálů)."
+      ],
+      "explanation": "Díky symetrii kolem středu každého podintervalu má středové obdélníkové pravidlo řád $O(h^2)$ a zhruba poloviční chybu než lichoběžníkové pravidlo."
+    },
+    {
+      "id": "num-06-q05",
+      "number": 10,
+      "type": "choice",
+      "text": "Jakou integrální metodu zvolíte pro velmi hladkou funkci $f \\in C^\\infty[a, b]$ bez singularit, když požadujete vysokou přesnost ($10^{-10}$) s malým počtem vyhodnocení $f$?",
+      "options": {
+        "A": "Levé obdélníkové pravidlo s milionem kroků",
+        "B": "Rombergovu kvadraturu (nebo Gaussovu kvadraturu), která využívá hladkost $f$ k dosažení vysokého řádu přesnosti",
+        "C": "Po částech lineární interpolaci bez dělení",
+        "D": "Explicitní Eulerovu metodu"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Levé obdélníky ($O(h)$) by pro $10^{-10}$ potřebovaly řádově $10^{10}$ vyhodnocení!",
+        "Krok 2: Rombergova kvadratura postupně eliminuje členy $O(h^2), O(h^4), O(h^6), O(h^8)\\dots$",
+        "Vysvětlení: Pro hladké funkce dosáhne Rombergova tabulka řádu $10^{-10}$ už kolem 5.–6. řádku ($2^5 = 32$ až $64$ dílků)."
+      ],
+      "explanation": "Pro hladké funkce bez zlomů konverguje Rombergova kvadratura superlineárně a šetří řády výpočetního času oproti obdélníkovému či samotnému lichoběžníkovému pravidlu."
+    }
+  ]
+}

@@ -3,15 +3,61 @@
   "code": "KI/NUM",
   "short": "NUM",
   "title": "Numerické metody",
-  "description": "Chyby výpočtu, hledání kořenů, soustavy rovnic, interpolace, integrace a aproximace",
+  "description": "Stabilita a chyby algoritmů, nelineární rovnice, soustavy, interpolace, MNC, derivování, integrace a ODR v Pythonu či R",
   "visibility": "public",
   "provider": {
     "type": "obsidian",
     "folder": "NUM"
   },
+  "annotation": "V předmětu jsou studentům představeny základní metody numerické matematiky a možnosti jejich použití v praxi. Studenti si osvojí nezbytné teoretické znalosti (schopnost popisu, rozboru a odvození vybraných algoritmů), které spolu s praktickými dovednostmi nabytými v předmětu Matematický software využijí k řešení komplexnějších úloh z praxe. Hlavním cílem je rozšířit kompetence v programování v Pythonu či R za použití algoritmů numerické matematiky a dokázat zvolit vhodnou metodu pro řešení zadaného problému.",
+  "requirements": "Praktický test (řešení zadaných úloh na počítači v počítačové učebně v Pythonu či R).",
+  "syllabus": [
+    {
+      "weeks": "1. týden",
+      "title": "Vlastnosti numerických algoritmů: stabilita, korektnost a podmíněnost úlohy, typy chyb a jejich šíření"
+    },
+    {
+      "weeks": "2.–3. týden",
+      "title": "Řešení nelineárních rovnic: metoda půlení intervalu, regula falsi, metoda prostých iterací, Newtonova metoda tečen, Hornerovo schéma a kořeny polynomu (Newtonova–Hornerova metoda)"
+    },
+    {
+      "weeks": "4.–5. týden",
+      "title": "Řešení soustav lineárních rovnic: přímé metody (Gaussova eliminační metoda, metoda LU rozkladu), iterační metody (Jacobiova, Gaussova–Seidelova)"
+    },
+    {
+      "weeks": "6.–7. týden",
+      "title": "Interpolace: po částech lineární a polynomem (v Lagrangově a Newtonově tvaru)"
+    },
+    {
+      "weeks": "8.–9. týden",
+      "title": "Aproximace metodou nejmenších čtverců"
+    },
+    {
+      "weeks": "10.–11. týden",
+      "title": "Numerické derivování a integrace (Newtonovy–Cotesovy vzorce jednoduché a složené, Rombergova kvadratura)"
+    },
+    {
+      "weeks": "12.–13. týden",
+      "title": "Numerické řešení obyčejných diferenciálních rovnic: jednokrokové metody (Eulerova metoda, metody Rungeho–Kutty)"
+    }
+  ],
+  "literature": [
+    {
+      "kind": "Základní",
+      "citation": "Vicher, M. Numerická matematika, skripta UJEP, Ústí n. Lab., 2003."
+    },
+    {
+      "kind": "Základní",
+      "citation": "VONDRÁK, V. a L. POSPÍŠIL. Numerické metody 1. 2011."
+    },
+    {
+      "kind": "Doporučená",
+      "citation": "KUBEN, J. a P. RAČKOVÁ. Numerické metody. Brno: Univerzita obrany, 2016. ISBN 978-80-7231-373-0."
+    }
+  ],
   "engines": ["choice", "input_numeric", "recall", "code_task", "multi_step"],
   "sandbox": {
-    "languages": ["r"],
+    "languages": ["r", "python"],
     "default_tier": "webr",
     "timeout_ms": 5000
   },

@@ -1,7 +1,7 @@
 {
-  "title": "04 · Interpolace, aproximace, integrace a ODR",
-  "lecture": 4,
-  "date": "2026-10-22",
+  "title": "04 · Interpolace: po částech lineární, Lagrange a Newton (T6–7)",
+  "lecture": 6,
+  "date": "2026-11-05",
   "questions": [
     {
       "id": "num-04-q01",
@@ -64,7 +64,7 @@
       "text": "Co je **Rungeho fenomén** a jak mu v numerických metodách spolehlivě předejít?",
       "options": {
         "A": "Přetečení exponentu při dělení nulou; řeší se pivotací",
-        "B": "Silné oscilace interpolačního polynomu vysokého stupně u okrajů intervalu při ekvidistantních uzlech; řeší se kubickými spliny nebo Čebyševovými uzly",
+        "B": "Silné oscilace interpolačního polynomu vysokého stupně u okrajů intervalu při ekvidistantních uzlech; řeší se po částech interpolací (spliny / lomená čára) nebo Čebyševovými uzly",
         "C": "Pomalá konvergence bisekce; řeší se Newtonovou metodou",
         "D": "Ztráta symetrie matice při LU rozkladu; řeší se Choleského rozkladem"
       },
@@ -72,152 +72,117 @@
       "hints": [
         "Krok 1: Vzpomeňte si na klasickou Rungeho funkci $f(x) = \\frac{1}{1 + 25x^2}$ na $[-1, 1]$.",
         "Krok 2: Zvyšování počtu rovnoměrně rozmístěných uzlů zhoršuje chybu poblíž $x = \\pm 1$.",
-        "Vysvětlení: Místo jednoho polynomu stupně 20 použijeme po částech kubické spliny nebo zahustíme uzly u krajů (Čebyševovy uzly)."
+        "Vysvětlení: Místo jednoho globálního polynomu vysokého stupně použijeme po částech interpolaci (lineární nebo kubické spliny) nebo zahustíme uzly u krajů (Čebyševovy uzly)."
       ],
-      "explanation": "Rungeho fenomén ukazuje, že polynomiální interpolace vysokého stupně na ekvidistantních uzlech může u krajů intervalu divergovat. Řešením jsou spliny (po částech nízkostupňové polynomy) nebo Čebyševovy uzly."
+      "explanation": "Rungeho fenomén ukazuje, že globální polynomiální interpolace vysokého stupně na ekvidistantních uzlech může u krajů intervalu divergovat. Řešením je po částech interpolace nebo Čebyševovy uzly."
     },
     {
-      "id": "num-04-q05",
+      "id": "num-04-q13",
       "number": 5,
+      "type": "input_numeric",
+      "text": "Máme tabulku hodnot $(0, 2)$, $(2, 6)$, $(5, 15)$. Určete hodnotu **po částech lineární interpolace** v bodě $x = 3{,}5$.",
+      "answer": 10.5,
+      "tolerance": 0.01,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Bod $x = 3{,}5$ leží v podintervalu $[2, 5]$ mezi uzly $(2, 6)$ a $(5, 15)$ — první bod $(0, 2)$ se nepoužije!",
+        "Krok 2: Lineární interpolace na $[x_i, x_{i+1}]$: $L(x) = y_i + \\frac{y_{i+1} - y_i}{x_{i+1} - x_i}(x - x_i)$.",
+        "Vysvětlení: $L(3{,}5) = 6 + \\frac{15 - 6}{5 - 2}(3{,}5 - 2) = 6 + 3 \\cdot 1{,}5 = 10{,}5$."
+      ],
+      "explanation": "Po částech lineární interpolace spojuje sousední uzly úsečkami. Pro $x \\in [2, 5]$ má úsečka směrnici $\\frac{15-6}{5-2} = 3$, takže $L(3{,}5) = 6 + 3 \\cdot 1{,}5 = 10{,}5$."
+    },
+    {
+      "id": "num-04-q14",
+      "number": 6,
       "type": "choice",
-      "text": "Jakou maticovou soustavu (**normální rovnice**) řešíme při hledání vektoru parametrů $\\vec{c}$ lineární aproximace metodou nejmenších čtverců $\\min \\|A\\vec{c} - \\vec{y}\\|_2^2$?",
+      "text": "Jaká je hlavní vlastnost a horní odhad chyby **po částech lineární interpolace** na rovnoměrné síti s krokem $h$ pro dvakrát spojitě diferencovatelnou funkci $f \\in C^2[a, b]$?",
       "options": {
-        "A": "$A\\vec{c} = \\vec{y}$",
-        "B": "$A^T A \\vec{c} = A^T \\vec{y}$",
-        "C": "$A A^T \\vec{c} = \\vec{y}$",
-        "D": "$(A + A^T)\\vec{c} = \\vec{y}$"
+        "A": "Je všude nekonečně diferencovatelná, chyba $O(h)$",
+        "B": "Je spojitá ($C^0$, v uzlech má lomy), netrpí Rungeho fenoménem a její chyba je $|f(x) - L(x)| \\le \\frac{h^2}{8} \\max |f''(\\xi)| = O(h^2)$",
+        "C": "Její chyba klesá jako $O(h^4)$ bez ohledu na $f''$",
+        "D": "Vyžaduje řešení husté soustavy $n \\times n$ s Vandermondovou maticí"
       },
       "correct": ["B"],
       "hints": [
-        "Krok 1: Přeurčená matice $A$ má rozměr $m \\times p$ ($m > p$), takže není čtvercová.",
-        "Krok 2: Položíme gradient funkce $S(\\vec{c}) = (A\\vec{c} - \\vec{y})^T(A\\vec{c} - \\vec{y})$ roven nule.",
-        "Vysvětlení: $\\nabla S(\\vec{c}) = 2A^T(A\\vec{c} - \\vec{y}) = \\vec{0} \\iff A^T A \\vec{c} = A^T \\vec{y}$."
+        "Krok 1: Lomená čára procházející uzly je spojitá, ale v uzlech se mění její směrnice.",
+        "Krok 2: Na každém podintervalu $[x_i, x_{i+1}]$ délky $h$ je zbytek lineární interpolace $|(x-x_i)(x-x_{i+1})| \\le \\frac{h^2}{4}$ násobený $\\frac{1}{2}|f''(\\xi)|$.",
+        "Vysvětlení: Proto platí odhad $\\frac{h^2}{8} M_2 = O(h^2)$ a zjemněním sítě chyba spolehlivě klesá k nule."
       ],
-      "explanation": "Normální soustava $A^T A \\vec{c} = A^T \\vec{y}$ převádí přeurčený problém ($m > p$) na čtvercovou symetrickou soustavu rozměru $p \\times p$. (Pro špatně podmíněné matice se používá QR rozklad.)"
+      "explanation": "Po částech lineární interpolace je lokální, rychlá ($O(1)$ po nalezení podintervalu), netrpí Rungeho fenoménem a konverguje k $f$ rychlostí $O(h^2)$, pouze není v uzlech hladká ($C^0$)."
     },
     {
-      "id": "num-04-q06",
-      "number": 6,
-      "type": "input_numeric",
-      "text": "Spočítejte přibližnou hodnotu integrálu $\\int_0^2 x^2\\,dx$ pomocí **složeného lichoběžníkového pravidla** pro $n = 2$ podintervaly (krok $h = 1$).",
-      "answer": 3,
-      "tolerance": 0.001,
-      "tolerance_mode": "abs",
-      "unit": "",
-      "hints": [
-        "Krok 1: Dělicí body jsou $x_0 = 0, x_1 = 1, x_2 = 2$ s hodnotami $f(0) = 0, f(1) = 1, f(2) = 4$.",
-        "Krok 2: Složené lichoběžníkové pravidlo: $T = \\frac{h}{2}\\big(f(x_0) + 2f(x_1) + f(x_2)\\big)$.",
-        "Vysvětlení: $T = \\frac{1}{2}(0 + 2\\cdot 1 + 4) = 3{,}0$ (přesný integrál je $\\frac{8}{3} \\approx 2{,}667$)."
-      ],
-      "explanation": "S krokem $h = 1$ dává složené lichoběžníkové pravidlo $T = \\frac{1}{2}(0 + 2\\cdot 1 + 4) = 3$. Protože je $x^2$ konvexní, sečny leží nad grafem a lichoběžníkové pravidlo výsledek nadhodnocuje."
-    },
-    {
-      "id": "num-04-q07",
+      "id": "num-04-q15",
       "number": 7,
-      "type": "choice",
-      "text": "Jaký je stupeň přesnosti a řád chyby **složeného Simpsonova pravidla**?",
-      "options": {
-        "A": "Přesné pouze pro konstanty, chyba $O(h)$",
-        "B": "Přesné pro lineární funkce, chyba $O(h^2)$",
-        "C": "Přesné pro všechny polynomy až do stupně 3 (včetně kubik!), chyba $O(h^4)$",
-        "D": "Přesné pro libovolné funkce, chyba je vždy nulová"
-      },
-      "correct": ["C"],
-      "hints": [
-        "Krok 1: Simpsonovo pravidlo prokládá trojice bodů parabolou (stupně 2), ale díky symetrii se kubický chybový člen přesně vyruší!",
-        "Krok 2: Chybový člen obsahuje až čtvrtou derivaci $f^{(4)}(\\xi)$ a krok $h^4$.",
-        "Vysvětlení: Složené Simpsonovo pravidlo má chybu $O(h^4)$ a je algebraicky přesné pro polynomy stupně $\\le 3$."
-      ],
-      "explanation": "Ačkoli je Simpsonovo pravidlo odvozeno z kvadratického polynomu, díky symetrii integruje přesně i polynomy 3. stupně a jeho chyba pro hladkou funkci klesá velmi rychle jako $O(h^4)$."
-    },
-    {
-      "id": "num-04-q08",
-      "number": 8,
       "type": "input_numeric",
-      "text": "Pomocí **Simpsonova pravidla** s $n = 2$ (krok $h = 1$, body $0, 1, 2$) vypočítejte $\\int_0^2 x^3\\,dx$.",
-      "answer": 4,
+      "text": "Vypočítejte druhou **poměrnou diferenci** $f[x_0, x_1, x_2]$ Newtonova interpolačního polynomu pro uzly $(0, 1)$, $(1, 2)$, $(3, 10)$.",
+      "answer": 1,
       "tolerance": 0.001,
       "tolerance_mode": "abs",
       "unit": "",
       "hints": [
-        "Krok 1: Simpsonův vzorec na 2 dílcích: $S = \\frac{h}{3}\\big(f(0) + 4f(1) + f(2)\\big)$.",
-        "Krok 2: Dosaďte $f(0) = 0$, $f(1) = 1$, $f(2) = 8$ a $h = 1$.",
-        "Vysvětlení: $S = \\frac{1}{3}(0 + 4\\cdot 1 + 8) = \\frac{12}{3} = 4{,}0$, což je přesná hodnota $\\left[\\frac{x^4}{4}\\right]_0^2 = 4$!"
+        "Krok 1: Nejprve určete první poměrné diference: $f[x_0, x_1] = \\frac{2 - 1}{1 - 0} = 1$ a $f[x_1, x_2] = \\frac{10 - 2}{3 - 1} = 4$.",
+        "Krok 2: Druhá poměrná diference je $f[x_0, x_1, x_2] = \\frac{f[x_1, x_2] - f[x_0, x_1]}{x_2 - x_0}$.",
+        "Vysvětlení: $f[0, 1, 3] = \\frac{4 - 1}{3 - 0} = \\frac{3}{3} = 1$ (odpovídá vedoucímu koeficientu polynomu $x^2 + 1$)."
       ],
-      "explanation": "Simpsonovo pravidlo dává $\\frac{1}{3}(0 + 4 + 8) = 4$, což potvrzuje, že je přesné i pro kubické polynomy."
+      "explanation": "Poměrné diference tvoří rekurzivní tabulku: $f[0,1]=1$, $f[1,3]=4$, a tedy $f[0,1,3] = \\frac{4-1}{3-0} = 1$. Newtonův tvar je $P_2(x) = 1 + 1(x-0) + 1(x-0)(x-1) = x^2 + 1$."
     },
     {
-      "id": "num-04-q09",
+      "id": "num-04-q16",
+      "number": 8,
+      "type": "choice",
+      "text": "Proč se při praktické konstrukci interpolačního polynomu stupně $n$ nedoporučuje přímé řešení soustavy s **Vandermondovou maticí** $V \\vec{a} = \\vec{y}$?",
+      "options": {
+        "A": "Vandermondova matice je vždy singulární pro $n \\ge 3$",
+        "B": "Vandermondova matice je pro vyšší $n$ silně špatně podmíněná ($\\kappa(V)$ roste exponenciálně s $n$), takže řešení soustavy ztrácí přesnost",
+        "C": "Vandermondova soustava dává jiný polynom než Lagrangeův tvar",
+        "D": "Řešení Vandermondovy soustavy vyžaduje znalost derivace $f'(x)$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Sloupce Vandermondovy matice jsou mocniny $1, x, x^2, \\dots, x^n$, které jsou pro vyšší $n$ téměř lineárně závislé.",
+        "Krok 2: Číslo podmíněnosti $\\kappa(V)$ prudce roste a vyžaduje navíc čas $O(n^3)$.",
+        "Vysvětlení: Lagrangeův a zejména Newtonův tvar s poměrnými diferencemi jsou numericky lépe podmíněné a rychlejší ($O(n^2)$)."
+      ],
+      "explanation": "Ačkoli Vandermondova matice pro navzájem různé uzly je regulární, její číslo podmíněnosti roste s $n$ exponenciálně. Proto v praxi používáme Newtonův tvar, barycentrickou Lagrangeovu formu nebo po částech interpolaci."
+    },
+    {
+      "id": "num-04-q17",
       "number": 9,
       "type": "choice",
-      "text": "Na jakém principu zvyšuje přesnost **Rombergova integrace**?",
+      "text": "Jaký je teoretický tvar **zbytku (chyby) polynomiální interpolace** $R_n(x) = f(x) - P_n(x)$ pro $n + 1$ uzlů $x_0, \\dots, x_n$ a funkci $f \\in C^{n+1}$?",
       "options": {
-        "A": "Mění lichoběžníkové pravidlo na náhodný výběr bodů (Monte Carlo)",
-        "B": "Kombinuje výsledky lichoběžníkového pravidla pro kroky $h, h/2, h/4, \\dots$ pomocí Richardsonovy extrapolace a postupně eliminuje chybové členy $O(h^2), O(h^4), O(h^6), \\dots$",
-        "C": "Používá pouze krajní body intervalu $[a, b]$ bez dalšího dělení",
-        "D": "Řeší integrál analyticky pomocí symbolické algebry"
+        "A": "$R_n(x) = \\frac{f^{(n+1)}(\\xi)}{(n+1)!} \\prod_{i=0}^{n} (x - x_i)$ pro nějaké $\\xi$ z intervalu obsahujícího uzly a bod $x$",
+        "B": "$R_n(x) = \\frac{f'(x)}{n} \\sum_{i=0}^{n} (x - x_i)$",
+        "C": "$R_n(x) = h^2 \\max |f(x)|$",
+        "D": "$R_n(x) = 0$ pro jakoukoli spojitou funkci"
       },
-      "correct": ["B"],
+      "correct": ["A"],
       "hints": [
-        "Krok 1: Chyba složeného lichoběžníkového pravidla se rozvíjí v sudé mocniny $h$: $c_2 h^2 + c_4 h^4 + c_6 h^6 + \\dots$",
-        "Krok 2: Lineární kombinace $R_{k,1} = \\frac{4 T(h/2) - T(h)}{3}$ přesně zruší člen $c_2 h^2$ (a shoduje se se Simpsonovým pravidlem!).",
-        "Vysvětlení: Opakovanou Richardsonovou extrapolací Rombergova tabulka rychle dosahuje řádů $O(h^4), O(h^6), O(h^8)$."
+        "Krok 1: Chyba interpolace musí být přesně rovna nule v každém uzlu $x = x_i$ — proto obsahuje součin $\\prod_{i=0}^{n}(x - x_i)$.",
+        "Krok 2: Pro polynomy stupně $\\le n$ je $(n+1)$-ní derivace nulová, takže interpolace je přesná.",
+        "Vysvětlení: Čebyševovy uzly minimalizují právě maximum součinu $\\left|\\prod_{i=0}^n (x - x_i)\\right|$ na $[-1, 1]$."
       ],
-      "explanation": "Rombergova metoda spojuje složené lichoběžníkové pravidlo s Richardsonovou extrapolací: opakovaným půlením kroku $h$ eliminuje vedoucí sudé mocniny chyby."
+      "explanation": "Cauchyho tvar zbytku $R_n(x) = \\frac{f^{(n+1)}(\\xi)}{(n+1)!}\\prod_{i=0}^n(x-x_i)$ vysvětluje, proč interpolace přesně reprodukuje polynomy stupně $\\le n$ a proč volba uzlů (např. Čebyševových) zásadně ovlivňuje chybu."
     },
     {
-      "id": "num-04-q10",
+      "id": "num-04-q18",
       "number": 10,
       "type": "choice",
-      "text": "Proč má **centrální diference** $f'(x) \\approx \\frac{f(x+h) - f(x-h)}{2h}$ výrazně menší diskretizační chybu než dopředná diference $\\frac{f(x+h) - f(x)}{h}$?",
+      "text": "Kterou metodu zvolíte, pokud máte **50 přesně zadaných bodů** hladké tabulkované funkce na ekvidistantní síti a potřebujete spolehlivě vyhodnocovat mezilehlé hodnoty bez rizika oscilací?",
       "options": {
-        "A": "Protože nevyžaduje dělení krokem $h$",
-        "B": "Protože v Taylorově rozvoji se sudé členy (včetně $h^2 f''(x)$) odečtou a chyba klesne z $O(h)$ na $O(h^2)$",
-        "C": "Protože zcela eliminuje zaokrouhlovací chybu",
-        "D": "Protože vyžaduje pouze jedno vyhodnocení funkce $f$"
+        "A": "Jeden globální Lagrangeův polynom 49. stupně",
+        "B": "Po částech lineární interpolaci (příp. po částech kubický spline)",
+        "C": "Lineární regresi jedinou přímkou přes celý interval",
+        "D": "Explicitní Eulerovu metodu"
       },
       "correct": ["B"],
       "hints": [
-        "Krok 1: Napište Taylorův rozvoj pro $f(x+h)$ a $f(x-h)$ do členu s $h^3$.",
-        "Krok 2: Odečtěte oba rozvoje — členy s $f(x)$ a $\\frac{h^2}{2}f''(x)$ mají stejné znaménko, takže zmizí!",
-        "Vysvětlení: Po vydělení $2h$ zbývá první chybový člen $\\frac{h^2}{6}f'''(x) = O(h^2)$."
+        "Krok 1: Globální polynom 49. stupně na ekvidistantních uzlech téměř jistě zkolabuje kvůli Rungeho fenoménu.",
+        "Krok 2: Data jsou přesná (nezašuměná), takže jediná globální přímka MNC by funkci zkreslila.",
+        "Vysvětlení: Po částech interpolace (lineární pro jednoduchost a zaručenou monotonii, nebo spliny pro hladkost) je pro 50 ekvidistantních bodů ideální."
       ],
-      "explanation": "Symetrický rozdíl $f(x+h) - f(x-h)$ ruší kvadratický člen Taylorova rozvoje, čímž zvyšuje řád přesnosti numerické derivace z $O(h)$ na $O(h^2)$."
-    },
-    {
-      "id": "num-04-q11",
-      "number": 11,
-      "type": "input_numeric",
-      "text": "Řešíme ODR $y' = y$ s počáteční podmínkou $y(0) = 1$ pomocí **explicitní Eulerovy metody** s krokem $h = 0{,}5$. Jakou aproximaci $y_2 \\approx y(1)$ získáme po 2 krocích?",
-      "answer": 2.25,
-      "tolerance": 0.001,
-      "tolerance_mode": "abs",
-      "unit": "",
-      "hints": [
-        "Krok 1: Eulerův krok má tvar $y_{k+1} = y_k + h \\cdot f(x_k, y_k) = y_k + 0{,}5 y_k = 1{,}5 y_k$.",
-        "Krok 2: Po 1. kroku: $y_1 = 1 + 0{,}5 \\cdot 1 = 1{,}5$.",
-        "Vysvětlení: Po 2. kroku: $y_2 = 1{,}5 + 0{,}5 \\cdot 1{,}5 = 2{,}25$ (přesné řešení $e^1 \\approx 2{,}7183$, což ukazuje hrubou chybu $O(h)$ Eulerovy metody)."
-      ],
-      "explanation": "Eulerova metoda dává $y_1 = 1{,}5$ a $y_2 = 1{,}5^2 = 2{,}25$. Znatelná odchylka od $e \\approx 2{,}718$ je důvodem, proč se v praxi používá RK4."
-    },
-    {
-      "id": "num-04-q12",
-      "number": 12,
-      "type": "choice",
-      "text": "Jaký je globální řád přesnosti klasické **Rungeho–Kuttovy metody 4. řádu (RK4)** a jaké váhy používá pro sklony $k_1, k_2, k_3, k_4$?",
-      "options": {
-        "A": "Řád $O(h^2)$, váhy $\\frac{1}{4}(k_1 + k_2 + k_3 + k_4)$",
-        "B": "Řád $O(h^4)$, váhy $\\frac{1}{6}(k_1 + 2k_2 + 2k_3 + k_4)$",
-        "C": "Řád $O(h)$, váhy $k_1$",
-        "D": "Řád $O(h^3)$, váhy $\\frac{1}{3}(k_1 + k_2 + k_4)$"
-      },
-      "correct": ["B"],
-      "hints": [
-        "Krok 1: Sklony $k_2$ a $k_3$ se vyhodnocují ve středu kroku $x_k + h/2$, a proto dostávají dvojnásobnou váhu.",
-        "Krok 2: Součet vah musí být 1: $\\frac{1 + 2 + 2 + 1}{6} = 1$ (obdoba Simpsonova pravidla).",
-        "Vysvětlení: RK4 kombinuje 4 vyhodnocení pravé strany do váženého průměru $\\frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)$ a dosahuje globální chyby $O(h^4)$."
-      ],
-      "explanation": "Klasická RK4 metoda vyhodnotí směrnici na začátku ($k_1$), dvakrát uprostřed kroku ($k_2, k_3$) a na konci ($k_4$) a zkombinuje je váhami $(1, 2, 2, 1)/6$, což přináší globální řád přesnosti $O(h^4)$."
+      "explanation": "Globální polynom stupně 49 na rovnoměrných uzlech trpí silnými oscilacemi u krajů. Po částech interpolace (lomená čára či spline) pracuje lokálně s nízkým stupněm a zaručuje stabilní výsledky."
     }
   ]
 }

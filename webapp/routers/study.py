@@ -178,6 +178,17 @@ def sanitize_question_for_client(question: dict[str, Any], mode: str) -> dict[st
                 _sanitize_step(step) for step in val if isinstance(step, dict)
             ]
             continue
+        if key == "languages" and isinstance(val, dict):
+            clean_langs: dict[str, dict[str, Any]] = {}
+            for lang_code, variant in val.items():
+                if isinstance(variant, dict):
+                    clean_langs[str(lang_code)] = {
+                        vk: vv
+                        for vk, vv in variant.items()
+                        if vk not in _SECRET_QUESTION_KEYS
+                    }
+            clean["languages"] = clean_langs
+            continue
         clean[key] = val
 
     qtype = str(question.get("type") or "choice").strip().lower()

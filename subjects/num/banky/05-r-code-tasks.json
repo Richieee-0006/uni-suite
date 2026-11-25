@@ -1,7 +1,7 @@
 {
-  "title": "05 · Praktické úlohy v R (Sandbox)",
-  "lecture": 5,
-  "date": "2026-10-29",
+  "title": "08 · Praktický test v R a Pythonu (Sandbox)",
+  "lecture": 13,
+  "date": "2026-11-26",
   "questions": [
     {
       "id": "num-code-01",
@@ -9,7 +9,7 @@
       "type": "code_task",
       "language": "r",
       "title": "Metoda půlení intervalu (Bisekce)",
-      "text": "Implementujte funkci `bisection(f, a, b, tol = 1e-6, max_iter = 100)`, která najde kořen spojité funkce `f` na intervalu `[a, b]` se změnou znaménka `f(a) * f(b) < 0`. Zastavte iteraci, jakmile platí `abs(f(mid)) < tol` nebo `(b - a) / 2 < tol`, a vraťte střed intervalu `mid`.",
+      "text": "Implementujte funkci `bisection(f, a, b, tol=1e-6, max_iter=100)`, která najde kořen spojité funkce `f` na intervalu `[a, b]` se změnou znaménka `f(a) * f(b) < 0`. Zastavte iteraci, jakmile platí `abs(f(mid)) < tol` nebo `(b - a) / 2 < tol`, a vraťte střed intervalu `mid`.",
       "formula": "c_k = \\frac{a_k + b_k}{2}, \\quad |x^* - c_k| \\le \\frac{b - a}{2^{k+1}}",
       "starter_code": "bisection <- function(f, a, b, tol = 1e-6, max_iter = 100) {\n  # Doplňte kontrolu znamének a iterační cyklus bisekce\n  \n}\n",
       "solution_code": "bisection <- function(f, a, b, tol = 1e-6, max_iter = 100) {\n  fa <- f(a)\n  fb <- f(b)\n  if (fa * fb > 0) stop(\"Interval neobsahuje zmenu znamenka\")\n  for (i in seq_len(max_iter)) {\n    mid <- (a + b) / 2\n    fmid <- f(mid)\n    if (abs(fmid) < tol || (b - a) / 2 < tol) return(mid)\n    if (fa * fmid < 0) {\n      b <- mid\n      fb <- fmid\n    } else {\n      a <- mid\n      fa <- fmid\n    }\n  }\n  (a + b) / 2\n}\n",
@@ -42,10 +42,76 @@
           "tolerance": 1e-5
         }
       ],
+      "languages": {
+        "r": {
+          "starter_code": "bisection <- function(f, a, b, tol = 1e-6, max_iter = 100) {\n  # Doplňte kontrolu znamének a iterační cyklus bisekce\n  \n}\n",
+          "solution_code": "bisection <- function(f, a, b, tol = 1e-6, max_iter = 100) {\n  fa <- f(a)\n  fb <- f(b)\n  if (fa * fb > 0) stop(\"Interval neobsahuje zmenu znamenka\")\n  for (i in seq_len(max_iter)) {\n    mid <- (a + b) / 2\n    fmid <- f(mid)\n    if (abs(fmid) < tol || (b - a) / 2 < tol) return(mid)\n    if (fa * fmid < 0) {\n      b <- mid\n      fb <- fmid\n    } else {\n      a <- mid\n      fa <- fmid\n    }\n  }\n  (a + b) / 2\n}\n",
+          "visible_tests": [
+            {
+              "name": "Kořen x^2 - 2 = 0 na [1, 2] (odmocnina ze 2)",
+              "code": "bisection(function(x) x^2 - 2, 1, 2, tol = 1e-7)",
+              "expected": 1.41421356,
+              "tolerance": 1e-5
+            },
+            {
+              "name": "Kořen x^3 - x - 2 = 0 na [1, 2]",
+              "code": "bisection(function(x) x^3 - x - 2, 1, 2, tol = 1e-7)",
+              "expected": 1.52137971,
+              "tolerance": 1e-5
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Transcendentní rovnice cos(x) - x = 0 na [0, 1]",
+              "code": "bisection(function(x) cos(x) - x, 0, 1, tol = 1e-7)",
+              "expected": 0.73908513,
+              "tolerance": 1e-5
+            },
+            {
+              "name": "Rovnice exp(x) - 3*x = 0 na [0, 1]",
+              "code": "bisection(function(x) exp(x) - 3 * x, 0, 1, tol = 1e-7)",
+              "expected": 0.61906129,
+              "tolerance": 1e-5
+            }
+          ]
+        },
+        "python": {
+          "starter_code": "import math\n\ndef bisection(f, a, b, tol=1e-6, max_iter=100):\n    # Doplňte kontrolu znamének a iterační cyklus bisekce\n    pass\n",
+          "solution_code": "import math\n\ndef bisection(f, a, b, tol=1e-6, max_iter=100):\n    fa = f(a)\n    fb = f(b)\n    if fa * fb > 0:\n        raise ValueError('Interval neobsahuje zmenu znamenka')\n    for _ in range(max_iter):\n        mid = (a + b) / 2.0\n        fmid = f(mid)\n        if abs(fmid) < tol or (b - a) / 2.0 < tol:\n            return mid\n        if fa * fmid < 0:\n            b = mid\n            fb = fmid\n        else:\n            a = mid\n            fa = fmid\n    return (a + b) / 2.0\n",
+          "visible_tests": [
+            {
+              "name": "Kořen x^2 - 2 = 0 na [1, 2] (odmocnina ze 2)",
+              "code": "bisection(lambda x: x**2 - 2, 1, 2, tol=1e-7)",
+              "expected": 1.41421356,
+              "tolerance": 1e-5
+            },
+            {
+              "name": "Kořen x^3 - x - 2 = 0 na [1, 2]",
+              "code": "bisection(lambda x: x**3 - x - 2, 1, 2, tol=1e-7)",
+              "expected": 1.52137971,
+              "tolerance": 1e-5
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Transcendentní rovnice cos(x) - x = 0 na [0, 1]",
+              "code": "bisection(lambda x: math.cos(x) - x, 0, 1, tol=1e-7)",
+              "expected": 0.73908513,
+              "tolerance": 1e-5
+            },
+            {
+              "name": "Rovnice exp(x) - 3*x = 0 na [0, 1]",
+              "code": "bisection(lambda x: math.exp(x) - 3 * x, 0, 1, tol=1e-7)",
+              "expected": 0.61906129,
+              "tolerance": 1e-5
+            }
+          ]
+        }
+      },
       "hints": [
-        "Krok 1: Uložte si `fa <- f(a)` a v každém kroku spočítejte `mid <- (a + b) / 2` a `fmid <- f(mid)`.",
-        "Krok 2: Pokud `fa * fmid < 0`, leží kořen v levé polovině (`b <- mid`), jinak v pravé polovině (`a <- mid; fa <- fmid`).",
-        "Vysvětlení: Ukončovací podmínka `abs(fmid) < tol || (b - a) / 2 < tol` zajistí přesnost výsledku v obou směrech."
+        "Krok 1: Uložte si `fa = f(a)` a v každém kroku spočítejte střed `mid = (a + b) / 2` a hodnotu `fmid = f(mid)`.",
+        "Krok 2: Pokud `fa * fmid < 0`, leží kořen v levé polovině (`b = mid`), jinak v pravé polovině (`a = mid; fa = fmid`).",
+        "Vysvětlení: Ukončovací podmínka `abs(fmid) < tol` nebo `(b - a) / 2 < tol` zajistí přesnost výsledku v obou směrech."
       ],
       "explanation": "Bisekce v každé iteraci rozpůlí interval a ponechá tu polovinu, na jejíchž krajích má funkce opačná znaménka. Díky tomu konverguje spolehlivě pro jakoukoli spojitou funkci se změnou znaménka."
     },
@@ -55,7 +121,7 @@
       "type": "code_task",
       "language": "r",
       "title": "Newtonova metoda tečen (Newton–Raphson)",
-      "text": "Implementujte funkci `newton_root(f, df, x0, tol = 1e-8, max_iter = 100)`, která hledá kořen rovnice `f(x) = 0` s derivací `df(x)` počínaje odhadem `x0`. Ukončete iteraci, jakmile `abs(x_new - x) < tol`, a vraťte nalezený kořen.",
+      "text": "Implementujte funkci `newton_root(f, df, x0, tol=1e-8, max_iter=100)`, která hledá kořen rovnice `f(x) = 0` s derivací `df(x)` počínaje odhadem `x0`. Ukončete iteraci, jakmile `abs(x_new - x) < tol`, a vraťte nalezený kořen.",
       "formula": "x_{k+1} = x_k - \\frac{f(x_k)}{f'(x_k)}",
       "starter_code": "newton_root <- function(f, df, x0, tol = 1e-8, max_iter = 100) {\n  x <- x0\n  # Doplňte iterační krok Newtonovy metody\n  \n}\n",
       "solution_code": "newton_root <- function(f, df, x0, tol = 1e-8, max_iter = 100) {\n  x <- x0\n  for (i in seq_len(max_iter)) {\n    dfx <- df(x)\n    if (abs(dfx) < 1e-14) stop(\"Derivace je prilis blizko nuly\")\n    x_new <- x - f(x) / dfx\n    if (abs(x_new - x) < tol) return(x_new)\n    x <- x_new\n  }\n  x\n}\n",
@@ -84,66 +150,310 @@
         {
           "name": "log(x) + x - 2 = 0 z x0 = 1.5",
           "code": "newton_root(function(x) log(x) + x - 2, function(x) 1 / x + 1, 1.5)",
-          "expected": 1.55714560,
+          "expected": 1.5571456,
           "tolerance": 1e-6
         }
       ],
+      "languages": {
+        "r": {
+          "starter_code": "newton_root <- function(f, df, x0, tol = 1e-8, max_iter = 100) {\n  x <- x0\n  # Doplňte iterační krok Newtonovy metody\n  \n}\n",
+          "solution_code": "newton_root <- function(f, df, x0, tol = 1e-8, max_iter = 100) {\n  x <- x0\n  for (i in seq_len(max_iter)) {\n    dfx <- df(x)\n    if (abs(dfx) < 1e-14) stop(\"Derivace je prilis blizko nuly\")\n    x_new <- x - f(x) / dfx\n    if (abs(x_new - x) < tol) return(x_new)\n    x <- x_new\n  }\n  x\n}\n",
+          "visible_tests": [
+            {
+              "name": "Kořen x^2 - 5 = 0 z x0 = 2",
+              "code": "newton_root(function(x) x^2 - 5, function(x) 2 * x, 2)",
+              "expected": 2.23606798,
+              "tolerance": 1e-6
+            },
+            {
+              "name": "Kubická rovnice x^3 - 2x - 5 = 0 z x0 = 2",
+              "code": "newton_root(function(x) x^3 - 2 * x - 5, function(x) 3 * x^2 - 2, 2)",
+              "expected": 2.09455148,
+              "tolerance": 1e-6
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "cos(x) - x = 0 z x0 = 0.5",
+              "code": "newton_root(function(x) cos(x) - x, function(x) -sin(x) - 1, 0.5)",
+              "expected": 0.73908513,
+              "tolerance": 1e-6
+            },
+            {
+              "name": "log(x) + x - 2 = 0 z x0 = 1.5",
+              "code": "newton_root(function(x) log(x) + x - 2, function(x) 1 / x + 1, 1.5)",
+              "expected": 1.5571456,
+              "tolerance": 1e-6
+            }
+          ]
+        },
+        "python": {
+          "starter_code": "import math\n\ndef newton_root(f, df, x0, tol=1e-8, max_iter=100):\n    x = float(x0)\n    # Doplňte iterační krok Newtonovy metody\n    pass\n",
+          "solution_code": "import math\n\ndef newton_root(f, df, x0, tol=1e-8, max_iter=100):\n    x = float(x0)\n    for _ in range(max_iter):\n        dfx = df(x)\n        if abs(dfx) < 1e-14:\n            raise ZeroDivisionError('Derivace je prilis blizko nuly')\n        x_new = x - f(x) / dfx\n        if abs(x_new - x) < tol:\n            return x_new\n        x = x_new\n    return x\n",
+          "visible_tests": [
+            {
+              "name": "Kořen x^2 - 5 = 0 z x0 = 2",
+              "code": "newton_root(lambda x: x**2 - 5, lambda x: 2 * x, 2)",
+              "expected": 2.23606798,
+              "tolerance": 1e-6
+            },
+            {
+              "name": "Kubická rovnice x^3 - 2x - 5 = 0 z x0 = 2",
+              "code": "newton_root(lambda x: x**3 - 2 * x - 5, lambda x: 3 * x**2 - 2, 2)",
+              "expected": 2.09455148,
+              "tolerance": 1e-6
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "cos(x) - x = 0 z x0 = 0.5",
+              "code": "newton_root(lambda x: math.cos(x) - x, lambda x: -math.sin(x) - 1, 0.5)",
+              "expected": 0.73908513,
+              "tolerance": 1e-6
+            },
+            {
+              "name": "log(x) + x - 2 = 0 z x0 = 1.5",
+              "code": "newton_root(lambda x: math.log(x) + x - 2, lambda x: 1 / x + 1, 1.5)",
+              "expected": 1.5571456,
+              "tolerance": 1e-6
+            }
+          ]
+        }
+      },
       "hints": [
-        "Krok 1: V cyklu spočítejte hodnotu derivace `dfx <- df(x)` a zkontrolujte, že není příliš blízko nuly.",
-        "Krok 2: Novou aproximaci určete jako `x_new <- x - f(x) / dfx`.",
-        "Vysvětlení: Pokud `abs(x_new - x) < tol`, vraťte `x_new`; jinak přepište `x <- x_new` a pokračujte."
+        "Krok 1: V cyklu spočítejte hodnotu derivace `dfx = df(x)` a zkontrolujte, že není příliš blízko nuly.",
+        "Krok 2: Novou aproximaci určete jako `x_new = x - f(x) / dfx`.",
+        "Vysvětlení: Pokud `abs(x_new - x) < tol`, vraťte `x_new`; jinak přepište `x = x_new` a pokračujte."
       ],
       "explanation": "Newtonova metoda dosahuje pro jednoduché kořeny kvadratické konvergence — na `tol = 1e-8` obvykle stačí pouhých 4–6 iterací."
     },
     {
-      "id": "num-code-03",
+      "id": "num-code-08",
       "number": 3,
       "type": "code_task",
       "language": "r",
-      "title": "Složené lichoběžníkové pravidlo",
-      "text": "Implementujte funkci `trapezoid_int(f, a, b, n = 100)`, která numericky vypočítá určitý integrál funkce `f` na intervalu `[a, b]` rozděleném na `n` stejně širokých podintervalů pomocí složeného lichoběžníkového pravidla. Pozor na krajní případ `n = 1`!",
-      "formula": "T_n = h \\left(\\frac{f(x_0)}{2} + \\sum_{i=1}^{n-1} f(x_i) + \\frac{f(x_n)}{2}\\right), \\quad h = \\frac{b - a}{n}",
-      "starter_code": "trapezoid_int <- function(f, a, b, n = 100) {\n  h <- (b - a) / n\n  # Vytvořte dělicí body a sečtěte příspěvky lichoběžníků\n  \n}\n",
-      "solution_code": "trapezoid_int <- function(f, a, b, n = 100) {\n  h <- (b - a) / n\n  x <- seq(a, b, length.out = n + 1)\n  y <- f(x)\n  mid_sum <- if (n > 1) sum(y[2:n]) else 0\n  h * (0.5 * y[1] + mid_sum + 0.5 * y[n + 1])\n}\n",
+      "title": "Newtonova–Hornerova metoda pro kořen polynomu",
+      "text": "Implementujte funkci `newton_horner(coeffs, x0, tol=1e-8, max_iter=100)`, kde `coeffs` jsou koeficienty polynomu od nejvyšší mocniny $(a_n, a_{n-1}, \\dots, a_0)$. V každé iteraci vyhodnoťte současně $P(x)$ i $P'(x)$ dvojitým Hornerovým schématem a proveďte Newtonův krok $x \\leftarrow x - P(x)/P'(x)$.",
+      "formula": "b_k = a_k + b_{k+1} x, \\quad c_k = b_k + c_{k+1} x \\implies P(x) = b_0,\\; P'(x) = c_1",
+      "starter_code": "newton_horner <- function(coeffs, x0, tol = 1e-8, max_iter = 100) {\n  x <- x0\n  # Dvojitým Hornerovým schématem spočítejte P(x) a P'(x)\n  \n}\n",
+      "solution_code": "newton_horner <- function(coeffs, x0, tol = 1e-8, max_iter = 100) {\n  x <- x0\n  n <- length(coeffs)\n  for (iter in seq_len(max_iter)) {\n    p <- coeffs[1]\n    dp <- 0\n    if (n > 1) {\n      for (i in 2:n) {\n        dp <- dp * x + p\n        p <- p * x + coeffs[i]\n      }\n    }\n    if (abs(dp) < 1e-14) stop(\"Derivace je nulova\")\n    x_new <- x - p / dp\n    if (abs(x_new - x) < tol) return(x_new)\n    x <- x_new\n  }\n  x\n}\n",
       "produces_plot": false,
       "visible_tests": [
         {
-          "name": "int_0^2 x^2 dx pro n = 2 (přesná hodnota pravidla = 3.0)",
-          "code": "trapezoid_int(function(x) x^2, 0, 2, n = 2)",
-          "expected": 3.0,
-          "tolerance": 1e-9
+          "name": "Polynom x^3 - 2x - 5 = 0 z x0 = 2",
+          "code": "newton_horner(c(1, 0, -2, -5), 2)",
+          "expected": 2.09455148,
+          "tolerance": 1e-6
         },
         {
-          "name": "int_0^pi sin(x) dx pro n = 100 (~ 2.0)",
-          "code": "trapezoid_int(function(x) sin(x), 0, pi, n = 100)",
-          "expected": 1.9998355,
-          "tolerance": 1e-4
+          "name": "Polynom x^2 - 7x + 10 = 0 (kořen 5 z x0 = 6)",
+          "code": "newton_horner(c(1, -7, 10), 6)",
+          "expected": 5.0,
+          "tolerance": 1e-6
         }
       ],
       "hidden_tests": [
         {
-          "name": "int_0^1 exp(x) dx pro n = 200 (~ e - 1)",
-          "code": "trapezoid_int(function(x) exp(x), 0, 1, n = 200)",
-          "expected": 1.71828183,
-          "tolerance": 1e-4
+          "name": "Polynom 2x^3 - 3x^2 - 11x + 6 = 0 (kořen 3 z x0 = 4)",
+          "code": "newton_horner(c(2, -3, -11, 6), 4)",
+          "expected": 3.0,
+          "tolerance": 1e-6
         },
         {
-          "name": "Lineární funkce pro n = 1 (okrajový případ bez vnitřních uzlů)",
-          "code": "trapezoid_int(function(x) 3 * x + 2, 0, 4, n = 1)",
-          "expected": 32.0,
-          "tolerance": 1e-9
+          "name": "Polynom x^4 - 16 = 0 (kořen 2 z x0 = 3)",
+          "code": "newton_horner(c(1, 0, 0, 0, -16), 3)",
+          "expected": 2.0,
+          "tolerance": 1e-6
         }
       ],
+      "languages": {
+        "r": {
+          "starter_code": "newton_horner <- function(coeffs, x0, tol = 1e-8, max_iter = 100) {\n  x <- x0\n  # Dvojitým Hornerovým schématem spočítejte P(x) a P'(x)\n  \n}\n",
+          "solution_code": "newton_horner <- function(coeffs, x0, tol = 1e-8, max_iter = 100) {\n  x <- x0\n  n <- length(coeffs)\n  for (iter in seq_len(max_iter)) {\n    p <- coeffs[1]\n    dp <- 0\n    if (n > 1) {\n      for (i in 2:n) {\n        dp <- dp * x + p\n        p <- p * x + coeffs[i]\n      }\n    }\n    if (abs(dp) < 1e-14) stop(\"Derivace je nulova\")\n    x_new <- x - p / dp\n    if (abs(x_new - x) < tol) return(x_new)\n    x <- x_new\n  }\n  x\n}\n",
+          "visible_tests": [
+            {
+              "name": "Polynom x^3 - 2x - 5 = 0 z x0 = 2",
+              "code": "newton_horner(c(1, 0, -2, -5), 2)",
+              "expected": 2.09455148,
+              "tolerance": 1e-6
+            },
+            {
+              "name": "Polynom x^2 - 7x + 10 = 0 (kořen 5 z x0 = 6)",
+              "code": "newton_horner(c(1, -7, 10), 6)",
+              "expected": 5.0,
+              "tolerance": 1e-6
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Polynom 2x^3 - 3x^2 - 11x + 6 = 0 (kořen 3 z x0 = 4)",
+              "code": "newton_horner(c(2, -3, -11, 6), 4)",
+              "expected": 3.0,
+              "tolerance": 1e-6
+            },
+            {
+              "name": "Polynom x^4 - 16 = 0 (kořen 2 z x0 = 3)",
+              "code": "newton_horner(c(1, 0, 0, 0, -16), 3)",
+              "expected": 2.0,
+              "tolerance": 1e-6
+            }
+          ]
+        },
+        "python": {
+          "starter_code": "def newton_horner(coeffs, x0, tol=1e-8, max_iter=100):\n    x = float(x0)\n    # Dvojitým Hornerovým schématem spočítejte P(x) a P'(x)\n    pass\n",
+          "solution_code": "def newton_horner(coeffs, x0, tol=1e-8, max_iter=100):\n    x = float(x0)\n    for _ in range(max_iter):\n        p = float(coeffs[0])\n        dp = 0.0\n        for a in coeffs[1:]:\n            dp = dp * x + p\n            p = p * x + a\n        if abs(dp) < 1e-14:\n            raise ZeroDivisionError('Derivace je nulova')\n        x_new = x - p / dp\n        if abs(x_new - x) < tol:\n            return x_new\n        x = x_new\n    return x\n",
+          "visible_tests": [
+            {
+              "name": "Polynom x^3 - 2x - 5 = 0 z x0 = 2",
+              "code": "newton_horner([1, 0, -2, -5], 2)",
+              "expected": 2.09455148,
+              "tolerance": 1e-6
+            },
+            {
+              "name": "Polynom x^2 - 7x + 10 = 0 (kořen 5 z x0 = 6)",
+              "code": "newton_horner([1, -7, 10], 6)",
+              "expected": 5.0,
+              "tolerance": 1e-6
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Polynom 2x^3 - 3x^2 - 11x + 6 = 0 (kořen 3 z x0 = 4)",
+              "code": "newton_horner([2, -3, -11, 6], 4)",
+              "expected": 3.0,
+              "tolerance": 1e-6
+            },
+            {
+              "name": "Polynom x^4 - 16 = 0 (kořen 2 z x0 = 3)",
+              "code": "newton_horner([1, 0, 0, 0, -16], 3)",
+              "expected": 2.0,
+              "tolerance": 1e-6
+            }
+          ]
+        }
+      },
       "hints": [
-        "Krok 1: Vygenerujte $n + 1$ bodů příkazem `x <- seq(a, b, length.out = n + 1)` a vyhodnoťte `y <- f(x)`.",
-        "Krok 2: Krajní hodnoty `y[1]` a `y[n + 1]` mají váhu `0.5`, vnitřní body `y[2:n]` váhu `1`.",
-        "Vysvětlení: Pro `n == 1` by zápis `2:n` v R vytvořil vektor `c(2, 1)` — ošetřete vnitřní součet podmínkou `if (n > 1) sum(y[2:n]) else 0`."
+        "Krok 1: Inicializujte `p = coeffs[0]` (v R `coeffs[1]`) a `dp = 0`.",
+        "Krok 2: Pro každý další koeficient `a` proveďte nejprve `dp = dp * x + p` a potom `p = p * x + a` (pořadí je klíčové!).",
+        "Vysvětlení: Po průchodu cyklem je `p` rovno $P(x)$ a `dp` rovno $P'(x)$ v jediném průchodu $O(n)$."
       ],
-      "explanation": "Složené lichoběžníkové pravidlo aproximuje plochu pod křivkou lomenou čárou s globální chybou $O(h^2)$ a vektorizací v R pracuje v jediném průchodu."
+      "explanation": "Dvojité Hornerovo schéma vyhodnotí současně hodnotu polynomu i jeho derivace v čase $O(n)$ bez ručního derivování a bez počítání mocnin $x^k$."
+    },
+    {
+      "id": "num-code-09",
+      "number": 4,
+      "type": "code_task",
+      "language": "r",
+      "title": "Gaussova–Seidelova iterační metoda",
+      "text": "Implementujte funkci `gauss_seidel(A, b, tol=1e-7, max_iter=200)`, která iteračně řeší diagonálně dominantní soustavu $A\\vec{x} = \\vec{b}$ od počátečního nulového vektoru $\\vec{x}^{(0)} = \\vec{0}$ a ihned využívá čerstvě vypočtené složky $x_i$.",
+      "formula": "x_i^{(k+1)} = \\frac{1}{a_{ii}}\\left(b_i - \\sum_{j < i} a_{ij}x_j^{(k+1)} - \\sum_{j > i} a_{ij}x_j^{(k)}\\right)",
+      "starter_code": "gauss_seidel <- function(A, b, tol = 1e-7, max_iter = 200) {\n  n <- length(b)\n  x <- numeric(n)\n  # Doplňte Gaussovy–Seidelovy iterace s kontrolou max(|x_new - x|) < tol\n  \n  x\n}\n",
+      "solution_code": "gauss_seidel <- function(A, b, tol = 1e-7, max_iter = 200) {\n  n <- length(b)\n  x <- numeric(n)\n  for (iter in seq_len(max_iter)) {\n    x_old <- x\n    for (i in seq_len(n)) {\n      s <- sum(A[i, -i] * x[-i])\n      x[i] <- (b[i] - s) / A[i, i]\n    }\n    if (max(abs(x - x_old)) < tol) return(x)\n  }\n  x\n}\n",
+      "produces_plot": false,
+      "visible_tests": [
+        {
+          "name": "Soustava 4x + y = 9, x + 3y = 5 -> x1 = 2",
+          "code": "gauss_seidel(matrix(c(4, 1, 1, 3), nrow = 2, byrow = TRUE), c(9, 5))[1]",
+          "expected": 2.0,
+          "tolerance": 1e-5
+        },
+        {
+          "name": "Soustava 4x + y = 9, x + 3y = 5 -> x2 = 1",
+          "code": "gauss_seidel(matrix(c(4, 1, 1, 3), nrow = 2, byrow = TRUE), c(9, 5))[2]",
+          "expected": 1.0,
+          "tolerance": 1e-5
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "3x3 soustava: složka x3 = -1",
+          "code": "gauss_seidel(matrix(c(10, -1, 2, -1, 11, -1, 2, -1, 10), nrow = 3, byrow = TRUE), c(6, 22, -10))[3]",
+          "expected": -1.0,
+          "tolerance": 1e-5
+        },
+        {
+          "name": "3x3 soustava: složka x2 = 2",
+          "code": "gauss_seidel(matrix(c(10, -1, 2, -1, 11, -1, 2, -1, 10), nrow = 3, byrow = TRUE), c(6, 22, -10))[2]",
+          "expected": 2.0,
+          "tolerance": 1e-5
+        }
+      ],
+      "languages": {
+        "r": {
+          "starter_code": "gauss_seidel <- function(A, b, tol = 1e-7, max_iter = 200) {\n  n <- length(b)\n  x <- numeric(n)\n  # Doplňte Gaussovy–Seidelovy iterace s kontrolou max(|x_new - x|) < tol\n  \n  x\n}\n",
+          "solution_code": "gauss_seidel <- function(A, b, tol = 1e-7, max_iter = 200) {\n  n <- length(b)\n  x <- numeric(n)\n  for (iter in seq_len(max_iter)) {\n    x_old <- x\n    for (i in seq_len(n)) {\n      s <- sum(A[i, -i] * x[-i])\n      x[i] <- (b[i] - s) / A[i, i]\n    }\n    if (max(abs(x - x_old)) < tol) return(x)\n  }\n  x\n}\n",
+          "visible_tests": [
+            {
+              "name": "Soustava 4x + y = 9, x + 3y = 5 -> x1 = 2",
+              "code": "gauss_seidel(matrix(c(4, 1, 1, 3), nrow = 2, byrow = TRUE), c(9, 5))[1]",
+              "expected": 2.0,
+              "tolerance": 1e-5
+            },
+            {
+              "name": "Soustava 4x + y = 9, x + 3y = 5 -> x2 = 1",
+              "code": "gauss_seidel(matrix(c(4, 1, 1, 3), nrow = 2, byrow = TRUE), c(9, 5))[2]",
+              "expected": 1.0,
+              "tolerance": 1e-5
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "3x3 soustava: složka x3 = -1",
+              "code": "gauss_seidel(matrix(c(10, -1, 2, -1, 11, -1, 2, -1, 10), nrow = 3, byrow = TRUE), c(6, 22, -10))[3]",
+              "expected": -1.0,
+              "tolerance": 1e-5
+            },
+            {
+              "name": "3x3 soustava: složka x2 = 2",
+              "code": "gauss_seidel(matrix(c(10, -1, 2, -1, 11, -1, 2, -1, 10), nrow = 3, byrow = TRUE), c(6, 22, -10))[2]",
+              "expected": 2.0,
+              "tolerance": 1e-5
+            }
+          ]
+        },
+        "python": {
+          "starter_code": "def gauss_seidel(A, b, tol=1e-7, max_iter=200):\n    n = len(b)\n    x = [0.0] * n\n    # Doplňte Gaussovy–Seidelovy iterace (A je seznam řádků)\n    return x\n",
+          "solution_code": "def gauss_seidel(A, b, tol=1e-7, max_iter=200):\n    n = len(b)\n    x = [0.0] * n\n    for _ in range(max_iter):\n        max_diff = 0.0\n        for i in range(n):\n            s = sum(A[i][j] * x[j] for j in range(n) if j != i)\n            x_new = (b[i] - s) / A[i][i]\n            diff = abs(x_new - x[i])\n            if diff > max_diff:\n                max_diff = diff\n            x[i] = x_new\n        if max_diff < tol:\n            return x\n    return x\n",
+          "visible_tests": [
+            {
+              "name": "Soustava 4x + y = 9, x + 3y = 5 -> x[0] = 2",
+              "code": "gauss_seidel([[4, 1], [1, 3]], [9, 5])[0]",
+              "expected": 2.0,
+              "tolerance": 1e-5
+            },
+            {
+              "name": "Soustava 4x + y = 9, x + 3y = 5 -> x[1] = 1",
+              "code": "gauss_seidel([[4, 1], [1, 3]], [9, 5])[1]",
+              "expected": 1.0,
+              "tolerance": 1e-5
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "3x3 soustava: složka x[2] = -1",
+              "code": "gauss_seidel([[10, -1, 2], [-1, 11, -1], [2, -1, 10]], [6, 22, -10])[2]",
+              "expected": -1.0,
+              "tolerance": 1e-5
+            },
+            {
+              "name": "3x3 soustava: složka x[1] = 2",
+              "code": "gauss_seidel([[10, -1, 2], [-1, 11, -1], [2, -1, 10]], [6, 22, -10])[1]",
+              "expected": 2.0,
+              "tolerance": 1e-5
+            }
+          ]
+        }
+      },
+      "hints": [
+        "Krok 1: Protože přepisujeme vektor `x` přímo na místě (`x[i] = ...`), složky `j < i` automaticky obsahují čerstvé hodnoty z probíhající iterace.",
+        "Krok 2: Pro každý řádek `i` sečtěte `A[i, j] * x[j]` pro všechna `j != i`, odečtěte od `b[i]` a vydělte `A[i, i]`.",
+        "Vysvětlení: Uložte si `x_old` před vnitřním cyklem a ukončete výpočet, jakmile `max(abs(x - x_old)) < tol`."
+      ],
+      "explanation": "Přímou aktualizací vektoru `x` na místě získáme Gaussovu–Seidelovu metodu, která u diagonálně dominantních matic konverguje zhruba dvakrát rychleji než Jacobiho metoda."
     },
     {
       "id": "num-code-04",
-      "number": 4,
+      "number": 5,
       "type": "code_task",
       "language": "r",
       "title": "Lagrangeův interpolační polynom",
@@ -180,20 +490,86 @@
           "tolerance": 1e-8
         }
       ],
+      "languages": {
+        "r": {
+          "starter_code": "lagrange_eval <- function(x_nodes, y_nodes, x0) {\n  n <- length(x_nodes)\n  res <- 0\n  # Spočítejte bázové polynomy L_i(x0) a přičtěte y_nodes[i] * L_i(x0)\n  \n  res\n}\n",
+          "solution_code": "lagrange_eval <- function(x_nodes, y_nodes, x0) {\n  n <- length(x_nodes)\n  res <- 0\n  for (i in seq_len(n)) {\n    basis <- prod((x0 - x_nodes[-i]) / (x_nodes[i] - x_nodes[-i]))\n    res <- res + y_nodes[i] * basis\n  }\n  res\n}\n",
+          "visible_tests": [
+            {
+              "name": "Kvadratický polynom x^2 + x + 1 v bodě x0 = 1.5",
+              "code": "lagrange_eval(c(0, 1, 2), c(1, 3, 7), 1.5)",
+              "expected": 4.75,
+              "tolerance": 1e-8
+            },
+            {
+              "name": "Kubický polynom x^3 vyhodnocený v x0 = 3",
+              "code": "lagrange_eval(c(-1, 0, 1, 2), c(-1, 0, 1, 8), 3)",
+              "expected": 27.0,
+              "tolerance": 1e-8
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Polynom x^2 + 1 z uzlů (0, 2, 4) v bodě x0 = 1",
+              "code": "lagrange_eval(c(0, 2, 4), c(1, 5, 17), 1)",
+              "expected": 2.0,
+              "tolerance": 1e-8
+            },
+            {
+              "name": "Přesný průchod samotným uzlem x0 = 2",
+              "code": "lagrange_eval(c(1, 2, 3), c(2, 5, 10), 2)",
+              "expected": 5.0,
+              "tolerance": 1e-8
+            }
+          ]
+        },
+        "python": {
+          "starter_code": "def lagrange_eval(x_nodes, y_nodes, x0):\n    n = len(x_nodes)\n    res = 0.0\n    # Spočítejte bázové polynomy L_i(x0) a přičtěte y_nodes[i] * L_i(x0)\n    return res\n",
+          "solution_code": "def lagrange_eval(x_nodes, y_nodes, x0):\n    n = len(x_nodes)\n    res = 0.0\n    for i in range(n):\n        basis = 1.0\n        for j in range(n):\n            if j != i:\n                basis *= (x0 - x_nodes[j]) / (x_nodes[i] - x_nodes[j])\n        res += y_nodes[i] * basis\n    return res\n",
+          "visible_tests": [
+            {
+              "name": "Kvadratický polynom x^2 + x + 1 v bodě x0 = 1.5",
+              "code": "lagrange_eval([0, 1, 2], [1, 3, 7], 1.5)",
+              "expected": 4.75,
+              "tolerance": 1e-8
+            },
+            {
+              "name": "Kubický polynom x^3 vyhodnocený v x0 = 3",
+              "code": "lagrange_eval([-1, 0, 1, 2], [-1, 0, 1, 8], 3)",
+              "expected": 27.0,
+              "tolerance": 1e-8
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Polynom x^2 + 1 z uzlů (0, 2, 4) v bodě x0 = 1",
+              "code": "lagrange_eval([0, 2, 4], [1, 5, 17], 1)",
+              "expected": 2.0,
+              "tolerance": 1e-8
+            },
+            {
+              "name": "Přesný průchod samotným uzlem x0 = 2",
+              "code": "lagrange_eval([1, 2, 3], [2, 5, 10], 2)",
+              "expected": 5.0,
+              "tolerance": 1e-8
+            }
+          ]
+        }
+      },
       "hints": [
-        "Krok 1: V R můžete vynechat $i$-tý uzel elegantně zápisem `x_nodes[-i]`.",
-        "Krok 2: Bázový polynom $L_i(x_0)$ pak spočítáte jedním řádkem: `prod((x0 - x_nodes[-i]) / (x_nodes[i] - x_nodes[-i]))`.",
-        "Vysvětlení: Výsledek je součet `y_nodes[i] * basis` přes všechna `i` od `1` do `length(x_nodes)`."
+        "Krok 1: Pro každý uzel $i$ vynásobte podíly `(x0 - x_nodes[j]) / (x_nodes[i] - x_nodes[j])` pro všechna $j \\neq i$.",
+        "Krok 2: V R můžete vynechat $i$-tý uzel zápisem `x_nodes[-i]` a použít `prod(...)`; v Pythonu použijte vnořený cyklus `for j in range(n)`.",
+        "Vysvětlení: Výsledek je součet `y_nodes[i] * basis` přes všechny uzly."
       ],
-      "explanation": "Vektorizovaný index `-i` v R zkracuje výpočet Lagrangeova bázového polynomu $L_i(x_0)$ na jediný přehledný výraz s funkcí `prod()`."
+      "explanation": "Lagrangeův tvar nevyžaduje řešení soustavy rovnic a v každém uzlu $x_i$ přesně reprodukuje hodnotu $y_i$."
     },
     {
       "id": "num-code-05",
-      "number": 5,
+      "number": 6,
       "type": "code_task",
       "language": "r",
-      "title": "Aproximace přímkou metodou nejmenších čtverců (`solve()`)",
-      "text": "Implementujte funkci `fit_mnc_line(x, y)`, která sestaví matici soustavy $A = [\\mathbf{1}, \\vec{x}]$ a pomocí normálních rovnic $A^T A \\vec{c} = A^T \\vec{y}$ a funkce `solve()` vrátí číselný vektor `c(q, k)` pro přímku $y = q + k x$ (nepoužívejte `lm()`, řešte přímo maticově).",
+      "title": "Aproximace přímkou metodou nejmenších čtverců",
+      "text": "Implementujte funkci `fit_mnc_line(x, y)`, která sestaví normální rovnice $A^T A \\vec{c} = A^T \\vec{y}$ pro přímku $y = q + k x$ a vrátí dvojici `(q, k)` (v R vektor `c(q, k)`, v Pythonu seznam/n-tici `[q, k]`). Nepoužívejte hotové `lm()` ani `polyfit()`.",
       "formula": "A^T A \\begin{pmatrix} q \\\\ k \\end{pmatrix} = A^T \\vec{y}, \\quad A = \\begin{pmatrix} 1 & x_1 \\\\ \\vdots & \\vdots \\\\ 1 & x_m \\end{pmatrix}",
       "starter_code": "fit_mnc_line <- function(x, y) {\n  # Sestavte matici A = cbind(1, x) a vyřešte normální soustavu přes solve()\n  \n}\n",
       "solution_code": "fit_mnc_line <- function(x, y) {\n  A <- cbind(1, x)\n  as.numeric(solve(t(A) %*% A, t(A) %*% y))\n}\n",
@@ -226,20 +602,310 @@
           "tolerance": 1e-8
         }
       ],
+      "languages": {
+        "r": {
+          "starter_code": "fit_mnc_line <- function(x, y) {\n  # Sestavte matici A = cbind(1, x) a vyřešte normální soustavu přes solve()\n  \n}\n",
+          "solution_code": "fit_mnc_line <- function(x, y) {\n  A <- cbind(1, x)\n  as.numeric(solve(t(A) %*% A, t(A) %*% y))\n}\n",
+          "visible_tests": [
+            {
+              "name": "Úsek q pro data x = 1:4, y = c(2.1, 3.9, 6.2, 7.8)",
+              "code": "fit_mnc_line(c(1, 2, 3, 4), c(2.1, 3.9, 6.2, 7.8))[1]",
+              "expected": 0.15,
+              "tolerance": 1e-6
+            },
+            {
+              "name": "Směrnice k pro data x = 1:4, y = c(2.1, 3.9, 6.2, 7.8)",
+              "code": "fit_mnc_line(c(1, 2, 3, 4), c(2.1, 3.9, 6.2, 7.8))[2]",
+              "expected": 1.94,
+              "tolerance": 1e-6
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Přesná přímka y = -3 + 4x (úsek q)",
+              "code": "fit_mnc_line(c(0, 1, 2, 5), c(-3, 1, 5, 17))[1]",
+              "expected": -3.0,
+              "tolerance": 1e-8
+            },
+            {
+              "name": "Přesná přímka y = -3 + 4x (směrnice k)",
+              "code": "fit_mnc_line(c(0, 1, 2, 5), c(-3, 1, 5, 17))[2]",
+              "expected": 4.0,
+              "tolerance": 1e-8
+            }
+          ]
+        },
+        "python": {
+          "starter_code": "def fit_mnc_line(x, y):\n    # Vyřešte 2x2 normální soustavu pro y = q + k * x a vraťte [q, k]\n    pass\n",
+          "solution_code": "def fit_mnc_line(x, y):\n    m = float(len(x))\n    sx = sum(x)\n    sy = sum(y)\n    sxx = sum(xi * xi for xi in x)\n    sxy = sum(xi * yi for xi, yi in zip(x, y))\n    det = m * sxx - sx * sx\n    q = (sxx * sy - sx * sxy) / det\n    k = (m * sxy - sx * sy) / det\n    return [q, k]\n",
+          "visible_tests": [
+            {
+              "name": "Úsek q pro data x = [1..4], y = [2.1, 3.9, 6.2, 7.8]",
+              "code": "fit_mnc_line([1, 2, 3, 4], [2.1, 3.9, 6.2, 7.8])[0]",
+              "expected": 0.15,
+              "tolerance": 1e-6
+            },
+            {
+              "name": "Směrnice k pro data x = [1..4], y = [2.1, 3.9, 6.2, 7.8]",
+              "code": "fit_mnc_line([1, 2, 3, 4], [2.1, 3.9, 6.2, 7.8])[1]",
+              "expected": 1.94,
+              "tolerance": 1e-6
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Přesná přímka y = -3 + 4x (úsek q)",
+              "code": "fit_mnc_line([0, 1, 2, 5], [-3, 1, 5, 17])[0]",
+              "expected": -3.0,
+              "tolerance": 1e-8
+            },
+            {
+              "name": "Přesná přímka y = -3 + 4x (směrnice k)",
+              "code": "fit_mnc_line([0, 1, 2, 5], [-3, 1, 5, 17])[1]",
+              "expected": 4.0,
+              "tolerance": 1e-8
+            }
+          ]
+        }
+      },
       "hints": [
-        "Krok 1: Matici návrhu sestavte pomocí `A <- cbind(1, x)`.",
-        "Krok 2: Maticové násobení v R zapisujeme operátorem `%*%` a transpozici funkcí `t(A)`.",
-        "Vysvětlení: Normální soustavu vyřešíte jedním voláním `as.numeric(solve(t(A) %*% A, t(A) %*% y))`."
+        "Krok 1: Normální soustava má tvar $m\\,q + (\\sum x_i)\\,k = \\sum y_i$ a $(\\sum x_i)\\,q + (\\sum x_i^2)\\,k = \\sum x_i y_i$.",
+        "Krok 2: V R ji vyřešíte jedním voláním `as.numeric(solve(t(A) %*% A, t(A) %*% y))` s `A <- cbind(1, x)`.",
+        "Vysvětlení: V čistém Pythonu vyřešíte $2\\times 2$ soustavu Cramerovým pravidlem pomocí determinantu `det = m * sxx - sx * sx`."
       ],
-      "explanation": "Řešení normální soustavy $A^T A \\vec{c} = A^T \\vec{y}$ pomocí `solve()` demonstruje propojení lineární algebry a aproximace metodou nejmenších čtverců."
+      "explanation": "Řešení normální soustavy $A^T A \\vec{c} = A^T \\vec{y}$ demonstruje přímé propojení lineární algebry a aproximace metodou nejmenších čtverců."
+    },
+    {
+      "id": "num-code-03",
+      "number": 7,
+      "type": "code_task",
+      "language": "r",
+      "title": "Složené lichoběžníkové pravidlo",
+      "text": "Implementujte funkci `trapezoid_int(f, a, b, n=100)`, která numericky vypočítá určitý integrál funkce `f` na intervalu `[a, b]` rozděleném na `n` stejně širokých podintervalů pomocí složeného lichoběžníkového pravidla. Pozor na krajní případ `n = 1`!",
+      "formula": "T_n = h \\left(\\frac{f(x_0)}{2} + \\sum_{i=1}^{n-1} f(x_i) + \\frac{f(x_n)}{2}\\right), \\quad h = \\frac{b - a}{n}",
+      "starter_code": "trapezoid_int <- function(f, a, b, n = 100) {\n  h <- (b - a) / n\n  # Vytvořte dělicí body a sečtěte příspěvky lichoběžníků\n  \n}\n",
+      "solution_code": "trapezoid_int <- function(f, a, b, n = 100) {\n  h <- (b - a) / n\n  x <- seq(a, b, length.out = n + 1)\n  y <- f(x)\n  mid_sum <- if (n > 1) sum(y[2:n]) else 0\n  h * (0.5 * y[1] + mid_sum + 0.5 * y[n + 1])\n}\n",
+      "produces_plot": false,
+      "visible_tests": [
+        {
+          "name": "int_0^2 x^2 dx pro n = 2 (přesná hodnota pravidla = 3.0)",
+          "code": "trapezoid_int(function(x) x^2, 0, 2, n = 2)",
+          "expected": 3.0,
+          "tolerance": 1e-9
+        },
+        {
+          "name": "int_0^pi sin(x) dx pro n = 100 (~ 2.0)",
+          "code": "trapezoid_int(function(x) sin(x), 0, pi, n = 100)",
+          "expected": 1.9998355,
+          "tolerance": 1e-4
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "int_0^1 exp(x) dx pro n = 200 (~ e - 1)",
+          "code": "trapezoid_int(function(x) exp(x), 0, 1, n = 200)",
+          "expected": 1.71828183,
+          "tolerance": 1e-4
+        },
+        {
+          "name": "Lineární funkce pro n = 1 (okrajový případ bez vnitřních uzlů)",
+          "code": "trapezoid_int(function(x) 3 * x + 2, 0, 4, n = 1)",
+          "expected": 32.0,
+          "tolerance": 1e-9
+        }
+      ],
+      "languages": {
+        "r": {
+          "starter_code": "trapezoid_int <- function(f, a, b, n = 100) {\n  h <- (b - a) / n\n  # Vytvořte dělicí body a sečtěte příspěvky lichoběžníků\n  \n}\n",
+          "solution_code": "trapezoid_int <- function(f, a, b, n = 100) {\n  h <- (b - a) / n\n  x <- seq(a, b, length.out = n + 1)\n  y <- f(x)\n  mid_sum <- if (n > 1) sum(y[2:n]) else 0\n  h * (0.5 * y[1] + mid_sum + 0.5 * y[n + 1])\n}\n",
+          "visible_tests": [
+            {
+              "name": "int_0^2 x^2 dx pro n = 2 (přesná hodnota pravidla = 3.0)",
+              "code": "trapezoid_int(function(x) x^2, 0, 2, n = 2)",
+              "expected": 3.0,
+              "tolerance": 1e-9
+            },
+            {
+              "name": "int_0^pi sin(x) dx pro n = 100 (~ 2.0)",
+              "code": "trapezoid_int(function(x) sin(x), 0, pi, n = 100)",
+              "expected": 1.9998355,
+              "tolerance": 1e-4
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "int_0^1 exp(x) dx pro n = 200 (~ e - 1)",
+              "code": "trapezoid_int(function(x) exp(x), 0, 1, n = 200)",
+              "expected": 1.71828183,
+              "tolerance": 1e-4
+            },
+            {
+              "name": "Lineární funkce pro n = 1 (okrajový případ bez vnitřních uzlů)",
+              "code": "trapezoid_int(function(x) 3 * x + 2, 0, 4, n = 1)",
+              "expected": 32.0,
+              "tolerance": 1e-9
+            }
+          ]
+        },
+        "python": {
+          "starter_code": "import math\n\ndef trapezoid_int(f, a, b, n=100):\n    h = (b - a) / n\n    # Spočítejte složené lichoběžníkové pravidlo\n    pass\n",
+          "solution_code": "import math\n\ndef trapezoid_int(f, a, b, n=100):\n    h = (b - a) / n\n    mid_sum = sum(f(a + i * h) for i in range(1, n))\n    return h * (0.5 * f(a) + mid_sum + 0.5 * f(b))\n",
+          "visible_tests": [
+            {
+              "name": "int_0^2 x^2 dx pro n = 2 (přesná hodnota pravidla = 3.0)",
+              "code": "trapezoid_int(lambda x: x**2, 0, 2, n=2)",
+              "expected": 3.0,
+              "tolerance": 1e-9
+            },
+            {
+              "name": "int_0^pi sin(x) dx pro n = 100 (~ 2.0)",
+              "code": "trapezoid_int(math.sin, 0, math.pi, n=100)",
+              "expected": 1.9998355,
+              "tolerance": 1e-4
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "int_0^1 exp(x) dx pro n = 200 (~ e - 1)",
+              "code": "trapezoid_int(math.exp, 0, 1, n=200)",
+              "expected": 1.71828183,
+              "tolerance": 1e-4
+            },
+            {
+              "name": "Lineární funkce pro n = 1 (okrajový případ)",
+              "code": "trapezoid_int(lambda x: 3 * x + 2, 0, 4, n=1)",
+              "expected": 32.0,
+              "tolerance": 1e-9
+            }
+          ]
+        }
+      },
+      "hints": [
+        "Krok 1: Krok sítě je $h = (b - a) / n$; krajní body $f(a)$ a $f(b)$ mají váhu $0{,}5$, všechny vnitřní body váhu $1$.",
+        "Krok 2: V R pozor na případ `n == 1`, kdy `2:n` vrací `c(2, 1)` — použijte `if (n > 1) sum(y[2:n]) else 0`.",
+        "Vysvětlení: V Pythonu `range(1, n)` pro `n == 1` vrátí prázdnou sekvenci automaticky."
+      ],
+      "explanation": "Složené lichoběžníkové pravidlo aproximuje plochu pod křivkou lomenou čárou s globální chybou $O(h^2)$."
+    },
+    {
+      "id": "num-code-10",
+      "number": 8,
+      "type": "code_task",
+      "language": "r",
+      "title": "Rombergova kvadratura",
+      "text": "Implementujte funkci `romberg_int(f, a, b, max_level=5)`, která sestaví Rombergovu tabulku o `max_level` řádcích (od $n = 1$ po $n = 2^{\text{max\\_level}-1}$ dílků) pomocí složeného lichoběžníkového pravidla a Richardsonovy extrapolace a vrátí nejpřesnější prvek $R_{\text{max\\_level}, \text{max\\_level}}$.",
+      "formula": "R_{k,j} = \\frac{4^j R_{k,j-1} - R_{k-1,j-1}}{4^j - 1}",
+      "starter_code": "romberg_int <- function(f, a, b, max_level = 5) {\n  R <- matrix(0, nrow = max_level, ncol = max_level)\n  # Vyplňte 1. sloupec lichoběžníkovým pravidlem a extrapolujte další sloupce\n  \n  R[max_level, max_level]\n}\n",
+      "solution_code": "romberg_int <- function(f, a, b, max_level = 5) {\n  R <- matrix(0, nrow = max_level, ncol = max_level)\n  h <- b - a\n  R[1, 1] <- 0.5 * h * (f(a) + f(b))\n  if (max_level > 1) {\n    for (k in 2:max_level) {\n      h <- h / 2\n      n_new <- 2^(k - 2)\n      mid_pts <- a + (2 * seq_len(n_new) - 1) * h\n      R[k, 1] <- 0.5 * R[k - 1, 1] + h * sum(vapply(mid_pts, f, numeric(1)))\n      for (j in 2:k) {\n        factor <- 4^(j - 1)\n        R[k, j] <- (factor * R[k, j - 1] - R[k - 1, j - 1]) / (factor - 1)\n      }\n    }\n  }\n  R[max_level, max_level]\n}\n",
+      "produces_plot": false,
+      "visible_tests": [
+        {
+          "name": "int_0^pi sin(x) dx (přesně 2.0) při max_level = 5",
+          "code": "romberg_int(function(x) sin(x), 0, pi, max_level = 5)",
+          "expected": 2.0,
+          "tolerance": 1e-8
+        },
+        {
+          "name": "int_0^1 exp(x) dx (e - 1 ≈ 1.718281828) při max_level = 5",
+          "code": "romberg_int(function(x) exp(x), 0, 1, max_level = 5)",
+          "expected": 1.718281828,
+          "tolerance": 1e-8
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "int_0^1 1/(1 + x^2) dx (= pi/4) při max_level = 6",
+          "code": "romberg_int(function(x) 1 / (1 + x^2), 0, 1, max_level = 6)",
+          "expected": 0.785398163,
+          "tolerance": 1e-8
+        },
+        {
+          "name": "Polynom x^4 na [0, 2] (= 32/5 = 6.4) už při max_level = 3",
+          "code": "romberg_int(function(x) x^4, 0, 2, max_level = 3)",
+          "expected": 6.4,
+          "tolerance": 1e-9
+        }
+      ],
+      "languages": {
+        "r": {
+          "starter_code": "romberg_int <- function(f, a, b, max_level = 5) {\n  R <- matrix(0, nrow = max_level, ncol = max_level)\n  # Vyplňte 1. sloupec lichoběžníkovým pravidlem a extrapolujte další sloupce\n  \n  R[max_level, max_level]\n}\n",
+          "solution_code": "romberg_int <- function(f, a, b, max_level = 5) {\n  R <- matrix(0, nrow = max_level, ncol = max_level)\n  h <- b - a\n  R[1, 1] <- 0.5 * h * (f(a) + f(b))\n  if (max_level > 1) {\n    for (k in 2:max_level) {\n      h <- h / 2\n      n_new <- 2^(k - 2)\n      mid_pts <- a + (2 * seq_len(n_new) - 1) * h\n      R[k, 1] <- 0.5 * R[k - 1, 1] + h * sum(vapply(mid_pts, f, numeric(1)))\n      for (j in 2:k) {\n        factor <- 4^(j - 1)\n        R[k, j] <- (factor * R[k, j - 1] - R[k - 1, j - 1]) / (factor - 1)\n      }\n    }\n  }\n  R[max_level, max_level]\n}\n",
+          "visible_tests": [
+            {
+              "name": "int_0^pi sin(x) dx (přesně 2.0) při max_level = 5",
+              "code": "romberg_int(function(x) sin(x), 0, pi, max_level = 5)",
+              "expected": 2.0,
+              "tolerance": 1e-8
+            },
+            {
+              "name": "int_0^1 exp(x) dx (e - 1 ≈ 1.718281828) při max_level = 5",
+              "code": "romberg_int(function(x) exp(x), 0, 1, max_level = 5)",
+              "expected": 1.718281828,
+              "tolerance": 1e-8
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "int_0^1 1/(1 + x^2) dx (= pi/4) při max_level = 6",
+              "code": "romberg_int(function(x) 1 / (1 + x^2), 0, 1, max_level = 6)",
+              "expected": 0.785398163,
+              "tolerance": 1e-8
+            },
+            {
+              "name": "Polynom x^4 na [0, 2] (= 32/5 = 6.4) už při max_level = 3",
+              "code": "romberg_int(function(x) x^4, 0, 2, max_level = 3)",
+              "expected": 6.4,
+              "tolerance": 1e-9
+            }
+          ]
+        },
+        "python": {
+          "starter_code": "import math\n\ndef romberg_int(f, a, b, max_level=5):\n    R = [[0.0] * max_level for _ in range(max_level)]\n    # Vyplňte 1. sloupec lichoběžníkovým pravidlem a extrapolujte další sloupce\n    return R[max_level - 1][max_level - 1]\n",
+          "solution_code": "import math\n\ndef romberg_int(f, a, b, max_level=5):\n    R = [[0.0] * max_level for _ in range(max_level)]\n    h = b - a\n    R[0][0] = 0.5 * h * (f(a) + f(b))\n    for k in range(1, max_level):\n        h /= 2.0\n        n_new = 1 << (k - 1)\n        mid_sum = sum(f(a + (2 * i + 1) * h) for i in range(n_new))\n        R[k][0] = 0.5 * R[k - 1][0] + h * mid_sum\n        for j in range(1, k + 1):\n            factor = 4 ** j\n            R[k][j] = (factor * R[k][j - 1] - R[k - 1][j - 1]) / (factor - 1)\n    return R[max_level - 1][max_level - 1]\n",
+          "visible_tests": [
+            {
+              "name": "int_0^pi sin(x) dx (přesně 2.0) při max_level = 5",
+              "code": "romberg_int(math.sin, 0, math.pi, max_level=5)",
+              "expected": 2.0,
+              "tolerance": 1e-8
+            },
+            {
+              "name": "int_0^1 exp(x) dx (e - 1 ≈ 1.718281828) při max_level = 5",
+              "code": "romberg_int(math.exp, 0, 1, max_level=5)",
+              "expected": 1.718281828,
+              "tolerance": 1e-8
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "int_0^1 1/(1 + x^2) dx (= pi/4) při max_level = 6",
+              "code": "romberg_int(lambda x: 1.0 / (1.0 + x * x), 0, 1, max_level=6)",
+              "expected": 0.785398163,
+              "tolerance": 1e-8
+            },
+            {
+              "name": "Polynom x^4 na [0, 2] (= 32/5 = 6.4) už při max_level = 3",
+              "code": "romberg_int(lambda x: x**4, 0, 2, max_level=3)",
+              "expected": 6.4,
+              "tolerance": 1e-9
+            }
+          ]
+        }
+      },
+      "hints": [
+        "Krok 1: První sloupec tvoří lichoběžníkové pravidlo se zjemněním kroku `h = h / 2`: stačí přičíst jen nové lichoběžníkové středy (`0.5 * R[k-1, 0] + h * sum(...)`).",
+        "Krok 2: Další sloupce spočítáte Richardsonovým vzorcem `(4^j * R[k, j-1] - R[k-1, j-1]) / (4^j - 1)`.",
+        "Vysvětlení: Už 5 řádků Rombergovy tabulky (pouhých 17 vyhodnocení funkce!) dosahuje přesnosti přes 8 desetinných míst."
+      ],
+      "explanation": "Rombergova kvadratura efektivně recykluje všechny dříve vyhodnocené body lichoběžníkového pravidla a extrapolací rychle dosahuje vysokých řádů přesnosti."
     },
     {
       "id": "num-code-06",
-      "number": 6,
+      "number": 9,
       "type": "code_task",
       "language": "r",
-      "title": "Vizualizace Rungeho fenoménu (`curve()` + `lines()`)",
-      "text": "Pro Rungeho funkci $f(x) = \\frac{1}{1 + 25x^2}$ na $[-1, 1]$ sestrojte Lagrangeovu interpolaci v 9 ekvidistantních uzlech (`seq(-1, 1, length.out = 9)`). Vykreslete graf původní funkce pomocí `curve()`, přidejte křivku interpolantu `lines()` a uzly `points()`. Uložte maximální absolutní chybu na jemné mřížce `seq(-1, 1, length.out = 201)` do proměnné `max_runge_error`.",
+      "title": "Vizualizace Rungeho fenoménu",
+      "text": "Pro Rungeho funkci $f(x) = \\frac{1}{1 + 25x^2}$ na $[-1, 1]$ sestrojte Lagrangeovu interpolaci v 9 ekvidistantních uzlech (`-1` až `1`). Uložte maximální absolutní chybu na jemné mřížce 201 bodů do proměnné `max_runge_error` (v R zároveň vykreslete srovnávací graf pomocí `curve()`, `lines()`, `points()`).",
       "formula": "f(x) = \\frac{1}{1 + 25x^2}, \\quad E_\\infty = \\max_{x \\in [-1, 1]} |P_8(x) - f(x)|",
       "starter_code": "runge_f <- function(x) 1 / (1 + 25 * x^2)\n\nlagrange_vec <- function(x_nodes, y_nodes, x_eval) {\n  # Vyhodnoťte Lagrangeův polynom pro vektor bodů x_eval\n}\n\nx_nodes <- seq(-1, 1, length.out = 9)\ny_nodes <- runge_f(x_nodes)\nx_grid <- seq(-1, 1, length.out = 201)\n\n# Doplňte výpočet y_interp, max_runge_error a vykreslete graf pomocí curve(), lines(), points()\n",
       "solution_code": "runge_f <- function(x) 1 / (1 + 25 * x^2)\n\nlagrange_vec <- function(x_nodes, y_nodes, x_eval) {\n  vapply(x_eval, function(x0) {\n    n <- length(x_nodes)\n    res <- 0\n    for (i in seq_len(n)) {\n      res <- res + y_nodes[i] * prod((x0 - x_nodes[-i]) / (x_nodes[i] - x_nodes[-i]))\n    }\n    res\n  }, numeric(1))\n}\n\nx_nodes <- seq(-1, 1, length.out = 9)\ny_nodes <- runge_f(x_nodes)\nx_grid <- seq(-1, 1, length.out = 201)\ny_interp <- lagrange_vec(x_nodes, y_nodes, x_grid)\nmax_runge_error <- max(abs(y_interp - runge_f(x_grid)))\n\ncurve(runge_f(x), from = -1, to = 1, ylim = c(-0.4, 1.2),\n      lwd = 2, col = \"#38bdf8\",\n      main = \"Rungeho fenomen (9 ekvidistantnich uzlu)\",\n      xlab = \"x\", ylab = \"f(x)\")\nlines(x_grid, y_interp, col = \"#f43f5e\", lwd = 2, lty = 2)\npoints(x_nodes, y_nodes, pch = 19, col = \"#fbbf24\")\nlegend(\"topright\", legend = c(\"1/(1+25x^2)\", \"Lagrange P8(x)\", \"Uzly\"),\n       col = c(\"#38bdf8\", \"#f43f5e\", \"#fbbf24\"), lty = c(1, 2, NA), pch = c(NA, NA, 19))\n",
@@ -272,20 +938,86 @@
           "tolerance": 1e-8
         }
       ],
+      "languages": {
+        "r": {
+          "starter_code": "runge_f <- function(x) 1 / (1 + 25 * x^2)\n\nlagrange_vec <- function(x_nodes, y_nodes, x_eval) {\n  # Vyhodnoťte Lagrangeův polynom pro vektor bodů x_eval\n}\n\nx_nodes <- seq(-1, 1, length.out = 9)\ny_nodes <- runge_f(x_nodes)\nx_grid <- seq(-1, 1, length.out = 201)\n\n# Doplňte výpočet y_interp, max_runge_error a vykreslete graf pomocí curve(), lines(), points()\n",
+          "solution_code": "runge_f <- function(x) 1 / (1 + 25 * x^2)\n\nlagrange_vec <- function(x_nodes, y_nodes, x_eval) {\n  vapply(x_eval, function(x0) {\n    n <- length(x_nodes)\n    res <- 0\n    for (i in seq_len(n)) {\n      res <- res + y_nodes[i] * prod((x0 - x_nodes[-i]) / (x_nodes[i] - x_nodes[-i]))\n    }\n    res\n  }, numeric(1))\n}\n\nx_nodes <- seq(-1, 1, length.out = 9)\ny_nodes <- runge_f(x_nodes)\nx_grid <- seq(-1, 1, length.out = 201)\ny_interp <- lagrange_vec(x_nodes, y_nodes, x_grid)\nmax_runge_error <- max(abs(y_interp - runge_f(x_grid)))\n\ncurve(runge_f(x), from = -1, to = 1, ylim = c(-0.4, 1.2),\n      lwd = 2, col = \"#38bdf8\",\n      main = \"Rungeho fenomen (9 ekvidistantnich uzlu)\",\n      xlab = \"x\", ylab = \"f(x)\")\nlines(x_grid, y_interp, col = \"#f43f5e\", lwd = 2, lty = 2)\npoints(x_nodes, y_nodes, pch = 19, col = \"#fbbf24\")\nlegend(\"topright\", legend = c(\"1/(1+25x^2)\", \"Lagrange P8(x)\", \"Uzly\"),\n       col = c(\"#38bdf8\", \"#f43f5e\", \"#fbbf24\"), lty = c(1, 2, NA), pch = c(NA, NA, 19))\n",
+          "visible_tests": [
+            {
+              "name": "Maximální chyba interpolace P8(x) na [-1, 1]",
+              "code": "max_runge_error",
+              "expected": 1.045173,
+              "tolerance": 0.01
+            },
+            {
+              "name": "Přesný průchod středovým uzlem x = 0",
+              "code": "lagrange_vec(x_nodes, y_nodes, 0)",
+              "expected": 1.0,
+              "tolerance": 1e-8
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Hodnota interpolantu v okraji x = 1",
+              "code": "lagrange_vec(x_nodes, y_nodes, 1)",
+              "expected": 0.03846154,
+              "tolerance": 1e-6
+            },
+            {
+              "name": "Symetrie interpolace: P8(-0.9) == P8(0.9)",
+              "code": "abs(lagrange_vec(x_nodes, y_nodes, -0.9) - lagrange_vec(x_nodes, y_nodes, 0.9))",
+              "expected": 0.0,
+              "tolerance": 1e-8
+            }
+          ]
+        },
+        "python": {
+          "starter_code": "def runge_f(x):\n    return 1.0 / (1.0 + 25.0 * x * x)\n\ndef lagrange_eval(x_nodes, y_nodes, x0):\n    # Vyhodnoťte Lagrangeův polynom v bodě x0\n    pass\n\nx_nodes = [-1.0 + 2.0 * i / 8.0 for i in range(9)]\ny_nodes = [runge_f(x) for x in x_nodes]\nx_grid = [-1.0 + 2.0 * i / 200.0 for i in range(201)]\n\n# Spočítejte max_runge_error na x_grid\nmax_runge_error = 0.0\n",
+          "solution_code": "def runge_f(x):\n    return 1.0 / (1.0 + 25.0 * x * x)\n\ndef lagrange_eval(x_nodes, y_nodes, x0):\n    n = len(x_nodes)\n    res = 0.0\n    for i in range(n):\n        basis = 1.0\n        for j in range(n):\n            if j != i:\n                basis *= (x0 - x_nodes[j]) / (x_nodes[i] - x_nodes[j])\n        res += y_nodes[i] * basis\n    return res\n\nx_nodes = [-1.0 + 2.0 * i / 8.0 for i in range(9)]\ny_nodes = [runge_f(x) for x in x_nodes]\nx_grid = [-1.0 + 2.0 * i / 200.0 for i in range(201)]\nmax_runge_error = max(abs(lagrange_eval(x_nodes, y_nodes, x) - runge_f(x)) for x in x_grid)\n",
+          "visible_tests": [
+            {
+              "name": "Maximální chyba interpolace P8(x) na [-1, 1]",
+              "code": "max_runge_error",
+              "expected": 1.045173,
+              "tolerance": 0.01
+            },
+            {
+              "name": "Přesný průchod středovým uzlem x = 0",
+              "code": "lagrange_eval(x_nodes, y_nodes, 0.0)",
+              "expected": 1.0,
+              "tolerance": 1e-8
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Hodnota interpolantu v okraji x = 1",
+              "code": "lagrange_eval(x_nodes, y_nodes, 1.0)",
+              "expected": 0.03846154,
+              "tolerance": 1e-6
+            },
+            {
+              "name": "Symetrie interpolace: P8(-0.9) == P8(0.9)",
+              "code": "abs(lagrange_eval(x_nodes, y_nodes, -0.9) - lagrange_eval(x_nodes, y_nodes, 0.9))",
+              "expected": 0.0,
+              "tolerance": 1e-8
+            }
+          ]
+        }
+      },
       "hints": [
-        "Krok 1: Pro vektor `x_eval` aplikujte Lagrangeův výpočet přes `sapply()` nebo `vapply()`.",
+        "Krok 1: Vyhodnoťte Lagrangeův interpolační polynom v každém z 201 bodů mřížky `x_grid`.",
         "Krok 2: Maximální chybu získáte jako `max(abs(y_interp - runge_f(x_grid)))`.",
-        "Vysvětlení: Graf vykreslíte příkazem `curve(runge_f(x), from = -1, to = 1, ylim = c(-0.4, 1.2))` a přidáte interpolant pomocí `lines(x_grid, y_interp)`."
+        "Vysvětlení: V R vykreslíte srovnání pomocí `curve(runge_f(x), from = -1, to = 1)` a `lines(x_grid, y_interp)`."
       ],
       "explanation": "I pro pouhých 9 ekvidistantních uzlů (polynom 8. stupně) překračuje maximální odchylka u okrajů intervalu hodnotu 1,0 — názorná ukázka Rungeho fenoménu."
     },
     {
       "id": "num-code-07",
-      "number": 7,
+      "number": 10,
       "type": "code_task",
       "language": "r",
-      "title": "Runge–Kutta 4. řádu (RK4) a graf řešení ODR",
-      "text": "Implementujte funkci `rk4_solve(f, x0, y0, h, n)` vracející `data.frame(x, y)` pro počáteční úlohu $y' = f(x, y)$, $y(x_0) = y_0$. Použijte ji na rovnici $y' = -2y$, $y(0) = 1$ s krokem $h = 0{,}2$ ($n = 10$ kroků do $x = 2$), uložte výsledek do `ode_res` a vykreslete numerické body (`plot()`) s přesným řešením $e^{-2x}$ (`curve(..., add = TRUE)`).",
+      "title": "Runge–Kutta 4. řádu (RK4) pro ODR",
+      "text": "Implementujte funkci `rk4_solve(f, x0, y0, h, n)` pro počáteční úlohu $y' = f(x, y)$, $y(x_0) = y_0$ (v R vrací `data.frame(x, y)`, v Pythonu dvojici seznamů `(xs, ys)`). Použijte ji na rovnici $y' = -2y$, $y(0) = 1$ s krokem $h = 0{,}2$ ($n = 10$ kroků do $x = 2$) a uložte výsledek do `ode_res`.",
       "formula": "y_{k+1} = y_k + \\frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)",
       "starter_code": "rk4_solve <- function(f, x0, y0, h, n) {\n  xs <- numeric(n + 1)\n  ys <- numeric(n + 1)\n  xs[1] <- x0\n  ys[1] <- y0\n  # Doplňte cyklus RK4\n  \n  data.frame(x = xs, y = ys)\n}\n\n# Vyřešte y' = -2*y, y(0) = 1 pro h = 0.2, n = 10 a vykreslete srovnávací graf\n",
       "solution_code": "rk4_solve <- function(f, x0, y0, h, n) {\n  xs <- numeric(n + 1)\n  ys <- numeric(n + 1)\n  xs[1] <- x0\n  ys[1] <- y0\n  for (i in seq_len(n)) {\n    x <- xs[i]\n    y <- ys[i]\n    k1 <- f(x, y)\n    k2 <- f(x + h / 2, y + h * k1 / 2)\n    k3 <- f(x + h / 2, y + h * k2 / 2)\n    k4 <- f(x + h, y + h * k3)\n    xs[i + 1] <- x + h\n    ys[i + 1] <- y + (h / 6) * (k1 + 2 * k2 + 2 * k3 + k4)\n  }\n  data.frame(x = xs, y = ys)\n}\n\node_res <- rk4_solve(function(x, y) -2 * y, 0, 1, 0.2, 10)\nplot(ode_res$x, ode_res$y, pch = 19, col = \"#10b981\",\n     main = \"RK4 reseni ODR y' = -2y, y(0) = 1\",\n     xlab = \"x\", ylab = \"y(x)\")\ncurve(exp(-2 * x), from = 0, to = 2, add = TRUE, col = \"#38bdf8\", lwd = 2)\nlegend(\"topright\", legend = c(\"RK4 (h = 0.2)\", \"Presne exp(-2x)\"),\n       col = c(\"#10b981\", \"#38bdf8\"), pch = c(19, NA), lty = c(NA, 1))\n",
@@ -318,10 +1050,76 @@
           "tolerance": 1e-8
         }
       ],
+      "languages": {
+        "r": {
+          "starter_code": "rk4_solve <- function(f, x0, y0, h, n) {\n  xs <- numeric(n + 1)\n  ys <- numeric(n + 1)\n  xs[1] <- x0\n  ys[1] <- y0\n  # Doplňte cyklus RK4\n  \n  data.frame(x = xs, y = ys)\n}\n\n# Vyřešte y' = -2*y, y(0) = 1 pro h = 0.2, n = 10 a vykreslete srovnávací graf\n",
+          "solution_code": "rk4_solve <- function(f, x0, y0, h, n) {\n  xs <- numeric(n + 1)\n  ys <- numeric(n + 1)\n  xs[1] <- x0\n  ys[1] <- y0\n  for (i in seq_len(n)) {\n    x <- xs[i]\n    y <- ys[i]\n    k1 <- f(x, y)\n    k2 <- f(x + h / 2, y + h * k1 / 2)\n    k3 <- f(x + h / 2, y + h * k2 / 2)\n    k4 <- f(x + h, y + h * k3)\n    xs[i + 1] <- x + h\n    ys[i + 1] <- y + (h / 6) * (k1 + 2 * k2 + 2 * k3 + k4)\n  }\n  data.frame(x = xs, y = ys)\n}\n\node_res <- rk4_solve(function(x, y) -2 * y, 0, 1, 0.2, 10)\nplot(ode_res$x, ode_res$y, pch = 19, col = \"#10b981\",\n     main = \"RK4 reseni ODR y' = -2y, y(0) = 1\",\n     xlab = \"x\", ylab = \"y(x)\")\ncurve(exp(-2 * x), from = 0, to = 2, add = TRUE, col = \"#38bdf8\", lwd = 2)\nlegend(\"topright\", legend = c(\"RK4 (h = 0.2)\", \"Presne exp(-2x)\"),\n       col = c(\"#10b981\", \"#38bdf8\"), pch = c(19, NA), lty = c(NA, 1))\n",
+          "visible_tests": [
+            {
+              "name": "Hodnota řešení y(2) ≈ exp(-4)",
+              "code": "ode_res$y[nrow(ode_res)]",
+              "expected": 0.01831564,
+              "tolerance": 1e-4
+            },
+            {
+              "name": "Hodnota řešení v x = 1 ≈ exp(-2)",
+              "code": "ode_res$y[6]",
+              "expected": 0.13533528,
+              "tolerance": 1e-4
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Test na y' = y, y(0) = 1 pro h = 0.1, n = 10 (y(1) ≈ e)",
+              "code": "tail(rk4_solve(function(x, y) y, 0, 1, 0.1, 10)$y, 1)",
+              "expected": 2.7182818,
+              "tolerance": 1e-5
+            },
+            {
+              "name": "Test na neautonomní rovnici y' = 2x, y(0) = 0 (y(2) = 4)",
+              "code": "tail(rk4_solve(function(x, y) 2 * x, 0, 0, 0.2, 10)$y, 1)",
+              "expected": 4.0,
+              "tolerance": 1e-8
+            }
+          ]
+        },
+        "python": {
+          "starter_code": "def rk4_solve(f, x0, y0, h, n):\n    xs = [float(x0)]\n    ys = [float(y0)]\n    # Doplňte cyklus RK4 a vraťte (xs, ys)\n    return xs, ys\n\n# Vyřešte y' = -2*y, y(0) = 1 pro h = 0.2, n = 10\node_res = rk4_solve(lambda x, y: -2 * y, 0.0, 1.0, 0.2, 10)\n",
+          "solution_code": "def rk4_solve(f, x0, y0, h, n):\n    xs = [float(x0)]\n    ys = [float(y0)]\n    x, y = float(x0), float(y0)\n    for _ in range(n):\n        k1 = f(x, y)\n        k2 = f(x + h / 2.0, y + h * k1 / 2.0)\n        k3 = f(x + h / 2.0, y + h * k2 / 2.0)\n        k4 = f(x + h, y + h * k3)\n        x = x + h\n        y = y + (h / 6.0) * (k1 + 2 * k2 + 2 * k3 + k4)\n        xs.append(x)\n        ys.append(y)\n    return xs, ys\n\node_res = rk4_solve(lambda x, y: -2 * y, 0.0, 1.0, 0.2, 10)\n",
+          "visible_tests": [
+            {
+              "name": "Hodnota řešení y(2) ≈ exp(-4)",
+              "code": "ode_res[1][-1]",
+              "expected": 0.01831564,
+              "tolerance": 1e-4
+            },
+            {
+              "name": "Hodnota řešení v x = 1 ≈ exp(-2)",
+              "code": "ode_res[1][5]",
+              "expected": 0.13533528,
+              "tolerance": 1e-4
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Test na y' = y, y(0) = 1 pro h = 0.1, n = 10 (y(1) ≈ e)",
+              "code": "rk4_solve(lambda x, y: y, 0.0, 1.0, 0.1, 10)[1][-1]",
+              "expected": 2.7182818,
+              "tolerance": 1e-5
+            },
+            {
+              "name": "Test na neautonomní rovnici y' = 2x, y(0) = 0 (y(2) = 4)",
+              "code": "rk4_solve(lambda x, y: 2 * x, 0.0, 0.0, 0.2, 10)[1][-1]",
+              "expected": 4.0,
+              "tolerance": 1e-8
+            }
+          ]
+        }
+      },
       "hints": [
         "Krok 1: Spočítejte postupně `k1`, `k2` v `(x + h/2, y + h*k1/2)`, `k3` v `(x + h/2, y + h*k2/2)` a `k4` v `(x + h, y + h*k3)`.",
-        "Krok 2: Nová hodnota je `ys[i + 1] <- y + (h / 6) * (k1 + 2 * k2 + 2 * k3 + k4)`.",
-        "Vysvětlení: Pomocí `plot(ode_res$x, ode_res$y)` a `curve(exp(-2 * x), from = 0, to = 2, add = TRUE)` vizuálně ověříte vysokou přesnost RK4."
+        "Krok 2: Nová hodnota je `y_next = y + (h / 6) * (k1 + 2 * k2 + 2 * k3 + k4)`.",
+        "Vysvětlení: V R můžete navíc výsledné body zobrazit přes `plot(ode_res$x, ode_res$y)` s analytickou křivkou `curve(exp(-2 * x), add = TRUE)`."
       ],
       "explanation": "RK4 dosahuje i s hrubým krokem $h = 0{,}2$ přesnosti na čtyři desetinná místa, zatímco Eulerova metoda by u téže úlohy měla výraznou chybu."
     }

@@ -1,0 +1,153 @@
+{
+  "title": "05 · Aproximace metodou nejmenších čtverců (T8–9)",
+  "lecture": 8,
+  "date": "2026-11-12",
+  "questions": [
+    {
+      "id": "num-04-q05",
+      "number": 1,
+      "type": "choice",
+      "text": "Jakou maticovou soustavu (**normální rovnice**) řešíme při hledání vektoru parametrů $\\vec{c}$ lineární aproximace metodou nejmenších čtverců $\\min \\|A\\vec{c} - \\vec{y}\\|_2^2$?",
+      "options": {
+        "A": "$A\\vec{c} = \\vec{y}$",
+        "B": "$A^T A \\vec{c} = A^T \\vec{y}$",
+        "C": "$A A^T \\vec{c} = \\vec{y}$",
+        "D": "$(A + A^T)\\vec{c} = \\vec{y}$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Přeurčená matice $A$ má rozměr $m \\times p$ ($m > p$), takže není čtvercová.",
+        "Krok 2: Položíme gradient funkce $S(\\vec{c}) = (A\\vec{c} - \\vec{y})^T(A\\vec{c} - \\vec{y})$ roven nule.",
+        "Vysvětlení: $\\nabla S(\\vec{c}) = 2A^T(A\\vec{c} - \\vec{y}) = \\vec{0} \\iff A^T A \\vec{c} = A^T \\vec{y}$."
+      ],
+      "explanation": "Normální soustava $A^T A \\vec{c} = A^T \\vec{y}$ převádí přeurčený problém ($m > p$) na čtvercovou symetrickou soustavu rozměru $p \\times p$. (Pro špatně podmíněné matice se používá QR rozklad.)"
+    },
+    {
+      "id": "num-05-q01",
+      "number": 2,
+      "type": "choice",
+      "text": "Jaký funkcionál minimalizuje **metoda nejmenších čtverců (MNC)** při prokládání bodů $(x_1, y_1), \\dots, (x_m, y_m)$ aproximační funkcí $\\varphi(x; \\vec{c})$?",
+      "options": {
+        "A": "Součet absolutních hodnot odchylek $\\sum_{i=1}^m |y_i - \\varphi(x_i; \\vec{c})|$",
+        "B": "Součet čtverců svislých odchylek (reziduí) $S(\\vec{c}) = \\sum_{i=1}^m \\big(y_i - \\varphi(x_i; \\vec{c})\\big)^2$",
+        "C": "Maximální odchylku $\\max_i |y_i - \\varphi(x_i; \\vec{c})|$ (Čebyševova aproximace)",
+        "D": "Součet svislých odchylek bez druhé mocniny $\\sum_{i=1}^m (y_i - \\varphi(x_i; \\vec{c}))$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Bez druhé mocniny by se kladné a záporné odchylky navzájem vyrušily.",
+        "Krok 2: Kvadratická funkce $S(\\vec{c})$ je hladce diferencovatelná, takže pro lineární model vede parciální derivování na soustavu lineárních rovnic.",
+        "Vysvětlení: MNC minimalizuje právě euklidovskou normu na druhou $\\|\\vec{y} - \\vec{\\varphi}\\|_2^2 = \\sum (y_i - \\varphi(x_i))^2$."
+      ],
+      "explanation": "Druhé mocniny reziduí zaručují nezápornost i hladkost účelové funkce. Položením parciálních derivací $\\frac{\\partial S}{\\partial c_j} = 0$ vznikají pro lineární kombinaci bázových funkcí normální rovnice."
+    },
+    {
+      "id": "num-05-q02",
+      "number": 3,
+      "type": "input_numeric",
+      "text": "Data $(0, 1)$, $(1, 2)$, $(2, 5)$ aproximujeme přímkou $y = q + k x$ metodou nejmenších čtverců. Jaká je optimální **směrnice $k$**?",
+      "answer": 2,
+      "tolerance": 0.01,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Průměry jsou $\\bar{x} = 1$ a $\\bar{y} = \\frac{1 + 2 + 5}{3} = \\frac{8}{3}$.",
+        "Krok 2: Směrnice regresní přímky: $k = \\frac{\\sum (x_i - \\bar{x})(y_i - \\bar{y})}{\\sum (x_i - \\bar{x})^2}$ (nebo ze soustavy $3q + 3k = 8$, $3q + 5k = 12$).",
+        "Vysvětlení: Odečtením normálních rovnic dostaneme $2k = 4 \\implies k = 2$ (a úsek $q = \\frac{2}{3}$)."
+      ],
+      "explanation": "Normální soustava má tvar $\\begin{pmatrix}3 & 3\\\\ 3 & 5\\end{pmatrix}\\begin{pmatrix}q\\\\k\\end{pmatrix} = \\begin{pmatrix}8\\\\12\\end{pmatrix}$. Odtud $2k = 4 \\implies k = 2$ a $q = \\frac{2}{3}$."
+    },
+    {
+      "id": "num-05-q03",
+      "number": 4,
+      "type": "choice",
+      "text": "Jak můžeme převést nelineární exponenciální model $y = a \\cdot e^{b x}$ (s kladnými hodnotami $y_i > 0$) na **lineární problém metody nejmenších čtverců**?",
+      "options": {
+        "A": "Zlogaritmováním obou stran na $\\ln(y) = \\ln(a) + b x$, kdy hledáme lineární parametry $q = \\ln(a)$ a $k = b$",
+        "B": "Umocněním obou stran na druhou",
+        "C": "Dosazením $x = 0$ do všech měření",
+        "D": "Exponenciální model nelze nijak linearizovat"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Jaká funkce je inverzní k exponenciále $e^{bx}$ a mění součin na součet?",
+        "Krok 2: Aplikujte přirozený logaritmus: $\\ln(y) = \\ln(a \\cdot e^{bx}) = \\ln(a) + b x$.",
+        "Vysvětlení: Položením $Y_i = \\ln(y_i)$ a $q = \\ln(a)$ vyřešíme běžnou lineární MNC pro $Y = q + bx$ a zpětně spočteme $a = e^q$."
+      ],
+      "explanation": "Logaritmická transformace převede $y = a e^{bx}$ na lineární vztah $\\ln(y) = \\ln(a) + bx$ (podobně mocninný model $y = a x^b$ na $\\ln(y) = \\ln(a) + b \\ln(x)$). Pozor: minimalizuje se chyba v logaritmickém měřítku."
+    },
+    {
+      "id": "num-05-q04",
+      "number": 5,
+      "type": "choice",
+      "text": "Jaký je hlavní numerický problém při řešení normální soustavy $A^T A \\vec{c} = A^T \\vec{y}$ pro polynomiální regresi vysokého stupně a jak jej řeší moderní knihovny (v Pythonu `numpy.linalg.lstsq` či v R `lm`)?",
+      "options": {
+        "A": "Matice $A^T A$ je obdélníková a nemá řešení",
+        "B": "Číslo podmíněnosti matice $A^T A$ je kvadrátem podmíněnosti matice $A$: $\\kappa(A^T A) = \\kappa(A)^2$; knihovny proto používají numericky stabilnější **QR rozklad** nebo **SVD**",
+        "C": "Normální soustava je vždy nesymetrická",
+        "D": "Výpočet $A^T A$ vyžaduje exponenciální čas"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Pokud má návrhová matice $A$ číslo podmíněnosti $10^6$, jakou podmíněnost má součin $A^T A$?",
+        "Krok 2: $\\kappa_2(A^T A) = \\kappa_2(A)^2 = 10^{12}$, což ve double přesnosti zničí 12 ze 16 cifer!",
+        "Vysvětlení: Ortogonální QR rozklad ($A = QR \\implies R\\vec{c} = Q^T\\vec{y}$) nikdy netvoří $A^T A$ a zachovává podmíněnost $\\kappa(A)$."
+      ],
+      "explanation": "Sestavení $A^T A$ umocňuje číslo podmíněnosti na druhou. Proto `lm()` v R používá QR rozklad a `numpy.linalg.lstsq()` v Pythonu používá SVD."
+    },
+    {
+      "id": "num-05-q05",
+      "number": 6,
+      "type": "input_numeric",
+      "text": "Pro body $(0, 1)$, $(1, 3)$, $(2, 4)$ máme navrženou přímku $y = 1 + 1{,}5 x$. Vypočítejte **reziduální součet čtverců** $S = \\sum_{i=1}^3 (y_i - \\hat{y}_i)^2$.",
+      "answer": 0.25,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Vyhodnoťte předpovědi přímky v uzlech: $\\hat{y}(0) = 1$, $\\hat{y}(1) = 2{,}5$, $\\hat{y}(2) = 4$.",
+        "Krok 2: Určete jednotlivá rezidua $r_i = y_i - \\hat{y}_i$: $r_1 = 0$, $r_2 = 0{,}5$, $r_3 = 0$.",
+        "Vysvětlení: $S = 0^2 + 0{,}5^2 + 0^2 = 0{,}25$."
+      ],
+      "explanation": "V bodech $x = 0$ a $x = 2$ přímka body přesně prochází ($r_1 = r_3 = 0$), v bodě $x = 1$ je odchylka $3 - 2{,}5 = 0{,}5$, tedy $S = 0{,}5^2 = 0{,}25$."
+    },
+    {
+      "id": "num-05-q06",
+      "number": 7,
+      "type": "choice",
+      "text": "Co se stane s **aproximací metodou nejmenších čtverců** polynomem stupně $p$, pokud pro $m$ různých bodů $(x_i, y_i)$ zvolíme stupeň $p = m - 1$?",
+      "options": {
+        "A": "Normální soustava nebude mít řešení",
+        "B": "Aproximace splyne s přesným interpolačním polynomem ($S = 0$) a u zašuměných dat dojde k přeučení (overfittingu)",
+        "C": "Polynom se zjednoduší na konstantní funkci",
+        "D": "Reziduální součet čtverců dosáhne maxima"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Kolik parametrů má polynom stupně $m - 1$? Přesně $m$ koeficientů pro $m$ bodů.",
+        "Krok 2: Matice $A$ se stane čtvercovou Vandermondovou maticí a existuje přesné řešení $A\\vec{c} = \\vec{y}$ s nulovou chybou v uzlech.",
+        "Vysvětlení: Aproximace tak ztratí vyhlazovací efekt — namísto trendu přesně okopíruje i měřicí šum."
+      ],
+      "explanation": "Když počet stupňů volnosti modelu dosáhne počtu bodů ($p + 1 = m$), MNC přechází v přesnou polynomiální interpolaci s nulovými rezidui v uzlech, ale často velkými oscilacemi mezi nimi."
+    },
+    {
+      "id": "num-05-q07",
+      "number": 8,
+      "type": "choice",
+      "text": "Jakou geometrickou vlastnost splňuje vektor reziduí $\\vec{r} = \\vec{y} - A\\vec{c}$ v optimálním řešení metody nejmenších čtverců?",
+      "options": {
+        "A": "Je rovnoběžný s každým sloupcem matice $A$",
+        "B": "Je kolmý (ortogonální) na sloupcový prostor matice $A$, tedy $A^T \\vec{r} = \\vec{0}$",
+        "C": "Má vždy všechny složky kladné",
+        "D": "Jeho norma je vždy rovna 1"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Přepište normální rovnici $A^T A \\vec{c} = A^T \\vec{y}$ na tvar $A^T(\\vec{y} - A\\vec{c}) = \\vec{0}$.",
+        "Krok 2: Výraz $\\vec{y} - A\\vec{c}$ je přímo vektor reziduí $\\vec{r}$.",
+        "Vysvětlení: Podmínka $A^T \\vec{r} = \\vec{0}$ říká, že $\\vec{r}$ je ortogonální ke všem sloupcům $A$ (tedy $A\\vec{c}$ je kolmý průmět $\\vec{y}$ do sloupcového prostoru $A$)."
+      ],
+      "explanation": "Metoda nejmenších čtverců hledá ortogonální projekci vektoru měření $\\vec{y}$ na sloupcový prostor matice $A$; proto platí $A^T(\\vec{y} - A\\vec{c}) = \\vec{0}$, což pro model s absolutním členem zároveň znamená $\\sum r_i = 0$."
+    }
+  ]
+}

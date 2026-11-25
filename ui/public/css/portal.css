@@ -1924,6 +1924,40 @@
     color: var(--text-3);
   }
 
+  /* Syllabus & literature disclosure on subject page */
+  .syllabus-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-4);
+    color: var(--text-2);
+    font-size: var(--text-sm);
+  }
+
+  .syllabus-group {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-2);
+  }
+
+  .syllabus-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-2);
+  }
+
+  .syllabus-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--sp-2);
+    padding-block: var(--sp-2);
+    border-block-end: 1px solid var(--border-subtle);
+  }
+
+  .syllabus-row:last-child {
+    border-block-end: 0;
+  }
+
   /* Mobile sticky action bar inside sandbox / quiz */
   .mobile-sticky-bar {
     display: none;

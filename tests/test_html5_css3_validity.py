@@ -116,4 +116,30 @@ def test_real_catalog_subjects_valid_html5(
             out.write_text(resp.text, encoding="utf-8")
             written.append(str(out))
 
+        # Verify official KI/NUM syllabus & dual R/Python sandbox non-leakage
+        num_html = (tmp_path / "real_num.html").read_text(encoding="utf-8")
+        for token in (
+            "Praktický test",
+            "Rombergova kvadratura",
+            "Vicher, M.",
+            "VONDRÁK, V.",
+            "KUBEN, J.",
+        ):
+            assert token in num_html, f"Missing NUM syllabus content: {token}"
+
+        r_code_q = tc.get("/api/num/questions?mode=practice&type=code_task&limit=50")
+        assert r_code_q.status_code == 200
+        q_list = r_code_q.json().get("questions", [])
+        assert len(q_list) == 10
+        for item in q_list:
+            assert "solution_code" not in item
+            assert "hidden_tests" not in item
+            langs = item.get("languages") or {}
+            assert {"r", "python"} <= set(langs.keys())
+            for variant in langs.values():
+                assert "solution_code" not in variant
+                assert "hidden_tests" not in variant
+                assert variant.get("starter_code")
+                assert len(variant.get("visible_tests") or []) >= 2
+
     _run_html_validate(written)
