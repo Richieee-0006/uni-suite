@@ -1,7 +1,7 @@
 {
   "name": "UNI Suite",
   "short_name": "UNI Suite",
-  "description": "Studijní trenažéry a sandbox pro předměty KI UJEP",
+  "description": "Neoficiální studentská studijní platforma a sandbox",
   "lang": "cs",
   "start_url": "/",
   "scope": "/",

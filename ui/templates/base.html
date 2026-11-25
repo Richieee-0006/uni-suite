@@ -16,7 +16,7 @@
 {%- block extra_head %}{% endblock %}
 </head>
 <body>
-{%- set _site = site or {'title': 'UNI Suite', 'domain': 'uni.rutterle.eu', 'subtitle': 'Studijní trenažéry a sandbox pro předměty KI UJEP'} %}
+{%- set _site = site or {'title': 'UNI Suite', 'domain': 'uni.rutterle.eu', 'subtitle': 'Neoficiální studentská studijní platforma a sandbox'} %}
 {%- set _prefs = prefs or {} %}
 {%- set _theme = _prefs.get('theme', 'graphite') %}
 {%- set _accent = _prefs.get('accent', 'sky') %}
@@ -248,7 +248,7 @@
     </main>
 
     <footer id="app-footer" class="app-footer">
-      <span>{{ _site.title }} · KI UJEP</span>
+      <span>{{ _site.title }} · RR</span>
       <div class="footer-meta">
         <span><kbd>Ctrl+K</kbd> Hledat</span>
         <span><kbd>F</kbd> Tahák</span>

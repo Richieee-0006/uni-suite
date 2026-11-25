@@ -26,7 +26,7 @@ MASTERY_LABELS: dict[str, str] = {
 DEFAULT_SITE: dict[str, str] = {
     "title": "UNI Suite",
     "domain": "uni.rutterle.eu",
-    "subtitle": "Studijní trenažéry a sandbox pro předměty KI UJEP",
+    "subtitle": "Neoficiální studentská studijní platforma a sandbox",
 }
 
 DEFAULT_EXAM_CONFIG: dict[str, int] = {
