@@ -26,6 +26,10 @@
         "body": "Vlastnost konkrétního algoritmu: stabilní algoritmus zbytečně nezvětšuje zaokrouhlovací chyby vzniklé během výpočtu."
       },
       {
+        "term": "Korektnost úlohy (Hadamard)",
+        "body": "Úloha je korektně formulovaná, pokud řešení existuje, je jednoznačné a spojitě závisí na vstupních datech."
+      },
+      {
         "term": "Hornerovo schéma",
         "body": "Vnořené vyhodnocení polynomu $P_n(x) = (\\dots(a_n x + a_{n-1})x + \\dots)x + a_0$ v čase $O(n)$ (přesně $n$ násobení a $n$ sčítání)."
       }
@@ -84,6 +88,10 @@
     ],
     "04-interpolace-integrace-aproximace": [
       {
+        "term": "Po částech lineární interpolace",
+        "body": "Spojitá ($C^0$) lokální interpolace propojující sousední uzly úsečkami; netrpí Rungeho fenoménem a má chybu $O(h^2)$."
+      },
+      {
         "term": "Lagrangeův interpolační polynom",
         "body": "Explicitní tvar polynomu procházejícího všemi uzly $(x_i, y_i)$ přes bázové polynomy $L_i(x)$ nabývající hodnoty 1 v $x_i$ a 0 v ostatních uzlech."
       },
@@ -93,23 +101,29 @@
       },
       {
         "term": "Rungeho fenomén",
-        "body": "Silné kmitání interpolačního polynomu vysokého stupně u krajů intervalu na ekvidistantních uzlech. Řeší se spliny nebo Čebyševovými uzly."
-      },
+        "body": "Silné kmitání interpolačního polynomu vysokého stupně u krajů intervalu na ekvidistantních uzlech. Řeší se po částech interpolací nebo Čebyševovými uzly."
+      }
+    ],
+    "04b-aproximace-mnc": [
       {
         "term": "Metoda nejmenších čtverců (MNC)",
-        "body": "Aproximace zašuměných dat minimalizující součet čtverců svislých odchylek řešením normálních rovnic $A^T A \\vec{c} = A^T \\vec{y}$."
+        "body": "Aproximace zašuměných dat minimalizující součet čtverců svislých odchylek řešením normálních rovnic $A^T A \\vec{c} = A^T \\vec{y}$ (příp. přes QR/SVD)."
+      }
+    ],
+    "04c-derivovani-integrace": [
+      {
+        "term": "Newtonovy–Cotesovy vzorce",
+        "body": "Kvadraturní vzorce (obdélníkové, lichoběžníkové $O(h^2)$, Simpsonovo $O(h^4)$) vzniklé integrací interpolačního polynomu na ekvidistantní síti; v praxi se používají složené."
       },
       {
-        "term": "Lichoběžníkové a Simpsonovo pravidlo",
-        "body": "Newtonovy–Cotesovy kvadratury: lichoběžníkové má chybu $O(h^2)$ (přesné pro přímky), Simpsonovo $O(h^4)$ (přesné až pro kubiky)."
-      },
+        "term": "Rombergova kvadratura",
+        "body": "Kombinace složeného lichoběžníkového pravidla s Richardsonovou extrapolací $R_{k,j} = \\frac{4^j R_{k,j-1} - R_{k-1,j-1}}{4^j - 1}$, postupně rušící chyby $O(h^2), O(h^4), O(h^6), \\dots$"
+      }
+    ],
+    "04d-odr": [
       {
-        "term": "Rombergova integrace",
-        "body": "Kombinace složeného lichoběžníkového pravidla s Richardsonovou extrapolací postupně rušící chyby $O(h^2), O(h^4), O(h^6), \\dots$"
-      },
-      {
-        "term": "Eulerova metoda a RK4",
-        "body": "Jednokrokové metody pro ODR $y' = f(x, y)$: Euler má globální chybu $O(h)$, klasická Runge–Kutta 4. řádu (RK4) má chybu $O(h^4)$."
+        "term": "Eulerova metoda, Heun (RK2) a RK4",
+        "body": "Jednokrokové metody pro ODR $y' = f(x, y)$: explicitní Euler má globální chybu $O(h)$, Heunova metoda (RK2) má $O(h^2)$ a klasická Runge–Kutta 4. řádu (RK4) má chybu $O(h^4)$."
       }
     ],
     "05-r-code-tasks": [

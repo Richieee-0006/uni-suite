@@ -1,5 +1,5 @@
 {
-  "title": "02 · Hledání kořenů nelineárních rovnic",
+  "title": "02 · Řešení nelineárních rovnic a Horner (T2–3)",
   "lecture": 2,
   "date": "2026-10-08",
   "questions": [
@@ -197,6 +197,41 @@
         "Vysvětlení: Chyba klesla z řádu $10^{-2}$ na řád $10^{-5}$ — typický projev kvadratické konvergence."
       ],
       "explanation": "Druhý krok dává $x_2 = 2{,}25 - \\frac{2{,}25^2 - 5}{4{,}5} = 2{,}236111\\dots$, což je od $\\sqrt{5} \\approx 2{,}236068$ vzdáleno jen o $4{,}3 \\cdot 10^{-5}$."
+    },
+    {
+      "id": "num-02-q11",
+      "number": 11,
+      "type": "input_numeric",
+      "text": "Aplikujte **jeden krok metody regula falsi** na rovnici $f(x) = x^2 - 2 = 0$ na intervalu $[a, b] = [1, 2]$. Jakou hodnotu $c_1$ (průsečík sečny s osou $x$) získáte? Zaokrouhlete na 3 desetinná místa.",
+      "answer": 1.333,
+      "tolerance": 0.005,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Vyhodnoťte krajní body: $f(1) = -1$ a $f(2) = 2$ (opačná znaménka jsou splněna).",
+        "Krok 2: Vzorec regula falsi: $c_1 = a - f(a)\\frac{b - a}{f(b) - f(a)} = \\frac{a f(b) - b f(a)}{f(b) - f(a)}$.",
+        "Vysvětlení: $c_1 = 1 - (-1)\\frac{2 - 1}{2 - (-1)} = 1 + \\frac{1}{3} = \\frac{4}{3} \\approx 1{,}333$."
+      ],
+      "explanation": "Sečna spojující body $(1, -1)$ a $(2, 2)$ protíná osu $x$ v bodě $c_1 = \\frac{1\\cdot 2 - 2\\cdot(-1)}{2 - (-1)} = \\frac{4}{3} \\approx 1{,}333$. Protože $f(4/3) < 0$, nový interval bude $[4/3, 2]$."
+    },
+    {
+      "id": "num-02-q12",
+      "number": 12,
+      "type": "choice",
+      "text": "Co dělá krok **deflace polynomu** v Newtonově–Hornerově metodě poté, co najdeme první kořen $x^*$ polynomu $P_n(x)$?",
+      "options": {
+        "A": "Zvýší stupeň polynomu o 1",
+        "B": "Využije mezivýsledky Hornerova schématu $b_n, \\dots, b_1$ jako koeficienty podílového polynomu $Q_{n-1}(x) = P_n(x)/(x - x^*)$ stupně $n - 1$ a hledá další kořeny už na něm",
+        "C": "Nahradí všechny koeficienty absolutní hodnotou",
+        "D": "Vymaže kořen $x^*$ z reálné osy a přejde k bisekci na původním polynomu"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Hornerovo schéma při vyhodnocování $P_n(x^*)$ vlastně provádí dělení polynomu kořenovým činitelem $(x - x^*)$ se zbytkem $b_0 = P_n(x^*) \\approx 0$.",
+        "Krok 2: Mezivýsledky $b_n, b_{n-1}, \\dots, b_1$ jsou přímo koeficienty polynomu nižšího stupně $Q_{n-1}(x)$.",
+        "Vysvětlení: Hledáním dalších kořenů na $Q_{n-1}(x)$ zabráníme opakovanému nalezení téhož kořene a snížíme složitost výpočtu."
+      ],
+      "explanation": "Hornerovo schéma splňuje $P_n(x) = (x - x^*)Q_{n-1}(x) + P_n(x^*)$. Jakmile $P_n(x^*) \\approx 0$, koeficienty $b_n, \\dots, b_1$ tvoří redukovaný (deflovaný) polynom $Q_{n-1}(x)$ pro hledání zbývajících kořenů."
     }
   ]
 }

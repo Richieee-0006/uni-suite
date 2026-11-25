@@ -309,6 +309,10 @@ def _load_raw_subject_record(
             "recall_topics_raw": [],
             "glossary_raw": [],
             "formulas_raw": [],
+            "annotation": "",
+            "requirements": "",
+            "syllabus": [],
+            "literature": [],
         }
 
     subject_dir = root / slug
@@ -363,6 +367,14 @@ def _load_raw_subject_record(
         "recall_topics_raw": recall_topics,
         "glossary_raw": glossary_items,
         "formulas_raw": formula_items,
+        "annotation": str(meta.get("annotation") or ""),
+        "requirements": str(meta.get("requirements") or ""),
+        "syllabus": list(meta.get("syllabus") or [])
+        if isinstance(meta.get("syllabus"), list)
+        else [],
+        "literature": list(meta.get("literature") or [])
+        if isinstance(meta.get("literature"), list)
+        else [],
     }
 
 
@@ -448,6 +460,10 @@ def _project_subject(
         "mastery_label": s_mastery["mastery_label"],
         "binary_preview": s_mastery["cells"][:BINARY_PREVIEW_LIMIT],
         "topics": projected_topics,
+        "annotation": raw.get("annotation", ""),
+        "requirements": raw.get("requirements", ""),
+        "syllabus": raw.get("syllabus", []),
+        "literature": raw.get("literature", []),
     }
 
     if include_admin_fields:

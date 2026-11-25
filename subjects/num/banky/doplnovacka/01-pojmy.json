@@ -242,6 +242,66 @@
         "Vysvětlení: Jedná se o Rungeho–Kuttovu metodu (RK4)."
       ],
       "explanation": "Rungeho–Kuttova metoda 4. řádu (RK4) patří díky skvělému poměru přesnosti $O(h^4)$ a jednoduchosti mezi nejpoužívanější řešiče ODR."
+    },
+    {
+      "id": "num-rec-17",
+      "number": 17,
+      "type": "recall",
+      "category": "Chyby a aritmetika",
+      "text": "Vlastnost matematické úlohy (podle Hadamarda), kdy řešení existuje, je jednoznačné a spojitě závisí na vstupních datech, se nazývá ____.",
+      "accept": ["korektnost úlohy", "korektnost ulohy", "korektnost", "dobrá položenost", "dobra polozenost"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Opakem je nekorektní (ill-posed) úloha.",
+        "Krok 2: V sylabu T1 stojí hned vedle stability a podmíněnosti úlohy.",
+        "Vysvětlení: Správný pojem je korektnost úlohy."
+      ],
+      "explanation": "Hadamardova korektnost úlohy vyžaduje existenci, jednoznačnost a spojitou závislost řešení na vstupních datech."
+    },
+    {
+      "id": "num-rec-18",
+      "number": 18,
+      "type": "recall",
+      "category": "Interpolace",
+      "text": "Lokální spojitá ($C^0$) interpolace propojující sousední uzly úsečkami s chybou $O(h^2)$ bez rizika Rungeho oscilací se nazývá ____.",
+      "accept": ["po částech lineární interpolace", "po castech linearni interpolace", "lomená čára", "lomena cara"],
+      "words": 4,
+      "hints": [
+        "Krok 1: Na každém dílčím intervalu $[x_i, x_{i+1}]$ jde o obyčejnou přímku.",
+        "Krok 2: Začíná slovy „po částech…“.",
+        "Vysvětlení: Jde o po částech lineární interpolaci."
+      ],
+      "explanation": "Po částech lineární interpolace spojuje sousední uzly úsečkami, netrpí Rungeho fenoménem a její chyba klesá jako $\\frac{h^2}{8}\\max|f''|$."
+    },
+    {
+      "id": "num-rec-19",
+      "number": 19,
+      "type": "recall",
+      "category": "Numerická integrace",
+      "text": "Rodina kvadraturních pravidel (obdélníkové, lichoběžníkové, Simpsonovo) odvozená integrací interpolačního polynomu na ekvidistantních uzlech nese název ____.",
+      "accept": ["Newtonovy-Cotesovy vzorce", "Newtonovy Cotesovy vzorce", "Newtonovy-Cotesovy kvadratury", "Newton-Cotesovy vzorce"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Rozlišujeme jejich jednoduchou a složenou variantu.",
+        "Krok 2: Nesou jména Isaaca Newtona a Rogera Cotese.",
+        "Vysvětlení: Jedná se o Newtonovy–Cotesovy vzorce."
+      ],
+      "explanation": "Newtonovy–Cotesovy vzorce nahrazují integrand interpolačním polynomem na rovnoměrné síti; v praxi používáme jejich složené nízkostupňové verze."
+    },
+    {
+      "id": "num-rec-20",
+      "number": 20,
+      "type": "recall",
+      "category": "Numerické řešení ODR",
+      "text": "Jednokroková metoda 2. řádu (RK2) pro ODR, která jako prediktor použije Eulerův krok a následně zprůměruje počáteční a koncový sklon $\\frac{h}{2}(k_1 + k_2)$, se nazývá ____.",
+      "accept": ["Heunova metoda", "RK2", "modifikovaná Eulerova metoda", "modifikovana Eulerova metoda"],
+      "words": 2,
+      "hints": [
+        "Krok 1: Vzorec $y_{k+1} = y_k + \\frac{h}{2}(k_1 + k_2)$ odpovídá lichoběžníkovému pravidlu pro integraci sklonu.",
+        "Krok 2: Nese jméno německého matematika Karla Heuna.",
+        "Vysvětlení: Jde o Heunovu metodu (RK2)."
+      ],
+      "explanation": "Heunova metoda patří mezi dvoukrokové stupně rodiny Runge–Kutta 2. řádu (RK2) s globální chybou $O(h^2)$."
     }
   ]
 }

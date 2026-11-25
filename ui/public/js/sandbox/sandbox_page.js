@@ -57,6 +57,10 @@ async function initStandaloneSandboxPage() {
   }
 
   const taskPicker = document.getElementById("sandbox-task-picker");
+  const langPicker = document.getElementById("sandbox-lang-picker");
+  const runtimeLabel = document.getElementById("sandbox-runtime-label");
+  const metaLine = document.getElementById("sandbox-meta-line");
+  const filenameEl = document.getElementById("sandbox-filename");
   const taskTitle = document.getElementById("sandbox-task-title");
   const taskDesc = document.getElementById("sandbox-task-desc");
   const taskFormula = document.getElementById("sandbox-task-formula");
@@ -65,6 +69,28 @@ async function initStandaloneSandboxPage() {
   const runBtn = document.getElementById("sandbox-run-btn");
   const testBtn = document.getElementById("sandbox-test-btn");
   const mobileRunBtn = document.querySelector("[data-sandbox-run-mobile]");
+
+  const LANG_META = {
+    r: {
+      label: "R (WebR)",
+      runtime: "WebR WASM · izolováno",
+      filename: "solution.R",
+    },
+    python: {
+      label: "Python (Pyodide)",
+      runtime: "Pyodide WASM · izolováno",
+      filename: "solution.py",
+    },
+  };
+
+  const subjectLangs =
+    state.subject &&
+    state.subject.sandbox &&
+    Array.isArray(state.subject.sandbox.languages) &&
+    state.subject.sandbox.languages.length > 0
+      ? state.subject.sandbox.languages.map((l) => String(l).toLowerCase())
+      : ["r"];
+  let activeLang = subjectLangs[0] || "r";
 
   const defaultStarter =
     "# Složene lichobeznikove pravidlo v R\n" +
@@ -76,7 +102,7 @@ async function initStandaloneSandboxPage() {
     "}\n";
 
   const editor = new SandboxCodeEditor(editorHost, {
-    language: "r",
+    language: activeLang,
     starterCode: defaultStarter,
     onRun: () => runSandbox(true),
   });
@@ -94,6 +120,70 @@ async function initStandaloneSandboxPage() {
   let currentTask = null;
   let running = false;
   let lastRunWithTests = null;
+
+  function resolveTaskVariant(task, lang) {
+    if (!task) {
+      return { language: lang, starter_code: defaultStarter, visible_tests: [] };
+    }
+    const variants = task.languages && typeof task.languages === "object" ? task.languages : null;
+    if (variants && variants[lang] && typeof variants[lang] === "object") {
+      const v = variants[lang];
+      return {
+        language: lang,
+        starter_code: v.starter_code || task.starter_code || defaultStarter,
+        visible_tests: Array.isArray(v.visible_tests) ? v.visible_tests : task.visible_tests || [],
+      };
+    }
+    const fallbackLang = (task.language || lang || "r").toLowerCase();
+    return {
+      language: fallbackLang,
+      starter_code: task.starter_code || defaultStarter,
+      visible_tests: Array.isArray(task.visible_tests) ? task.visible_tests : [],
+    };
+  }
+
+  function updateLanguageChrome(lang) {
+    const info = LANG_META[lang] || {
+      label: lang.toUpperCase(),
+      runtime: `${lang.toUpperCase()} WASM · izolováno`,
+      filename: `solution.${lang}`,
+    };
+    if (runtimeLabel) runtimeLabel.textContent = info.runtime;
+    if (filenameEl) filenameEl.textContent = info.filename;
+    if (metaLine) {
+      metaLine.textContent = `Jazyk: ${info.label} · Limit: 5 s · Síť: izolováno`;
+    }
+    if (langPicker) {
+      langPicker.querySelectorAll("button[data-lang]").forEach((btn) => {
+        btn.setAttribute("aria-pressed", btn.dataset.lang === lang ? "true" : "false");
+      });
+    }
+  }
+
+  function initLanguagePicker() {
+    if (!langPicker || subjectLangs.length < 2) return;
+    clearEl(langPicker);
+    langPicker.hidden = false;
+    subjectLangs.forEach((lang) => {
+      const info = LANG_META[lang] || { label: lang.toUpperCase() };
+      const btn = makeEl("button", "tab-pill", info.label);
+      btn.type = "button";
+      btn.dataset.lang = lang;
+      btn.setAttribute("aria-pressed", lang === activeLang ? "true" : "false");
+      btn.addEventListener("click", () => {
+        if (activeLang === lang) return;
+        activeLang = lang;
+        if (currentTask) {
+          renderTask(currentTask);
+        } else {
+          updateLanguageChrome(activeLang);
+        }
+      });
+      langPicker.appendChild(btn);
+    });
+    updateLanguageChrome(activeLang);
+  }
+  initLanguagePicker();
 
   function switchOutputTab(tabName) {
     document.querySelectorAll("[data-output-tab]").forEach((btn) => {
@@ -158,10 +248,12 @@ async function initStandaloneSandboxPage() {
         taskHints.appendChild(makeEl("p", "", "Pro tuto úlohu není uvedena nápověda."));
       }
     }
-    editor.setLanguage(task.language || "r");
-    editor.setStarterCode(task.starter_code || defaultStarter);
+    const variant = resolveTaskVariant(task, activeLang);
+    updateLanguageChrome(variant.language);
+    editor.setLanguage(variant.language);
+    editor.setStarterCode(variant.starter_code);
     editor.reset();
-    renderTestsList(task.visible_tests || []);
+    renderTestsList(variant.visible_tests);
   }
 
   function renderTestsList(items) {
@@ -200,8 +292,9 @@ async function initStandaloneSandboxPage() {
     if (testBtn) testBtn.disabled = true;
     if (mobileRunBtn) mobileRunBtn.disabled = true;
 
-    const lang = (currentTask && currentTask.language) || "r";
-    const tests = withTests && currentTask ? currentTask.visible_tests || [] : [];
+    const variant = resolveTaskVariant(currentTask, activeLang);
+    const lang = variant.language;
+    const tests = withTests && currentTask ? variant.visible_tests : [];
 
     try {
       const res = await defaultSandboxRegistry.run({

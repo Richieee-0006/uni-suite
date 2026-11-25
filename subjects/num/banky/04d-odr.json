@@ -1,0 +1,153 @@
+{
+  "title": "07 · Numerické řešení ODR: Euler a Runge–Kutta (T12–13)",
+  "lecture": 12,
+  "date": "2026-11-26",
+  "questions": [
+    {
+      "id": "num-04-q11",
+      "number": 1,
+      "type": "input_numeric",
+      "text": "Řešíme ODR $y' = y$ s počáteční podmínkou $y(0) = 1$ pomocí **explicitní Eulerovy metody** s krokem $h = 0{,}5$. Jakou aproximaci $y_2 \\approx y(1)$ získáme po 2 krocích?",
+      "answer": 2.25,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Eulerův krok má tvar $y_{k+1} = y_k + h \\cdot f(x_k, y_k) = y_k + 0{,}5 y_k = 1{,}5 y_k$.",
+        "Krok 2: Po 1. kroku: $y_1 = 1 + 0{,}5 \\cdot 1 = 1{,}5$.",
+        "Vysvětlení: Po 2. kroku: $y_2 = 1{,}5 + 0{,}5 \\cdot 1{,}5 = 2{,}25$ (přesné řešení $e^1 \\approx 2{,}7183$, což ukazuje hrubou chybu $O(h)$ Eulerovy metody)."
+      ],
+      "explanation": "Eulerova metoda dává $y_1 = 1{,}5$ a $y_2 = 1{,}5^2 = 2{,}25$. Znatelná odchylka od $e \\approx 2{,}718$ je důvodem, proč se v praxi používá RK4."
+    },
+    {
+      "id": "num-04-q12",
+      "number": 2,
+      "type": "choice",
+      "text": "Jaký je globální řád přesnosti klasické **Rungeho–Kuttovy metody 4. řádu (RK4)** a jaké váhy používá pro sklony $k_1, k_2, k_3, k_4$?",
+      "options": {
+        "A": "Řád $O(h^2)$, váhy $\\frac{1}{4}(k_1 + k_2 + k_3 + k_4)$",
+        "B": "Řád $O(h^4)$, váhy $\\frac{1}{6}(k_1 + 2k_2 + 2k_3 + k_4)$",
+        "C": "Řád $O(h)$, váhy $k_1$",
+        "D": "Řád $O(h^3)$, váhy $\\frac{1}{3}(k_1 + k_2 + k_4)$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Sklony $k_2$ a $k_3$ se vyhodnocují ve středu kroku $x_k + h/2$, a proto dostávají dvojnásobnou váhu.",
+        "Krok 2: Součet vah musí být 1: $\\frac{1 + 2 + 2 + 1}{6} = 1$ (obdoba Simpsonova pravidla).",
+        "Vysvětlení: RK4 kombinuje 4 vyhodnocení pravé strany do váženého průměru $\\frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)$ a dosahuje globální chyby $O(h^4)$."
+      ],
+      "explanation": "Klasická RK4 metoda vyhodnotí směrnici na začátku ($k_1$), dvakrát uprostřed kroku ($k_2, k_3$) a na konci ($k_4$) a zkombinuje je váhami $(1, 2, 2, 1)/6$, což přináší globální řád přesnosti $O(h^4)$."
+    },
+    {
+      "id": "num-07-q01",
+      "number": 3,
+      "type": "choice",
+      "text": "Co charakterizuje **jednokrokové metody** pro řešení počáteční (Cauchyho) úlohy $y' = f(x, y),\\; y(x_0) = y_0$ (např. Eulerovu a Rungeho–Kuttovy metody)?",
+      "options": {
+        "A": "Pro výpočet $y_{k+1}$ využívají výhradně aktuální bod $(x_k, y_k)$ a funkci $f$ (nepotřebují historii předchozích kroků $y_{k-1}, y_{k-2}$)",
+        "B": "Vyřeší celou diferenciální rovnici v jednom jediném kroku bez ohledu na délku intervalu",
+        "C": "Potřebují k rozběhu speciální startovací metodu pro první 4 kroky",
+        "D": "Fungují pouze pro lineární ODR s konstantními koeficienty"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Podívejte se na vstup kroku Eulerovy metody nebo RK4 — potřebují $y_{k-1}$?",
+        "Krok 2: Na rozdíl od vícekrokových metod (Adams–Bashforth) nepotřebují historii a snadno mění délku kroku $h$.",
+        "Vysvětlení: Jednokroková metoda je „samostartovací“ — pro $y_{k+1}$ stačí znát $(x_k, y_k)$ a krok $h$."
+      ],
+      "explanation": "Jednokrokové metody vypočtou $y_{k+1}$ pouze z $(x_k, y_k)$. Díky tomu jsou samostartovací a lze u nich snadno adaptivně měnit krok $h$."
+    },
+    {
+      "id": "num-07-q02",
+      "number": 4,
+      "type": "input_numeric",
+      "text": "Proveďte **jeden krok Heunovy metody (RK2)** pro $y' = x + y$, $y(0) = 1$ s krokem $h = 0{,}2$. Jaká je hodnota $y_1 \\approx y(0{,}2)$?",
+      "answer": 1.24,
+      "tolerance": 0.005,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: První sklon na začátku kroku: $k_1 = f(0, 1) = 0 + 1 = 1$.",
+        "Krok 2: Prediktor Eulerem: $\\tilde{y}_1 = y_0 + h k_1 = 1 + 0{,}2 \\cdot 1 = 1{,}2$; druhý sklon v $(0{,}2,\\, 1{,}2)$ je $k_2 = 0{,}2 + 1{,}2 = 1{,}4$.",
+        "Vysvětlení: Průměr sklonů (korektor): $y_1 = y_0 + \\frac{h}{2}(k_1 + k_2) = 1 + 0{,}1(1 + 1{,}4) = 1{,}24$."
+      ],
+      "explanation": "Heunova metoda (RK2) průměruje počáteční a koncový sklon: $k_1 = 1$, $k_2 = f(0{,}2, 1{,}2) = 1{,}4$, takže $y_1 = 1 + 0{,}1(1 + 1{,}4) = 1{,}24$ (přesně $2e^{0,2} - 1{,}2 \\approx 1{,}2428$)."
+    },
+    {
+      "id": "num-07-q03",
+      "number": 5,
+      "type": "choice",
+      "text": "Jak převedeme ODR 2. řádu $y'' + 3y' + 2y = \\sin(x)$ na **soustavu dvou ODR 1. řádu**, aby ji šlo řešit metodou RK4?",
+      "options": {
+        "A": "Zavedeme $u_1 = y$ a $u_2 = y'$, čímž získáme $u_1' = u_2$ a $u_2' = \\sin(x) - 3u_2 - 2u_1$",
+        "B": "Zanedbáme druhou derivaci $y''$",
+        "C": "Vydělíme rovnici hodnotou $y''$",
+        "D": "ODR 2. řádu nelze řešit pomocí Rungeho–Kuttových metod"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Každá nová proměnná reprezentuje jednu derivaci: $u_1 = y$, $u_2 = y'$.",
+        "Krok 2: Pak $u_1' = y' = u_2$ a $u_2' = y''$ vyjádříme z původní rovnice.",
+        "Vysvětlení: Soustava $\\vec{u}' = \\vec{F}(x, \\vec{u})$ se pak řeší vektorovou verzí Eulerovy či RK4 metody."
+      ],
+      "explanation": "Libovolnou ODR $m$-tého řádu v normálním tvaru převedeme substitucí $u_1 = y, u_2 = y', \\dots, u_m = y^{(m-1)}$ na soustavu $m$ rovnic 1. řádu."
+    },
+    {
+      "id": "num-07-q04",
+      "number": 6,
+      "type": "choice",
+      "text": "Jaký je vztah mezi **lokální chybou jednoho kroku** a **globální chybou** na pevném intervalu $[x_0, x_{\\text{end}}]$ u jednokrokové metody řádu $p$?",
+      "options": {
+        "A": "Obě mají stejný řád $O(h^p)$",
+        "B": "Lokální chyba jednoho kroku je $O(h^{p+1})$, ale za $N = (x_{\\text{end}} - x_0)/h$ kroků se chyby nasčítají na globální chybu řádu $O(h^p)$",
+        "C": "Globální chyba je vždy menší než lokální chyba",
+        "D": "Globální chyba nezávisí na kroku $h$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Kolik kroků délky $h$ musíme udělat, abychom prošli pevný interval délky $L$? Přesně $N = L / h$.",
+        "Krok 2: Vynásobte $N \\sim h^{-1}$ lokální chybou jednoho kroku $O(h^{p+1})$.",
+        "Vysvětlení: $O(h^{-1}) \\cdot O(h^{p+1}) = O(h^p)$ — proto má Euler lokální chybu $O(h^2)$ a globální $O(h)$, a RK4 lokální $O(h^5)$ a globální $O(h^4)$."
+      ],
+      "explanation": "Kumulací lokální chyby $O(h^{p+1})$ přes $N = O(1/h)$ kroků se řád globální chyby snižuje o jedna na $O(h^p)$."
+    },
+    {
+      "id": "num-07-q05",
+      "number": 7,
+      "type": "choice",
+      "text": "Řešíme testovací rovnici $y' = -10 y$, $y(0) = 1$ (přesné řešení $e^{-10x} \\to 0$) pomocí **explicitní Eulerovy metody**. Pro jakou velikost kroku $h$ zůstane numerické řešení stabilní (nebude kmitat a růst do nekonečna)?",
+      "options": {
+        "A": "Pro libovolně velké $h > 0$",
+        "B": "Pouze pro $h \\le 0{,}2$ (obecně $|1 + h\\lambda| \\le 1 \\implies h \\le 2/|\\lambda|$)",
+        "C": "Pouze pro $h \\ge 1$",
+        "D": "Explicitní Eulerova metoda je pro záporné $\\lambda$ vždy nestabilní"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Dosaďte $f(x, y) = -10 y$ do Eulerova kroku: $y_{k+1} = y_k + h(-10 y_k) = (1 - 10h) y_k$.",
+        "Krok 2: Aby posloupnost $y_k = (1 - 10h)^k$ nerostla k $\\infty$, musí platit $|1 - 10h| \\le 1$.",
+        "Vysvětlení: $-1 \\le 1 - 10h \\le 1 \\iff 0 \\le h \\le 0{,}2$. Pro $h = 0{,}25$ už je faktor $-1{,}5$ a řešení exploduje!"
+      ],
+      "explanation": "Explicitní Eulerova metoda je jen podmíněně stabilní: pro $y' = \\lambda y$ ($\\lambda < 0$) vyžaduje $h \\le 2/|\\lambda|$. Pro tuhé (stiff) úlohy se proto používají implicitní metody."
+    },
+    {
+      "id": "num-07-q06",
+      "number": 8,
+      "type": "choice",
+      "text": "Kolikrát zhruba klesne globální chyba metody **RK4** oproti **Eulerově metodě**, když zmenšíme krok $h$ na polovinu ($h \\to h/2$)?",
+      "options": {
+        "A": "U obou metod klesne na polovinu (2×)",
+        "B": "U Eulerovy metody ($O(h)$) klesne 2×, zatímco u RK4 ($O(h^4)$) klesne přibližně **16×** ($2^4$)",
+        "C": "U Eulerovy metody klesne 16×, u RK4 jen 2×",
+        "D": "Chyba u RK4 se při zmenšení kroku nezmění"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Porovnejte poměr $(h/2)^p / h^p = (1/2)^p$ pro $p = 1$ (Euler) a $p = 4$ (RK4).",
+        "Krok 2: Pro $p = 4$ je $(1/2)^4 = 1/16$.",
+        "Vysvětlení: Zjemnění kroku na polovinu u RK4 zmenší chybu 16× (a na desetinu dokonce $10\,000\\times$!)."
+      ],
+      "explanation": "Řád metody $p$ přímo určuje zisk přesnosti při zjemnění kroku: poloviční krok redukuje globální chybu faktorem $2^p$ (2× pro Euler, 4× pro RK2, 16× pro RK4)."
+    }
+  ]
+}

@@ -157,9 +157,10 @@
               <span class="eyebrow">Zadání · {{ _subj.code }}</span>
               <span class="status-inline">
                 <span class="status-dot status-dot-active" aria-hidden="true"></span>
-                <span>WebR WASM · izolováno</span>
+                <span id="sandbox-runtime-label">WebR WASM · izolováno</span>
               </span>
             </div>
+            <div id="sandbox-lang-picker" class="tab-strip" role="group" aria-label="Volba jazyka sandboxu" hidden></div>
             <div id="sandbox-task-picker" class="tab-strip" role="group" aria-label="Výběr programovací úlohy"></div>
             <h2 id="sandbox-task-title">Interaktivní laboratoř</h2>
             <p id="sandbox-task-desc" class="page-subtitle">Vyber cvičnou úlohu a ověř řešení v lokálním WASM sandboxu bez odesílání kódu na server.</p>
@@ -172,13 +173,13 @@
                 <p>Rozděl interval na n podintervalů délky h = (b − a) / n, spočítej funkční hodnoty v uzlech a sečti krajní body s vahou 1 a vnitřní body s vahou 2.</p>
               </div>
             </details>
-            <p class="daily-meta">Jazyk: R (WebR) · Limit: 5 s · Síť: izolováno</p>
+            <p id="sandbox-meta-line" class="daily-meta">Jazyk: R (WebR) · Limit: 5 s · Síť: izolováno</p>
           </article>
 
           <div class="subject-col">
             <article class="card sandbox-pane" data-sandbox-pane="code" data-mobile-hidden="true">
               <div class="code-editor-header">
-                <h2 class="mono">solution.R</h2>
+                <h2 id="sandbox-filename" class="mono">solution.R</h2>
                 <div class="page-tools">
                   <button type="button" id="sandbox-reset-btn" class="btn btn-ghost btn-sm">Reset kódu</button>
                   <button type="button" id="sandbox-run-btn" class="btn btn-secondary btn-sm">Spustit kód</button>
@@ -377,6 +378,47 @@ trapezoid &lt;- function(f, a, b, n) {
         </section>
 
         <section id="quiz-workspace" class="card" hidden aria-label="Aktivní procvičování"></section>
+{%- if _subj.annotation or _subj.requirements or _subj.syllabus or _subj.literature %}
+        <article class="card">
+          <details class="disclosure-box">
+            <summary>Sylabus předmětu, požadavky na zkoušku a literatura</summary>
+            <div class="disclosure-body syllabus-body">
+{%- if _subj.annotation %}
+              <p>{{ _subj.annotation }}</p>
+{%- endif %}
+{%- if _subj.requirements %}
+              <p><strong>Požadavky na studenta:</strong> {{ _subj.requirements }}</p>
+{%- endif %}
+{%- if _subj.syllabus %}
+              <div class="syllabus-group">
+                <h3>Osnova semestru</h3>
+                <ol class="syllabus-list">
+{%- for item in _subj.syllabus %}
+                  <li class="syllabus-row">
+                    <span class="code-pill">{{ item.weeks }}</span>
+                    <span>{{ item.title }}</span>
+                  </li>
+{%- endfor %}
+                </ol>
+              </div>
+{%- endif %}
+{%- if _subj.literature %}
+              <div class="syllabus-group">
+                <h3>Doporučená literatura</h3>
+                <ul class="syllabus-list">
+{%- for ref in _subj.literature %}
+                  <li class="syllabus-row">
+                    <span class="eyebrow">{{ ref.kind }}</span>
+                    <span>{{ ref.citation }}</span>
+                  </li>
+{%- endfor %}
+                </ul>
+              </div>
+{%- endif %}
+            </div>
+          </details>
+        </article>
+{%- endif %}
 {%- if 'numeric_lab' in _tools or 'dist_tables' in _tools %}
         <div id="mini-lab-host" data-lab-kind="{{ 'pas' if 'dist_tables' in _tools else 'num' }}"></div>
 {%- endif %}
@@ -389,7 +431,7 @@ trapezoid &lt;- function(f, a, b, n) {
 {%- block state_json %}{{ {
   'user': {'username': user.username, 'is_authenticated': user.is_authenticated} if user else None,
   'prefs': prefs or {},
-  'subject': {'slug': _subj.slug, 'code': _subj.code, 'short': _subj.short, 'title': _subj.title, 'tools': _tools},
+  'subject': {'slug': _subj.slug, 'code': _subj.code, 'short': _subj.short, 'title': _subj.title, 'tools': _tools, 'sandbox': _subj.get('sandbox')},
   'is_code_route': _is_code
 } | tojson }}{% endblock %}
 

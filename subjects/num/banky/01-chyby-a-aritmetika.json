@@ -1,5 +1,5 @@
 {
-  "title": "01 · Chyby výpočtu, podmíněnost a stabilita",
+  "title": "01 · Vlastnosti numerických algoritmů a chyby (T1)",
   "lecture": 1,
   "date": "2026-10-01",
   "questions": [
@@ -200,6 +200,41 @@
         "Vysvětlení: $\\kappa_\\infty(A) = 100 \\cdot 2 = 200$ (obecně u diagonální matice poměr největšího a nejmenšího $|d_i|$)."
       ],
       "explanation": "Pro regulární diagonální matici platí $\\kappa_\\infty(A) = \\frac{\\max_i |d_i|}{\\min_i |d_i|} = \\frac{100}{0{,}5} = 200$."
+    },
+    {
+      "id": "num-01-q11",
+      "number": 11,
+      "type": "choice",
+      "text": "Kdy nazýváme matematickou úlohu **korektně formulovanou (podle Hadamarda)**?",
+      "options": {
+        "A": "Když má řešení alespoň jeden numerický algoritmus v Pythonu",
+        "B": "Když řešení **existuje**, je **jednoznačné** a **spojitě závisí na vstupních datech**",
+        "C": "Když má vstupní matice rozměr nejvýše $10 \\times 10$",
+        "D": "Když lze řešení zapsat pomocí elementárních funkcí bez aproximace"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Hadamard definoval tři nezbytné podmínky dobře položené úlohy.",
+        "Krok 2: Kromě existence a jednoznačnosti musí malé odchylky vstupu vést jen k malým odchylkám výstupu.",
+        "Vysvětlení: Korektní úloha splňuje existenci, jednoznačnost a spojitou závislost řešení na datech (v opačném případě je úloha nekorektní)."
+      ],
+      "explanation": "Podle Hadamarda je úloha korektní (well-posed), pokud řešení existuje, je jednoznačné a spojitě závisí na vstupních datech. V numerické matematice navíc sledujeme kvantitativní míru citlivosti — podmíněnost úlohy."
+    },
+    {
+      "id": "num-01-q12",
+      "number": 12,
+      "type": "input_numeric",
+      "text": "Veličiny $a$ a $b$ mají maximální relativní chyby $\\delta a = 1{,}5\\,\\%$ a $\\delta b = 2{,}5\\,\\%$. Jaký je přibližný horní odhad **relativní chyby součinu** $\\delta(a \\cdot b)$ v procentech (v 1. řádu šíření chyb)?",
+      "answer": 4,
+      "tolerance": 0.05,
+      "tolerance_mode": "abs",
+      "unit": "%",
+      "hints": [
+        "Krok 1: Při násobení (a dělení) se relativní chyby v prvním přiblížení sčítají.",
+        "Krok 2: Vzorec šíření chyby: $\\delta(a \\cdot b) \\approx \\delta a + \\delta b$ (člen $\\delta a \\cdot \\delta b$ je zanedbatelně malý).",
+        "Vysvětlení: $\\delta(a \\cdot b) \\approx 1{,}5\\,\\% + 2{,}5\\,\\% = 4{,}0\\,\\%$."
+      ],
+      "explanation": "U součtu/rozdílu se sčítají absolutní chyby ($\\Delta(a \\pm b) \\le \\Delta a + \\Delta b$), zatímco u součinu/podílu se v lineárním přiblížení sčítají relativní chyby ($\\delta(a \\cdot b) \\approx \\delta a + \\delta b = 4\\,\\%$)."
     }
   ]
 }
