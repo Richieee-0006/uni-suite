@@ -148,6 +148,25 @@
         "Vysvětlení: Podmínka $A^T \\vec{r} = \\vec{0}$ říká, že $\\vec{r}$ je ortogonální ke všem sloupcům $A$ (tedy $A\\vec{c}$ je kolmý průmět $\\vec{y}$ do sloupcového prostoru $A$)."
       ],
       "explanation": "Metoda nejmenších čtverců hledá ortogonální projekci vektoru měření $\\vec{y}$ na sloupcový prostor matice $A$; proto platí $A^T(\\vec{y} - A\\vec{c}) = \\vec{0}$, což pro model s absolutním členem zároveň znamená $\\sum r_i = 0$."
+    },
+    {
+      "id": "num-05-q08",
+      "number": 9,
+      "type": "choice",
+      "text": "Fyzikální měření popisuje nelineární (Langmuirův) model $a(p) = a_m \\frac{b p}{1 + b p}$ ($p > 0, a > 0$). Jakou substitucí jej převedeme na **lineární model pro metodu nejmenších čtverců**?",
+      "options": {
+        "A": "Převrácením obou stran na $\\frac{1}{a} = \\frac{1}{a_m} + \\frac{1}{a_m b} \\cdot \\frac{1}{p}$, tedy lineární závislost $Y = q + k X$ pro $Y = 1/a$ a $X = 1/p$",
+        "B": "Umocněním na druhou na $a^2 = a_m^2 b p$",
+        "C": "Zanedbáním jmenovatele $1 + b p$",
+        "D": "Pouhým logaritmováním bez další úpravy"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Zkuste vzít převrácenou hodnotu obou stran: $\\frac{1}{a(p)} = \\frac{1 + bp}{a_m b p}$.",
+        "Krok 2: Rozdělte zlomek na součet dvou členů: $\\frac{1}{a_m b p} + \\frac{b p}{a_m b p}$.",
+        "Vysvětlení: Získáme přímku $\\frac{1}{a} = \\frac{1}{a_m} + \\frac{1}{a_m b}\\cdot\\frac{1}{p}$, odkud po lineární MNC dopočteme $a_m = 1/q$ a $b = q/k$ (příp. zpřesníme nelineární MNC)."
+      ],
+      "explanation": "Reciproční transformace $Y = 1/a$, $X = 1/p$ převede Langmuirovu izotermu na lineární regresi $Y = q + k X$, která poskytne buď přímo odhad parametrů, nebo skvělý počáteční odhad pro nelineární MNC."
     }
   ]
 }

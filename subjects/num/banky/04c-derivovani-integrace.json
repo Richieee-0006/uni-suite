@@ -180,6 +180,25 @@
         "Vysvětlení: Pro hladké funkce dosáhne Rombergova tabulka řádu $10^{-10}$ už kolem 5.–6. řádku ($2^5 = 32$ až $64$ dílků)."
       ],
       "explanation": "Pro hladké funkce bez zlomů konverguje Rombergova kvadratura superlineárně a šetří řády výpočetního času oproti obdélníkovému či samotnému lichoběžníkovému pravidlu."
+    },
+    {
+      "id": "num-06-q06",
+      "number": 11,
+      "type": "choice",
+      "text": "Čím dosahuje **$n$-bodová Gaussova kvadratura** (Vicher kap. 4.1.3) algebraické přesnosti až pro polynomy stupně **$2n - 1$**, zatímco $n$-bodový Newtonův–Cotesův vzorec má stupeň přesnosti nejvýše $n$?",
+      "options": {
+        "A": "Používá ekvidistantní uzly s větší hustotou",
+        "B": "Optimálně volí nejen integrační váhy $w_i$, ale i samotné polohy uzlů $x_i$ (kořeny ortogonálních Legendrových polynomů), čímž získá $2n$ stupňů volnosti",
+        "C": "Vyžaduje znalost analytické primitivní funkce",
+        "D": "Používá náhodné uzly z rovnoměrného rozdělení"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Newtonovy–Cotesovy vzorce mají uzly pevně zafixované ekvidistantně — volí se pouze $n$ vah $w_i$.",
+        "Krok 2: Gaussova kvadratura volí $n$ vah $w_i$ i $n$ uzlů $x_i$, tedy celkem $2n$ volných parametrů.",
+        "Vysvětlení: $2n$ parametrů přesně integruje bázi $1, x, x^2, \\dots, x^{2n-1}$, tedy všechny polynomy stupně $\\le 2n - 1$."
+      ],
+      "explanation": "Volbou uzlů $x_i$ jako kořenů Legendrova polynomu stupně $n$ (na $[-1, 1]$) a odpovídajících kladných vah $w_i$ integruje $n$-bodová Gaussova kvadratura přesně všechny polynomy až do stupně $2n - 1$."
     }
   ]
 }

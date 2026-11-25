@@ -43,8 +43,9 @@
   ],
   "literature": [
     {
-      "kind": "Základní",
-      "citation": "Vicher, M. Numerická matematika, skripta UJEP, Ústí n. Lab., 2003."
+      "kind": "Základní · PDF",
+      "citation": "Vicher, M. Numerická matematika, skripta UJEP, Ústí n. Lab., 2003 (77 s.).",
+      "url": "https://gitlab.com/The-Krew/ujep/KI-NUM/-/blob/PY-rewrite/assets/vicher_nm1.pdf"
     },
     {
       "kind": "Základní",
@@ -53,6 +54,31 @@
     {
       "kind": "Doporučená",
       "citation": "KUBEN, J. a P. RAČKOVÁ. Numerické metody. Brno: Univerzita obrany, 2016. ISBN 978-80-7231-373-0."
+    },
+    {
+      "kind": "Doporučená · PDF",
+      "citation": "Kučera, R. a Z. Morávková. Numerická matematika, VŠB-TU Ostrava, 2015 (117 s., důraz na algoritmizaci).",
+      "url": "https://gitlab.com/The-Krew/ujep/KI-NUM/-/blob/PY-rewrite/assets/FINALNI_VERZE_CD.pdf"
+    },
+    {
+      "kind": "Doporučená · PDF",
+      "citation": "Janovský, V. Úvod do numerické matematiky (NMNM211, MFF UK, 142 s. — LU, Cholesky, QR, MNC, nelineární rovnice).",
+      "url": "https://gitlab.com/The-Krew/ujep/KI-NUM/-/blob/PY-rewrite/assets/script_num.pdf"
+    },
+    {
+      "kind": "Doporučená · PDF",
+      "citation": "Felcman, J. Numerická matematika, MFF UK, KNM Press Praha, 2021 (57 s., stručná skripta).",
+      "url": "https://gitlab.com/The-Krew/ujep/KI-NUM/-/blob/PY-rewrite/assets/nm.pdf"
+    },
+    {
+      "kind": "Doporučená · PDF",
+      "citation": "Vicher, M. Numerika, MFF UK, 2001 (122 s., rozšířený text s vlastními čísly a SVD).",
+      "url": "https://gitlab.com/The-Krew/ujep/KI-NUM/-/blob/PY-rewrite/assets/NUMER.PDF"
+    },
+    {
+      "kind": "Komunitní repo",
+      "citation": "The-Krew / KI-NUM (PY-rewrite) — Python implementace metod, rozhodovací návod a archiv PDF.",
+      "url": "https://gitlab.com/The-Krew/ujep/KI-NUM/-/tree/PY-rewrite"
     }
   ],
   "engines": ["choice", "input_numeric", "recall", "code_task", "multi_step"],
