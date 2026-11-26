@@ -1,13 +1,13 @@
 {
-  "intro": "Kompletní výklad k předmětu KI/PAS pokrývající všechny tři zkušební okruhy (popisnou statistiku, prakticko-teoretické metody i všech 19 teoretických pojmů) včetně srovnávacích tabulek, vzorců a příkazů v R.",
+  "intro": "Kompletní výklad k předmětu KI/PAS sladěný s prezentacemi Mgr. Aleny Černíkové (139 slajdů), seznamem vzorců (Vzorce.pdf), přehledem příkazů R (R-ko.pdf) a třemi zkušebními okruhy.",
   "chapters": [
     {
       "id": "01-popisna-statistika",
       "weeks": "Okruh I · III.1, 13–17",
       "title": "Klasifikace dat, populace, histogram a popisné statistiky",
       "topic_id": "01-pravdepodobnost-a-nahodne-veliciny",
-      "tags": ["Typy proměnných", "Sturges & Scott", "Průměr vs. Medián", "IQR & MAD", "Z-skór"],
-      "summary": "Základ popisné statistiky: správné určení typu proměnné rozhoduje o tom, jaké grafy a charakteristiky polohy či variability vůbec dávají smysl.",
+      "tags": ["Typy proměnných", "Sturges & Scott", "MAD & CV", "Bowley SQ₄", "Moors KQ₈", "Z-skór"],
+      "summary": "Základ popisné statistiky: správné určení typu proměnné rozhoduje o tom, jaké grafy a charakteristiky polohy, variability či tvaru vůbec dávají smysl.",
       "concepts": [
         {
           "title": "Klasifikace proměnných a typů dat",
@@ -22,8 +22,12 @@
           "body": "Rozdělení četností lze zobrazit tabulkou četností, sloupcovým grafem (kategorická/diskrétní data) nebo histogramem (spojitá data). Tvar histogramu výrazně závisí na šířce okna $h$ (Sturgesovo a Scottovo pravidlo) i na posunu počátku (offsetu) — příliš úzké sloupce ukazují šum, příliš široké skryjí více vrcholů."
         },
         {
-          "title": "Míry polohy, variability a tvaru",
-          "body": "Tradiční míry: průměr $\\bar{x}$, rozptyl $s^2$ (dělený $n-1$ kvůli nestrannosti), směrodatná odchylka $s$, koeficient variace $V = s/\\bar{x}$. Robustní míry odolné vůči odlehlým hodnotám: medián, oříznutý průměr (`trim`), Huberův odhad, mezikvartilové rozpětí $\\mathrm{IQR} = Q_3 - Q_1$ a $\\mathrm{MAD}$. Tvar popisují šikmost (kladná = delší pravý chvost, $\\bar{x} > \\text{medián}$) a špičatost."
+          "title": "Tradiční vs. robustní míry polohy a variability",
+          "body": "Tradiční míry: průměr $\\bar{x}$, rozptyl $s^2$ (dělený $n-1$ kvůli nestrannosti), směrodatná odchylka $s$, variační koeficient $CV = s/\\bar{x}$. Robustní míry odolné vůči odlehlým hodnotám: medián, useknutý průměr (`trim`), **Huberův odhad** (ořeže extrémy na $\\bar{x} \\pm K$ a zprůměruje), $\\mathrm{IQR} = Q_3 - Q_1$ a $\\mathrm{MAD} = \\mathrm{median}(|X_i - \\tilde{X}|)/0{,}6745$."
+        },
+        {
+          "title": "Míry tvaru: klasické vs. kvantilové (Bowley, Moors)",
+          "body": "Klasická šikmost (`Skew`) a špičatost (`Kurt`, exces $-3$) používají 3. a 4. mocninu Z-skóru, takže jsou velmi citlivé na outliery. Robustní alternativy z `Vzorce.pdf` jsou **Bowleyho kvartilový koeficient šikmosti $SQ_4$** a **Moorsův oktilový koeficient špičatosti $KQ_8$**."
         },
         {
           "title": "Reakce na posunutí, změnu měřítka a normování",
@@ -31,13 +35,13 @@
         }
       ],
       "comparison": {
-        "caption": "Tradiční vs. robustní popisné statistiky v R",
+        "caption": "Tradiční vs. robustní popisné statistiky v R (dle Vzorce.pdf & R-ko.pdf)",
         "headers": ["Účel", "Tradiční (citlivá na outliery)", "Robustní (odolná)", "Reakce na aX + b"],
         "rows": [
           ["Poloha", "Průměr `mean(X)`", "Medián `median(X)`, `mean(X, trim=0.1)`, `HuberM(X)`", "$a \\cdot \\text{míra} + b$"],
-          ["Variabilita", "Směr. odchylka `sd(X)`, `var(X)`", "`IQR(X)`, `MAD(X)`", "$|a| \\cdot \\text{míra}$ (u $s^2$: $a^2 s^2$)"],
-          ["Relativní variabilita", "Koeficient variace `CoefVar(X)`", "$\\mathrm{IQR} / \\text{medián}$", "Bezrozměrná ($b = 0$)"],
-          ["Tvar rozdělení", "Šikmost `Skew(X)`, špičatost `Kurt(X)`", "Kvantilové míry tvaru", "Beze změny při $a > 0$"]
+          ["Variabilita", "Směr. odchylka `sd(X)`, `var(X)`", "`IQR(X)`, `MAD(X)` ($/0{,}6745$)", "$|a| \\cdot \\text{míra}$ (u $s^2$: $a^2 s^2$)"],
+          ["Relativní variabilita", "Variační koeficient `CoefVar(X)`", "$\\mathrm{IQR} / \\text{medián}$", "Bezrozměrná ($b = 0$)"],
+          ["Tvar rozdělení", "Šikmost `Skew(X)`, špičatost `Kurt(X)`", "Bowley $SQ_4$, Moors $KQ_8$", "Beze změny při $a > 0$"]
         ]
       },
       "formulas": [
@@ -47,9 +51,14 @@
           "note": "Sturges udává počet sloupců $k$, Scott doporučenou šířku okna $h_{\\text{opt}}$."
         },
         {
-          "name": "Výběrový průměr, rozptyl a Z-skór",
-          "latex": "\\bar{x} = \\frac{1}{n}\\sum_{i=1}^{n} x_i, \\quad s^2 = \\frac{1}{n-1}\\sum_{i=1}^{n}(x_i - \\bar{x})^2, \\quad u_i = \\frac{x_i - \\bar{x}}{s_x}",
-          "note": "Dělení $n-1$ (Besselova korekce) zajišťuje nestrannost odhadu $\\sigma^2$."
+          "name": "MAD a variační koeficient CV",
+          "latex": "\\mathrm{MAD} = \\frac{\\mathrm{median}(|X_i - \\tilde{X}|)}{0{,}6745}, \\qquad CV = \\frac{s_x}{\\bar{x}}",
+          "note": "Konstanta $0{,}6745$ škáluje MAD tak, aby pro normální rozdělení odhadovalo $\\sigma$."
+        },
+        {
+          "name": "Bowleyho šikmost SQ₄ a Moorsova špičatost KQ₈",
+          "latex": "SQ_4 = \\frac{(Q_3 - Q_2) + (Q_1 - Q_2)}{(Q_3 - Q_2) - (Q_1 - Q_2)}, \\qquad KQ_8 = \\frac{(Q_{87} - Q_{85}) + (Q_{83} - Q_{81})}{Q_{86} - Q_{82}} - 1{,}233",
+          "note": "Kvantilové míry tvaru z `Vzorce.pdf` odolné vůči odlehlým hodnotám."
         }
       ],
       "pitfalls": [
@@ -57,85 +66,81 @@
         "Zapomenout, že přičtení konstanty $+b$ nemění rozptyl ani směrodatnou odchylku.",
         "Zaměnit populační parametr ($\\mu, \\sigma$) za výběrovou statistiku ($\\bar{x}, s$)."
       ],
-      "code_tip": "R: `summary(X)`, `mean(X, trim=0.1)`, `DescTools::HuberM(X)`, `IQR(X)`, `MAD(X)`, `Skew(X)`, `Kurt(X)`, `hist(X)`, `boxplot(X)`, `prop.table(table(X))`"
+      "code_tip": "R: `summary(X)`, `mean(X, trim=0.1)`, `DescTools::HuberM(X)`, `IQR(X)`, `MAD(X)`, `CoefVar(X)`, `Skew(X)`, `Kurt(X)`, `scale(X)`"
     },
     {
       "id": "02-jadrovy-odhad-a-outliery",
       "weeks": "Okruh II.8 · III.12",
-      "title": "Jádrový odhad hustoty, modus a odlehlé hodnoty",
+      "title": "Jádrový odhad hustoty, modus, outliery a transformace dat",
       "topic_id": "01-pravdepodobnost-a-nahodne-veliciny",
-      "tags": ["KDE", "Epanechnikovo jádro", "Modus", "1,5 IQR", "3σ pravidlo", "Log transformace"],
-      "summary": "Jak hladce odhadnout hustotu a modus bez citlivosti histogramu na offset a jak systematicky odhalit odlehlé hodnoty (outliery).",
+      "tags": ["KDE", "Epanechnikovo jádro", "Modus", "1,5 IQR / 3 IQR", "3σ / 4σ", "Log & mocninná transformace"],
+      "summary": "Jak hladce odhadnout hustotu a modus bez citlivosti histogramu na offset, jak identifikovat odlehlé hodnoty a jak transformovat šikmá data.",
       "concepts": [
         {
           "title": "Jádrový odhad hustoty (KDE)",
-          "body": "Nad každé pozorování $x_i$ položíme malou symetrickou funkci (jádro $K$, např. Gaussovo, Epanechnikovo, trojúhelníkové či rovnoměrné) se šířkou okna $h$ a všechny je zprůměrujeme. Odstraní se tak skokovitost histogramu i závislost na počátku intervalů; klíčový parametr je šířka okna $h$ (vyhlazení vs. detail)."
+          "body": "Nad každé pozorování $x_i$ položíme malou symetrickou funkci (jádro $K$: Epanechnikovo, trojúhelníkové, rovnoměrné nebo Gaussovo) se šířkou okna $h$ (`bw`) a všechny je zprůměrujeme. Odstraní se tak skokovitost histogramu i citlivost na offset; klíčový parametr je šířka okna $h$."
         },
         {
-          "title": "Hledání modu",
-          "body": "Modus je nejčastější hodnota (u kategorií nejvyšší sloupec). Pro spojitou proměnnou hledáme maximum jádrového odhadu hustoty $\\hat{f}(x)$; pro seskupená data z histogramu používáme interpolační vzorec s výškovými rozdíly $d_0, d_1$ sousedních sloupců."
+          "title": "Hledání modu v R a z histogramu",
+          "body": "Modus je nejčastější hodnota. Pro spojitou proměnnou hledáme maximum jádrového odhadu `d <- density(X); d$x[which.max(d$y)]`; pro seskupená data z histogramu používáme interpolační vzorec $\\hat{x} = A + h\\frac{d_0}{d_0 + d_1}$ s výškovými rozdíly `hist(X, plot = F)$counts`."
         },
         {
           "title": "Identifikace odlehlých hodnot",
-          "body": "Dva hlavní přístupy: pravidlo přes kvartily a IQR (klasické hradby $Q_1 - 1{,}5\\,\\mathrm{IQR}$ a $Q_3 + 1{,}5\\,\\mathrm{IQR}$; striktní $3\\,\\mathrm{IQR}$ — vhodné i pro šikmá data) a pravidlo přes průměr a $s$ ($3\\sigma$, přísněji $4\\sigma$ — vyžaduje přibližnou normalitu, protože samotné outliery nafukují průměr i $s$)."
+          "body": "Čtyři pravidla z `Vzorce.pdf`: klasické IQR ($1{,}5\\cdot\\mathrm{IQR}$ od bližšího kvartilu), striktní IQR ($3\\cdot\\mathrm{IQR}$), základní SD pravidlo ($3\\sigma$ od průměru) a striktní SD ($4\\sigma$ od průměru). Pravidla na bázi SD vyžadují přibližnou normalitu."
         },
         {
-          "title": "Transformace dat",
-          "body": "Silně kladně šikmá data (příjmy, koncentrace, doby trvání) lze často přiblížit normálnímu rozdělení logaritmickou transformací $y = \\ln(x)$ (pro $x > 0$)."
+          "title": "Transformace dat (logaritmická a mocninná)",
+          "body": "Kladně šikmá data lze znormalizovat **logaritmickou transformací** $y = \\ln x$ (pro $x > 0$) nebo obecnou **mocninnou transformací** $y = \\left(\\frac{x - \\min x}{\\max x - \\min x}\\right)^h$, kde exponent $h > 0$ se volí experimentálně."
         }
       ],
       "formulas": [
         {
           "name": "Jádrový odhad hustoty",
           "latex": "\\hat{f}(x) = \\frac{1}{n h}\\sum_{i=1}^{n} K\\!\\left(\\frac{x - x_i}{h}\\right)",
-          "note": "Epanechnikovo jádro: $K(u) = \\frac{3}{4}(1-u^2)\\mathbb{I}_{|u|\\le 1}$; Gaussovo: $K(u) = \\frac{1}{\\sqrt{2\\pi}}e^{-u^2/2}$."
+          "note": "Epanechnikovo: $K(u) = \\frac{3}{4}(1-u^2)\\mathbb{I}_{|u|\\le 1}$; Trojúhelníkové: $(1-|u|)\\mathbb{I}_{|u|\\le 1}$; Gaussovo: $\\frac{1}{\\sqrt{2\\pi}}e^{-u^2/2}$."
         },
         {
-          "name": "Modus z histogramu a hradby outlierů",
-          "latex": "\\hat{x} = A + h\\frac{d_0}{d_0 + d_1}, \\qquad [Q_1 - 1{,}5\\,\\mathrm{IQR},\\; Q_3 + 1{,}5\\,\\mathrm{IQR}]",
-          "note": "Striktní IQR pravidlo používá násobek $3\\,\\mathrm{IQR}$; normální pravidlo $\\bar{x} \\pm 3s$."
+          "name": "Modus z histogramu a transformace dat",
+          "latex": "\\hat{x} = A + h\\frac{d_0}{d_0 + d_1}, \\qquad y = \\ln x, \\qquad y = \\left(\\frac{x - \\min x}{\\max x - \\min x}\\right)^h",
+          "note": "Hradby outlierů: $[Q_1 - 1{,}5\\,\\mathrm{IQR},\\; Q_3 + 1{,}5\\,\\mathrm{IQR}]$ (striktně $3\\,\\mathrm{IQR}$) nebo $\\bar{x} \\pm 3s$ ($4s$)."
         }
       ],
       "pitfalls": [
         "Odlehlé hodnoty automaticky nemazat — nejdřív ověřte, zda jde o chybu měření, nebo o skutečně extrémní pozorování.",
         "Pravidlo $3\\sigma$ na malém nebo šikmém vzorku maskuje outliery, protože outlier sám zvedne $s$."
       ],
-      "code_tip": "R: `plot(density(X))`, `boxplot(X)$out`, `hist(X, freq = FALSE); lines(density(X))`"
+      "code_tip": "R: `d <- density(X, bw = z); d$x[which.max(d$y)]`, `hist(X, plot = F)$breaks`, `hist(X, plot = F)$counts`, `boxplot(X)$out`"
     },
     {
       "id": "03-pravdepodobnost-a-nahodne-veliciny",
-      "weeks": "Okruh III.2–4",
-      "title": "Pravděpodobnost, Bayesova věta a náhodné veličiny",
+      "weeks": "Prezentace 1 · Okruh III.2–4",
+      "title": "Pravděpodobnost, senzitivita/specificita, Bayes a náhodné veličiny",
       "topic_id": "01-pravdepodobnost-a-nahodne-veliciny",
-      "tags": ["Podmíněná P", "Nezávislost", "Bayesova věta", "Diskrétní NV", "Spojitá NV", "E(X) & Var(X)"],
-      "summary": "Formální popis náhody: podmíněné jevy, obracení podmínky Bayesovou větou a charakterizace diskrétních i spojitých náhodných veličin.",
+      "tags": ["Podmíněná P", "Nezávislost", "Bayesova věta", "Senzitivita & Specificita", "Diskrétní & Spojitá NV"],
+      "summary": "Formální popis náhody z 1. části prezentace A. Černíkové: podmíněné jevy, Bayesova věta, senzitivita a specificita diagnostických testů a charakteristiky náhodných veličin.",
       "concepts": [
         {
           "title": "Podmíněná pravděpodobnost a nezávislost",
           "body": "Podmíněná pravděpodobnost $P(A \\mid B) = \\frac{P(A \\cap B)}{P(B)}$ zužuje prostor výsledků na situace, kdy nastalo $B$. Jevy $A$ a $B$ jsou nezávislé právě tehdy, když $P(A \\cap B) = P(A)P(B)$ — nezaměňujte nezávislost s neslučitelností ($A \\cap B = \\emptyset$)."
         },
         {
-          "title": "Úplná pravděpodobnost a Bayesova věta",
-          "body": "Bayesova věta obrací směr podmínky: ze znalosti $P(B \\mid A_k)$ a apriorních pravděpodobností $P(A_k)$ určí aposteriorní $P(A_k \\mid B)$. U vzácných jevů (nízká prevalence nemoci) vede i vysoce citlivý test často k vysokému podílu falešně pozitivních výsledků."
+          "title": "Senzitivita, specificita a Bayesova věta (slajdy 16–17)",
+          "body": "**Senzitivita** = $P(\\text{test +} \\mid \\text{nemocný})$ (schopnost odhalit nemoc). **Specificita** = $P(\\text{test -} \\mid \\text{zdravý})$ (schopnost správně vyloučit zdravého). Pacienta ale zajímá opačná podmíněná pravděpodobnost $P(\\text{nemocný} \\mid \\text{test +})$ (pozitivní prediktivní hodnota), kterou spočítá **Bayesova věta** — u vzácných nemocí může i přesný test dávat většinu pozitivních výsledků falešně!"
         },
         {
           "title": "Rozdělení náhodné veličiny a distribuční funkce",
           "body": "Náhodná veličina $X$ přiřazuje každému elementárnímu výsledku reálné číslo. Distribuční funkce $F(x) = P(X \\le x)$ je neklesající, zprava spojitá, s limitami $0$ v $-\\infty$ a $1$ v $+\\infty$, a jednoznačně určuje rozdělení $X$."
         },
         {
-          "title": "Diskrétní vs. spojitá náhodná veličina",
-          "body": "Diskrétní NV nabývá nejvýše spočetně mnoha hodnot a popisuje ji pravděpodobnostní funkce $p(x_k) = P(X = x_k)$ s $\\sum p(x_k) = 1$. Spojitá NV má hustotu $f(x) \\ge 0$ s $\\int_{-\\infty}^{\\infty} f(x)\\,dx = 1$; pravděpodobnost jednoho konkrétního bodu je nulová ($P(X = c) = 0$) a pravděpodobnosti na intervalu dává plocha pod hustotou."
-        },
-        {
-          "title": "Střední hodnota a rozptyl",
-          "body": "Střední hodnota $E(X)$ je dlouhodobý průměr ($\\sum x_k p_k$ nebo $\\int x f(x)\\,dx$) a je lineární: $E(aX + b) = aE(X) + b$. Rozptyl $\\operatorname{Var}(X) = E[(X - E(X))^2] = E(X^2) - [E(X)]^2$ splňuje $\\operatorname{Var}(aX + b) = a^2\\operatorname{Var}(X)$."
+          "title": "Diskrétní vs. spojitá NV, E(X) a Var(X)",
+          "body": "Diskrétní NV má pravděpodobnostní funkci $p(x_k) = P(X = x_k)$ s $\\sum p(x_k) = 1$. Spojitá NV má hustotu $f(x) \\ge 0$ s $\\int_{-\\infty}^{\\infty} f(x)\\,dx = 1$ a $P(X = c) = 0$. Střední hodnota je lineární ($E(aX+b) = aE(X)+b$) a rozptyl splňuje $\\operatorname{Var}(X) = E(X^2) - [E(X)]^2$ a $\\operatorname{Var}(aX+b) = a^2\\operatorname{Var}(X)$."
         }
       ],
       "formulas": [
         {
-          "name": "Bayesova věta",
-          "latex": "P(A_k \\mid B) = \\frac{P(B \\mid A_k)\\,P(A_k)}{\\sum_j P(B \\mid A_j)\\,P(A_j)}",
-          "note": "Jmenovatel vyjadřuje větu o úplné pravděpodobnosti $P(B)$."
+          "name": "Senzitivita, specificita a Bayesova věta",
+          "latex": "\\mathrm{Se} = P(+ \\mid N), \\quad \\mathrm{Sp} = P(- \\mid Z), \\qquad P(N \\mid +) = \\frac{P(+ \\mid N)P(N)}{P(+ \\mid N)P(N) + P(+ \\mid Z)P(Z)}",
+          "note": "Jmenovatel je celková pravděpodobnost pozitivního testu $P(+)$ (věta o úplné pravděpodobnosti)."
         },
         {
           "name": "Distribuční funkce a pravděpodobnost na intervalu",
@@ -143,8 +148,17 @@
           "note": "Pro spojitou NV nezáleží na ostrých vs. neostrých nerovnostech; pro diskrétní ano!"
         }
       ],
+      "example": {
+        "title": "Příklad z prezentace (slajd 17): 2000 pacientů, 50 nemocných, 45 TP a 200 FP",
+        "steps": [
+          "Z 2000 pacientů je 50 nemocných ($45$ pozitivních = TP, $5$ negativních = FN) a 1950 zdravých ($200$ pozitivních = FP, $1750$ negativních = TN).",
+          "Senzitivita: $\\mathrm{Se} = P(+ \\mid \\text{nemoc}) = \\frac{45}{50} = 0{,}90$ ($90\\,\\%$).",
+          "Specificita: $\\mathrm{Sp} = P(- \\mid \\text{zdravý}) = \\frac{1750}{1950} \\approx 0{,}8974$ ($89{,}7\\,\\%$).",
+          "Pozitivní prediktivní hodnota (Bayes): celkem vyšlo $45 + 200 = 245$ pozitivních testů, z toho jen $45$ je skutečně nemocných → $P(\\text{nemoc} \\mid +) = \\frac{45}{245} \\approx 0{,}1837$ (jen $18{,}4\\,\\%$!)."
+        ]
+      },
       "pitfalls": [
-        "Záměna $P(A \\mid B)$ a $P(B \\mid A)$ (prokurátorův klam).",
+        "Záměna senzitivity $P(+ \\mid \\text{nemoc})$ za $P(\\text{nemoc} \\mid +)$ (prokurátorův klam).",
         "Záměna neslučitelných jevů ($P(A \\cap B)=0$) s nezávislými jevy ($P(A \\cap B)=P(A)P(B)$).",
         "U diskrétní NV v R: $P(X \\ge k) = 1 - P(X \\le k - 1)$, nikoli $1 - P(X \\le k)$."
       ],
@@ -152,145 +166,148 @@
     },
     {
       "id": "04-rozdeleni-zvc-clv",
-      "weeks": "Okruh II.6–7 · III.3–4, 8",
-      "title": "Klíčová rozdělení, ZVČ, CLV a hodnocení normality",
+      "weeks": "Prezentace 2 · Okruh II.6–7 · III.3–4, 8",
+      "title": "Diskrétní a spojitá rozdělení, ZVČ, CLV, normalita a AIC/BIC",
       "topic_id": "02-rozdeleni-pravdepodobnosti",
-      "tags": ["Bi(n,p)", "Po(λ)", "Exp(λ)", "N(μ,σ²)", "Student t", "ZVČ & CLV", "Q-Q plot"],
-      "summary": "Přehled nejdůležitějších teoretických rozdělení, limitních vět propojujících pravděpodobnost se statistikou a postupů pro ověření rozdělení reálných dat.",
+      "tags": ["Alt & Bi", "Hyper & Geom", "Po(λ)", "Exp & Lognorm", "N(μ,σ²)", "ZVČ & CLV", "AIC & BIC"],
+      "summary": "Všechna diskrétní i spojitá rozdělení ze skript a R-ko.pdf, limitní věty a postup hledání optimálního rozdělení dat pomocí `fitdistrplus` a informačních kritérií AIC/BIC.",
       "concepts": [
         {
-          "title": "Diskrétní rozdělení",
-          "body": "Binomické $\\mathrm{Bi}(n, p)$: počet úspěchů v $n$ nezávislých pokusech ($E=np$, $\\mathrm{Var}=np(1-p)$). Poissonovo $\\mathrm{Po}(\\lambda)$: počet vzácných nezávislých událostí za čas/prostor ($E=\\mathrm{Var}=\\lambda$). Geometrické: počet pokusů do prvního úspěchu; hypergeometrické: výběr bez vracení."
+          "title": "Diskrétní rozdělení (Vzorce.pdf & R-ko.pdf)",
+          "body": "**Alternativní** $\\mathrm{Alt}(p)$: jeden pokus $0/1$. **Binomické** $\\mathrm{Bi}(n, p)$: počet úspěchů v $n$ nezávislých pokusech (výběr s vracením). **Hypergeometrické** (`dhyper(k, w, b, n)`): počet bílých koulí při výběru $n$ kusů **bez vracení** z osudí s $w$ bílými a $b$ černými. **Geometrické** (`dgeom(k, p)`): počet neúspěchů před prvním úspěchem. **Poissonovo** $\\mathrm{Po}(\\lambda)$: počet vzácných událostí za čas/prostor."
         },
         {
-          "title": "Spojitá rozdělení",
-          "body": "Rovnoměrné $R(a, b)$: konstantní hustota na $[a, b]$. Exponenciální $\\mathrm{Exp}(\\lambda)$: doba čekání mezi událostmi Poissonova procesu, jediné spojité bezpaměťové rozdělení ($E = 1/\\lambda$). Normální $N(\\mu, \\sigma^2)$: Gaussova křivka (pravidlo 68–95–99,7 %). Odvozená rozdělení pro inferenci: Studentovo $t_\\nu$ (těžší chvosty při neznámém $\\sigma$), $\\chi^2_\\nu$ (součet čtverců normovaných normálních NV) a Fisherovo $F$."
+          "title": "Spojitá rozdělení (včetně Lognormálního)",
+          "body": "**Rovnoměrné** $R(a, b)$: konstantní hustota na $[a, b]$. **Exponenciální** $\\mathrm{Exp}(\\lambda)$: bezpaměťová doba čekání ($E=1/\\lambda$). **Normální** $N(\\mu, \\sigma^2)$: Gaussova křivka. **Lognormální** (`plnorm`, `qlnorm`): kladná pravostranně šikmá veličina $X$, jejíž logaritmus $\\ln X$ má normální rozdělení $N(\\mu, \\sigma^2)$ (platy, koncentrace). Odvozená rozdělení: Studentovo $t_\\nu$, $\\chi^2_\\nu$ a Fisherovo $F$."
         },
         {
           "title": "Zákon velkých čísel (ZVČ) vs. Centrální limitní věta (CLV)",
-          "body": "ZVČ říká, že výběrový průměr $\\bar{X}_n$ se s rostoucím $n$ blíží k populační střední hodnotě $\\mu$ (konzistence průměru). CLV říká mnohem víc: rozdělení výběrového průměru $\\bar{X}_n$ se pro dostatečně velké $n$ (typicky $n \\ge 30$) blíží normálnímu $N(\\mu, \\sigma^2/n)$ bez ohledu na původní tvar rozdělení $X$ (pokud má konečný rozptyl)."
+          "body": "ZVČ říká, že výběrový průměr $\\bar{X}_n$ konverguje k populační střední hodnotě $\\mu$. CLV říká, že rozdělení součtu i průměru $\\bar{X}_n$ z nezávislých stejně rozdělených NV konverguje pro větší $n$ (typicky $n \\ge 30$) k normálnímu $N(\\mu, \\sigma^2/n)$ bez ohledu na původní tvar rozdělení $X$."
         },
         {
-          "title": "Hodnocení normality a identifikace rozdělení dat",
-          "body": "Normalitu posuzujeme kombinací grafů (histogram s křivkou hustoty, Q-Q plot — body u přímky, boxplot), čísel (šikmost $\\approx 0$, špičatost $\\approx 0$ u excesu) a testů (Shapiro–Wilk). Pro výběr podkladového rozdělení v R slouží Cullen–Freyův graf `descdist` a odhad parametrů `fitdist`."
+          "title": "Hodnocení normality a výběr rozdělení (AIC / BIC)",
+          "body": "Normalitu ověřujeme graficky (histogram, `PlotQQ(X)` / Q-Q plot) i testy (`shapiro.test`). K výběru vhodného teoretického rozdělení používáme Cullen–Freyův graf `descdist(X, boot=1000)`, odhad parametrů `fitdist(X, '...')` a **informační kritéria AIC a BIC** — **čím nižší AIC/BIC, tím lépe rozdělení sedí datům** (s penalizací za počet parametrů $k$)."
         }
       ],
       "comparison": {
-        "caption": "Přehled nejčastějších rozdělení pravděpodobnosti",
+        "caption": "Přehled rozdělení z Vzorce.pdf a R-ko.pdf",
         "headers": ["Rozdělení", "Typ", "Modeluje", "E(X) a Var(X)", "R funkce"],
         "rows": [
-          ["Binomické $\\mathrm{Bi}(n, p)$", "Diskrétní", "Počet úspěchů v $n$ pokusech", "$np$, $np(1-p)$", "`dbinom`, `pbinom`"],
+          ["Binomické $\\mathrm{Bi}(n, p)$", "Diskrétní", "Úspěchy v $n$ pokusech (s vracením)", "$np$, $np(1-p)$", "`dbinom`, `pbinom`"],
+          ["Hypergeometrické", "Diskrétní", "Výběr $n$ kusů z $w+b$ bez vracení", "$n\\frac{w}{w+b}$", "`dhyper(k, w, b, n)`"],
+          ["Geometrické", "Diskrétní", "Neúspěchy do 1. úspěchu", "$(1-p)/p$, $(1-p)/p^2$", "`dgeom(k, p)`, `pgeom`"],
           ["Poissonovo $\\mathrm{Po}(\\lambda)$", "Diskrétní", "Vzácné události za čas/prostor", "$\\lambda$, $\\lambda$", "`dpois`, `ppois`"],
           ["Exponenciální $\\mathrm{Exp}(\\lambda)$", "Spojité", "Doba čekání (bezpaměťové)", "$1/\\lambda$, $1/\\lambda^2$", "`dexp`, `pexp`, `qexp`"],
-          ["Normální $N(\\mu, \\sigma^2)$", "Spojité", "Součet mnoha malých vlivů", "$\\mu$, $\\sigma^2$", "`dnorm`, `pnorm`, `qnorm` (bere $\\sigma$!)"],
-          ["Studentovo $t_\\nu$", "Spojité", "Průměr při neznámém $\\sigma$", "$0$, $\\frac{\\nu}{\\nu-2}$", "`dt`, `pt`, `qt`"]
+          ["Normální $N(\\mu, \\sigma^2)$", "Spojité", "Součet mnoha malých vlivů", "$\\mu$, $\\sigma^2$", "`pnorm`, `qnorm` (bere $\\sigma$!)"],
+          ["Lognormální", "Spojité", "Kladná šikmá data ($\\ln X \\sim N$)", "$e^{\\mu+\\sigma^2/2}$", "`plnorm`, `qlnorm`"]
         ]
       },
       "formulas": [
         {
-          "name": "Hustota normálního rozdělení a standardizace",
-          "latex": "f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}}\\exp\\!\\left(-\\frac{(x-\\mu)^2}{2\\sigma^2}\\right), \\qquad U = \\frac{X-\\mu}{\\sigma} \\sim N(0, 1)",
+          "name": "Hustota normálního rozdělení a CLV",
+          "latex": "f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}}\\exp\\!\\left(-\\frac{(x-\\mu)^2}{2\\sigma^2}\\right), \\qquad \\frac{\\bar{X}_n - \\mu}{\\sigma / \\sqrt{n}} \\xrightarrow{d} N(0, 1)",
           "note": "V R zadávejte směrodatnou odchylku $\\sigma$, nikoli rozptyl $\\sigma^2$!"
         },
         {
-          "name": "Centrální limitní věta (CLV)",
-          "latex": "\\frac{\\bar{X}_n - \\mu}{\\sigma / \\sqrt{n}} \\xrightarrow{d} N(0, 1)",
-          "note": "Směrodatná chyba průměru $\\mathrm{SE} = \\sigma/\\sqrt{n}$ klesá s odmocninou z $n$."
+          "name": "Informační kritéria AIC a BIC (Vzorce.pdf)",
+          "latex": "\\mathrm{AIC} = 2k - 2\\ln L, \\qquad \\mathrm{BIC} = k\\ln(n) - 2\\ln L",
+          "note": "$L$ je věrohodnost, $k$ počet parametrů modelu, $n$ rozsah výběru. Menší hodnota = lepší model; BIC pro $n \\ge 8$ trestá složitost přísněji než AIC."
         }
       ],
       "pitfalls": [
-        "V R `pnorm(x, mu, sd)` a `qnorm(p, mu, sd)` očekávají $\\sigma$ (směrodatnou odchylku), ne $\\sigma^2$!",
-        "Shapiro–Wilkův test na obrovském vzorku ($n > 1000$) zamítne normalitu i pro prakticky nepodstatnou odchylku — vždy zkontrolujte Q-Q plot.",
-        "Záměna ZVČ (kam průměr konverguje) s CLV (jaké má průměr rozdělení)."
+        "V R `pnorm(x, mu, sd)` a `qnorm(p, mu, sd)` očekávají $\\sigma$, ne $\\sigma^2$!",
+        "V R `dgeom(k, p)` počítá počet **neúspěchů před** 1. úspěchem ($k = 0, 1, 2, \\dots$), nikoli celkový počet pokusů!",
+        "Shapiro–Wilkův test na obrovském vzorku zamítne normalitu i pro zanedbatelnou odchylku — vždy sledujte Q-Q plot."
       ],
-      "code_tip": "R: `qqnorm(X); qqline(X)`, `shapiro.test(X)`, `fitdistrplus::descdist(X, boot=1000)`, `fitdist(X, 'norm')`, `PlotQQ(...)`"
+      "code_tip": "R: `PlotQQ(X)`, `shapiro.test(X)`, `fitdistrplus::descdist(X, discrete=FALSE, boot=1000)`, `fitdist(X, 'lnorm')`, `gofstat(...)`"
     },
     {
       "id": "05-bodove-a-intervalove-odhady",
-      "weeks": "Okruh II.1–2 · III.5–7, 10",
-      "title": "Bodové a intervalové odhady, robustní a bootstrapový přístup",
+      "weeks": "Prezentace 5 · Okruh II.1–2 · III.5–7, 10",
+      "title": "Bodové a intervalové odhady (průměr, podíl, rozptyl, rozdíly, bootstrap)",
       "topic_id": "03-odhady-a-intervaly-spolehlivosti",
-      "tags": ["Nestrannost", "IS pro průměr", "IS pro podíl", "Bootstrap", "MeanCI & BootCI"],
-      "summary": "Z náhodného výběru usuzujeme na neznámé parametry populace: jedním číslem (bodový odhad) nebo intervalem spolehlivosti s řízenou mírou nejistoty.",
+      "tags": ["Nestrannost", "IS průměr & rozdíl", "IS podíl & rozdíl", "IS rozptyl (χ²)", "Bootstrap"],
+      "summary": "Z náhodného výběru usuzujeme na neznámé parametry populace: bodovým odhadem nebo intervalem spolehlivosti (včetně asymetrického IS pro rozptyl přes $\\chi^2$ z prezentace p. 62).",
       "concepts": [
         {
-          "title": "Bodový odhad a jeho žádoucí vlastnosti",
-          "body": "Bodový odhad je jedno číslo ($\\bar{x}$ pro $\\mu$, $\\hat{p} = k/n$ pro $p$). Dobrý odhad má být nestranný ($E(\\hat{\\theta}) = \\theta$), konzistentní (s rostoucím $n$ konverguje k $\\theta$) a vydatný (má nejmenší možný rozptyl mezi nestrannými odhady)."
+          "title": "Bodový odhad a jeho vlastnosti",
+          "body": "Bodový odhad je jedno číslo ($\\bar{x}$ pro $\\mu$, $\\hat{p} = k/n$ pro $p$, $s^2$ pro $\\sigma^2$). Má být nestranný ($E(\\hat{\\theta}) = \\theta$), konzistentní (s rostoucím $n$ konverguje k $\\theta$) a vydatný (nejmenší rozptyl mezi nestrannými odhady)."
         },
         {
-          "title": "Interval spolehlivosti (IS) pro průměr a rozdíl průměrů",
-          "body": "Interval spolehlivosti přidává k bodovému odhadu přesnost (šířku). Při neznámém $\\sigma$ používáme Studentův kvantil $t_{1-\\alpha/2,\\, n-1}$; při známém $\\sigma$ normální kvantil $u_{1-\\alpha/2}$. Zúžit IS na polovinu vyžaduje čtyřnásobek pozorování ($1/\\sqrt{n}$). Pro rozdíl průměrů dvou nezávislých skupin sledujeme, zda IS obsahuje nulu."
+          "title": "IS pro průměr a pro rozdíl dvou průměrů",
+          "body": "Při neznámém $\\sigma$ používáme $t_{1-\\alpha/2,\\, n-1}$; při známém $\\sigma$ normální kvantil $z_{1-\\alpha/2}$. Zúžit IS na polovinu vyžaduje $4\\times$ více dat ($1/\\sqrt{n}$). Pro rozdíl průměrů dvou nezávislých výběrů sledujeme, zda IS obsahuje $0$ (pokud ne, průměry se významně liší)."
         },
         {
           "title": "IS pro podíl a rozdíl podílů",
-          "body": "Waldův IS $\\hat{p} \\pm u_{1-\\alpha/2}\\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$ vyžaduje dostatečný počet úspěchů i neúspěchů ($n\\hat{p} \\ge 5$ a $n(1-\\hat{p}) \\ge 5$). Pro malé $n$ nebo extrémní $p$ jsou přesnější Wilsonův či Clopper–Pearsonův interval."
+          "body": "Waldův IS $\\hat{p} \\pm z_{1-\\alpha/2}\\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}$ vyžaduje $n\\hat{p} \\ge 5$ a $n(1-\\hat{p}) \\ge 5$. Pro rozdíl dvou podílů sčítáme jejich rozptyly pod odmocninou (`BinomDiffCI`)."
         },
         {
-          "title": "Tradiční vs. robustní vs. bootstrapový přístup",
-          "body": "Tradiční parametrické odhady předpokládají normalitu a jsou citlivé na outliery. Robustní odhady (medián, oříznutý průměr, Huberův odhad) drží stabilitu i při znečištěných datech. Bootstrap nevyžaduje analytický vzorec rozdělení: opakovaně (např. $B = 2000\\times$) losujeme výběry s vracením ze samotných dat a empiricky určíme kvantily statistiky."
+          "title": "IS pro rozptyl σ² (slajd 62 & Vzorce.pdf)",
+          "body": "Velikost $(n - 1)s^2 / \\sigma^2$ má za normality **asymetrické $\\chi^2$ rozdělení** (s $n-1$ stupni volnosti). Interval spolehlivosti pro rozptyl $\\sigma^2$ proto není symetrický kolem $s^2$: v dolní mezi dělíme větším kvantilem $\\chi^2(1 - \\alpha/2)$ a v horní mezi menším kvantilem $\\chi^2(\\alpha/2)$!"
         },
         {
-          "title": "Správná interpretace intervalu spolehlivosti",
-          "body": "Frekventistický 95 % IS znamená: při opakovaném losování náhodných výběrů pokryje takto konstruovaný interval skutečný (pevný!) parametr $\\mu$ v 95 % případů. Náhodný je interval, ne populační parametr $\\mu$."
+          "title": "Tradiční vs. robustní vs. bootstrapový přístup & interpretace IS",
+          "body": "Bootstrap (`BootCI`) nevyžaduje normalitu: opakovaně losuje výběry s vracením a bere empirické kvantily. Frekventistický 95 % IS znamená, že při opakovaném losování výběrů pokryje takto konstruovaný interval pevný parametr $\\mu$ v 95 % případů — náhodný je interval, ne parametr $\\mu$."
         }
       ],
       "formulas": [
         {
-          "name": "IS pro průměr (neznámé σ)",
-          "latex": "\\bar{x} \\pm t_{1 - \\alpha/2,\\; n - 1}\\cdot \\frac{s}{\\sqrt{n}}",
-          "note": "Vyšší hladina spolehlivosti $1 - \\alpha$ (např. 99 % místo 95 %) interval rozšíří."
+          "name": "IS pro průměr (neznámé σ) a rozdíl průměrů",
+          "latex": "\\bar{x} \\pm t_{1-\\alpha/2,\\, n-1}\\frac{s}{\\sqrt{n}}, \\qquad (\\bar{x}_1 - \\bar{x}_2) \\pm t_{1-\\alpha/2,\\, n_1+n_2-2}\\, s_p\\sqrt{\\frac{1}{n_1} + \\frac{1}{n_2}}",
+          "note": "Společný odhad rozptylu $s_p^2 = \\frac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1 + n_2 - 2}$."
         },
         {
-          "name": "Waldův IS pro podíl",
-          "latex": "\\hat{p} \\pm u_{1 - \\alpha/2}\\sqrt{\\frac{\\hat{p}(1 - \\hat{p})}{n}}",
-          "note": "Pro 95 % spolehlivost je $u_{0{,}975} \\approx 1{,}960$."
+          "name": "IS pro podíl a rozdíl podílů",
+          "latex": "\\hat{p} \\pm z_{1-\\alpha/2}\\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}}, \\qquad (\\hat{p}_1 - \\hat{p}_2) \\pm z_{1-\\alpha/2}\\sqrt{\\frac{\\hat{p}_1(1-\\hat{p}_1)}{n_1} + \\frac{\\hat{p}_2(1-\\hat{p}_2)}{n_2}}",
+          "note": "Pro 95 % spolehlivost je $z_{0{,}975} \\approx 1{,}960$."
+        },
+        {
+          "name": "IS pro rozptyl σ² (χ² rozdělení)",
+          "latex": "\\left[\\frac{(n - 1)s^2}{\\chi^2_{n-1}(1 - \\alpha/2)},\\; \\frac{(n - 1)s^2}{\\chi^2_{n-1}(\\alpha/2)}\\right]",
+          "note": "Pozor na pořadí kvantilů: větší $\\chi^2$ kvantil jde do jmenovatele dolní meze!"
         }
       ],
       "pitfalls": [
-        "Tvrdít, že „parametr $\\mu$ padne s pravděpodobností 95 % do vypočteného intervalu [12, 15]“ — konkrétní interval $\\mu$ buď obsahuje, nebo ne.",
-        "Použít $u$-kvantil místo $t$-kvantilu u malého vzorku, když $\\sigma$ neznáme.",
-        "Bootstrap neopraví nereprezentativní (nenáhodný) výběr ani příliš malý vzorek."
+        "Tvrdit, že „parametr $\\mu$ padne s pravděpodobností 95 % do konkrétního intervalu [12, 15]“ — konkrétní interval $\\mu$ buď obsahuje, nebo ne.",
+        "U IS pro rozptyl prohodit $\\chi^2(\\alpha/2)$ a $\\chi^2(1-\\alpha/2)$ — dostali byste horní mez menší než dolní.",
+        "Bootstrap neopraví nereprezentativní (nenáhodný) výběr."
       ],
-      "code_tip": "R: `DescTools::MeanCI(X, conf.level=0.95)`, `MeanDiffCI(X ~ Y)`, `BinomCI(k, n, method='wald')`, `BinomDiffCI(k1, n1, k2, n2)`, `BootCI(X, FUN=median)`"
+      "code_tip": "R: `DescTools::MeanCI(X)`, `MeanDiffCI(X ~ Y)`, `BinomCI(k, n, method='wald')`, `BinomDiffCI(k1, n1, k2, n2)`, `BootCI(X, FUN=median)`"
     },
     {
       "id": "06-testovani-hypotez",
-      "weeks": "Okruh II.3 · III.9–10",
-      "title": "Testování statistických hypotéz a p-hodnota",
+      "weeks": "Prezentace 6 (p. 63–91) · Okruh II.3 · III.9–10",
+      "title": "Testování hypotéz: jedno-, dvou- a párové testy a p-hodnota",
       "topic_id": "04-testovani-hypotez-a-regrese",
-      "tags": ["H₀ vs. H₁", "p-hodnota", "Chyby α a β", "t-test", "Wilcoxon", "χ² test"],
-      "summary": "Formální rozhodování o tvrzeních nad populací: nastavíme nulovou hypotézu $H_0$, spočítáme testovou statistiku a přes $p$-hodnotu nebo kritický obor vyhodnotíme sílu důkazů proti $H_0$.",
+      "tags": ["H₀ vs. H₁", "p-hodnota", "Chyby α a β", "1-výběrový", "Párový", "Dvouvýběrový & Wilcoxon"],
+      "summary": "Formální rozhodování o parametrech jedné nebo dvou populací: nastavení $H_0$ a $H_1$, chyby I. a II. druhu, volba parametrického vs. neparametrického testu a správná interpretace $p$-hodnoty.",
       "concepts": [
         {
-          "title": "Nulová a alternativní hypotéza",
-          "body": "Nulová hypotéza $H_0$ vyjadřuje stav bez efektu či rovnost ($\\mu = \\mu_0$, $\\mu_1 = \\mu_2$, nezávislost v tabulce). Alternativa $H_1$ může být oboustranná ($\\mu \\neq \\mu_0$) nebo jednostranná ($\\mu > \\mu_0$, $\\mu < \\mu_0$) — směr musí být zvolen před pohledem na data."
-        },
-        {
-          "title": "Tři ekvivalentní přístupy k rozhodnutí",
-          "body": "1) Kritický obor: porovnáme hodnotu testové statistiky s kritickým kvantilem. 2) $p$-hodnota: zamítáme $H_0$, pokud $p < \\alpha$ (typicky $\\alpha = 0{,}05$). 3) Interval spolehlivosti: pro oboustranný test zamítáme $H_0: \\theta = \\theta_0$, pokud $\\theta_0$ leží mimo $(1-\\alpha)$ IS."
+          "title": "Hypotézy, kritický obor, p-hodnota a IS",
+          "body": "Nulová hypotéza $H_0$ vyjadřuje rovnost / nulový efekt; alternativa $H_1$ může být oboustranná či jednostranná. Rozhodnutí přes kritický obor, $p$-hodnotu ($p < \\alpha \\implies$ zamítáme $H_0$) i oboustranný $(1-\\alpha)$ IS je ekvivalentní."
         },
         {
           "title": "Chyby I. a II. druhu a síla testu",
-          "body": "Chyba I. druhu ($\\alpha$) = zamítneme pravdivou $H_0$ (falešný poplach). Chyba II. druhu ($\\beta$) = nezamítneme nepravdivou $H_0$ (přehlédnutý efekt). Síla testu $1 - \\beta$ roste s velikostí vzorku $n$, velikostí efektu i hladinou $\\alpha$."
+          "body": "Chyba I. druhu ($\\alpha$) = zamítnutí pravdivé $H_0$ (falešný poplach). Chyba II. druhu ($\\beta$) = nezamítnutí nepravdivé $H_0$ (přehlédnutý efekt). Síla testu $1 - \\beta$ roste s $n$, velikostí efektu i hladinou $\\alpha$."
         },
         {
-          "title": "Základní testy v kontextu",
-          "body": "Průměr jednoho výběru: jednovýběrový $t$-test (`t.test(x, mu=...)`). Porovnání dvou nezávislých skupin: Welchův/Studentův dvouvýběrový $t$-test (nebo neparametrický Wilcoxon/Mann–Whitney při porušení normality). Měření před/po na stejných jedincích: párový $t$-test (`paired=TRUE`). Kategorické proměnné v kontingenční tabulce: Pearsonův $\\chi^2$ test nezávislosti (při očekávaných četnostech $< 5$ Fisherův exaktní test)."
+          "title": "Jednovýběrový, párový a dvouvýběrový test (slajdy 69–91)",
+          "body": "**Jednovýběrový:** $t$-test (`t.test(x, mu=mu0)`) při normalitě, jinak Wilcoxonův jednovýběrový. **Párový:** měření na stejných jedincích (před/po) — testujeme rozdíly $d_i = x_{i1} - x_{i2}$ proti nule (`paired=TRUE`). **Dvouvýběrový (2 nezávislé skupiny):** nejprve ověříme normalitu a shodu rozptylů ($F$-test `var.test`); pro normální a stejné rozptyly Studentův $t$-test (`var.equal=TRUE`), pro různé rozptyly **Welchův $t$-test** (výchozí v R), při porušení normality **Mann–Whitney / Wilcoxon**."
         },
         {
           "title": "Interpretační pasti p-hodnoty",
-          "body": "$p$-hodnota je pravděpodobnost naměření alespoň tak extrémní testové statistiky za předpokladu, že platí $H_0$: $P(\\text{data} \\mid H_0)$. Není to pravděpodobnost, že platí $H_0$! Nezamítnutí $H_0$ neznamená důkaz její pravdivosti a statistická významnost ($p < 0{,}05$) neznamená automaticky praktickou významnost."
+          "body": "$p$-hodnota je $P(\\text{alespoň tak extrémní data} \\mid H_0)$. Není to pravděpodobnost platnosti $H_0$! Nezamítnutí $H_0$ neznamená důkaz její pravdivosti a statistická významnost neznamená automaticky praktickou významnost."
         }
       ],
       "comparison": {
-        "caption": "Výběr statistického testu podle situace a dat",
+        "caption": "Volba testu pro 1 a 2 výběry",
         "headers": ["Situace", "Parametrický test", "Neparametrická alternativa", "R příkaz"],
         "rows": [
-          ["Průměr jednoho výběru vs. $\\mu_0$", "Jednovýběrový $t$-test", "Wilcoxonův jednovýběrový", "`t.test(x, mu = mu0)`"],
-          ["2 nezávislé skupiny (číselná)", "Welchův $t$-test", "Mann–Whitney / Wilcoxon", "`t.test(x ~ g)` / `wilcox.test(x ~ g)`"],
-          ["2 závislá měření (před / po)", "Párový $t$-test", "Párový Wilcoxonův test", "`t.test(x1, x2, paired = TRUE)`"],
-          ["Podíl úspěchů vs. $p_0$", "Test podílu (asympt.)", "Binomický exaktní test", "`prop.test(k, n, p = p0)`"],
-          ["2 kategorické proměnné", "Pearsonův $\\chi^2$ test", "Fisherův exaktní ($E_{ij} < 5$)", "`chisq.test(table(X, Y))`"]
+          ["1 výběr vs. $\\mu_0$", "Jednovýběrový $t$-test", "Wilcoxonův jednovýběrový", "`t.test(x, mu = mu0)`"],
+          ["2 závislá měření (před/po)", "Párový $t$-test", "Párový Wilcoxonův test", "`t.test(x1, x2, paired = TRUE)`"],
+          ["2 nezávislé (shodné $\\sigma^2$)", "Studentův dvouvýběrový $t$-test", "Mann–Whitney / Wilcoxon", "`t.test(x ~ g, var.equal = TRUE)`"],
+          ["2 nezávislé (různé $\\sigma^2$)", "Welchův $t$-test (výchozí v R)", "Mann–Whitney / Wilcoxon", "`t.test(x ~ g)` / `wilcox.test(x ~ g)`"],
+          ["Podíl úspěchů vs. $p_0$", "Test podílu (asympt.)", "Binomický exaktní test", "`prop.test(k, n, p = p0)`"]
         ]
       },
       "formulas": [
@@ -298,11 +315,6 @@
           "name": "Jednovýběrový t-test",
           "latex": "t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}} \\sim t_{n - 1}",
           "note": "Pro oboustrannou alternativu zamítáme $H_0$, pokud $|t| > t_{1-\\alpha/2,\\, n-1}$."
-        },
-        {
-          "name": "Pearsonův χ² test nezávislosti",
-          "latex": "\\chi^2 = \\sum_{i,j}\\frac{(O_{ij} - E_{ij})^2}{E_{ij}}, \\qquad df = (r - 1)(c - 1)",
-          "note": "Očekávaná četnost $E_{ij} = \\frac{R_i \\cdot C_j}{n}$; platí při $E_{ij} \\ge 5$."
         }
       ],
       "example": {
@@ -311,93 +323,155 @@
           "Hypotézy na hladině $\\alpha = 0{,}05$: $H_0: \\mu = 100$ vs. oboustranná $H_1: \\mu \\neq 100$.",
           "Testová statistika: $t = \\frac{104 - 100}{8 / \\sqrt{16}} = \\frac{4}{2} = 2{,}00$ při $df = n - 1 = 15$.",
           "Kritická hodnota: z tabulky Studentova rozdělení $t_{0{,}975,\\, 15} = 2{,}131$.",
-          "Rozhodnutí: $|t| = 2{,}00 < 2{,}131$ (ekvivalentně $p \\approx 0{,}064 > 0{,}05$) → na hladině $5\\,\\%$ **nezamítáme $H_0$** (nemáme dostatečný důkaz, že se populační průměr liší od 100)."
+          "Rozhodnutí: $|t| = 2{,}00 < 2{,}131$ (ekvivalentně $p \\approx 0{,}064 > 0{,}05$) → na hladině $5\\,\\%$ **nezamítáme $H_0$**."
         ]
       },
       "pitfalls": [
-        "Interpretovat $p = 0{,}03$ jako „3 % šance, že platí $H_0$“ — je to pravděpodobnost dat za platnosti $H_0$.",
-        "Říkat „přijímáme $H_0$“ místo „nezamítáme $H_0$“ (nemáme dost důkazů proti $H_0$).",
-        "Mnohonásobné testování bez korekce (p-hacking) dramaticky zvyšuje šanci falešného poplachu."
+        "Interpretovat $p = 0{,}03$ jako „3 % šance, že platí $H_0$“.",
+        "Říkat „přijímáme $H_0$“ místo „nezamítáme $H_0$“.",
+        "Použít dvouvýběrový test místo párového, když jsou měření provázána na stejných subjektech."
       ],
-      "code_tip": "R: `t.test(x, mu=mu0)`, `t.test(x ~ g)`, `t.test(x1, x2, paired=TRUE)`, `wilcox.test(...)`, `prop.test(k, n, p=p0)`, `chisq.test(table(X, Y))`, `fisher.test(...)`"
+      "code_tip": "R: `t.test(x, mu=mu0)`, `t.test(x ~ g)`, `t.test(x1, x2, paired=TRUE)`, `var.test(x ~ g)`, `wilcox.test(...)`, `prop.test(k, n, p=p0)`"
     },
     {
-      "id": "07-korelace-a-linearni-regrese",
-      "weeks": "Okruh II.4–5 · III.11, 18–19",
-      "title": "Kovariance, korelace a lineární regrese",
+      "id": "07-anova-dobra-shoda-or",
+      "weeks": "Prezentace 6 (p. 92–121)",
+      "title": "Analýza rozptylu (ANOVA), test dobré shody, Fisher a poměr šancí (OR)",
       "topic_id": "04-testovani-hypotez-a-regrese",
-      "tags": ["Kovariance", "Pearson r", "Spearman ρ", "lm(Y ~ X)", "R²", "Předpoklady regrese"],
-      "summary": "Hodnocení vztahu dvou číselných proměnných (tvar, směr, síla) a modelování závislé proměnné $Y$ pomocí vysvětlující proměnné $X$ regresní přímkou.",
+      "tags": ["ANOVA", "Bartlettův test", "Tukey HSD", "Kruskal–Wallis", "Test dobré shody", "Fisher", "Odds Ratio"],
+      "summary": "Porovnávání 3 a více skupin (ANOVA, Bartlett, post-hoc), testy pro kategorická data (test dobré shody, $\\chi^2$ nezávislosti, Fisherův exaktní test) a poměr šancí ze slajdů 92–121 A. Černíkové.",
       "concepts": [
         {
-          "title": "Kovariance a korelace",
-          "body": "Kovariance $\\operatorname{cov}(X, Y)$ ukazuje směr společné proměnlivosti, ale závisí na jednotkách měření. Pearsonův korelační koeficient $r \\in [-1, 1]$ je bezrozměrný a měří sílu a směr výhradně lineárního vztahu. Pro monotónní nelineární vztahy či outliery použijte pořadový Spearmanův koeficient $\\rho$."
+          "title": "Analýza rozptylu (ANOVA) a předpoklady (slajdy 92–100)",
+          "body": "Porovnává střední hodnoty u $k \\ge 3$ nezávislých skupin ($H_0: \\mu_1 = \\dots = \\mu_k$, $H_1$: alespoň jedna se liší) rozkladem celkové variability $SST = SSB + SSW$ a $F$-statistikou $F = \\frac{MSB}{MSW}$. Vyžaduje **normalitu ve skupinách** a **shodu rozptylů** (ověřujeme **Bartlettovým testem** `bartlett.test`)."
         },
         {
-          "title": "Tvar, směr, síla a korelace ≠ kauzalita",
-          "body": "Před výpočtem korelace vždy zobrazte bodový graf (`plot(Y ~ X)`): silný kvadratický vztah může mít $r \\approx 0$ (Anscombeho kvartet). Vysoká korelace dvou veličin sama o sobě neprokazuje příčinnou souvislost (může existovat třetí zavádějící proměnná)."
+          "title": "Welchova ANOVA, Kruskal–Wallis, post-hoc a opakovaná měření",
+          "body": "Při normalitě a různých rozptylech použijeme **Welchovu ANOVU** (`oneway.test`); při porušení normality neparametrický **Kruskal–Wallisův test** (`kruskal.test`). Pokud ANOVA zamítne $H_0$, zjistíme **které dvojice** se liší pomocí post-hoc **Tukey HSD** (`TukeyHSD`, graf IS — významný rozdíl u dvojic, jejichž IS neobsahuje $0$, slajd 102). Pro opakovaná měření na stejných subjektech slouží **ANOVA pro opakovaná měření** / Friedmanův test."
         },
         {
-          "title": "Jednoduchý lineární regresní model a jeho odhad",
-          "body": "Model $Y_i = \\beta_0 + \\beta_1 X_i + \\varepsilon_i$ odhadujeme metodou nejmenších čtverců minimalizací součtu čtverců reziduí $\\sum (y_i - \\hat{y}_i)^2$. Směrnice $b_1$ udává očekávanou změnu $Y$ při zvětšení $X$ o jednu jednotku; $b_0$ je úsek na ose $y$ pro $X = 0$. Koeficient determinace $R^2$ (v jednoduché regresi $r^2$) vyjadřuje podíl variability $Y$ vysvětlený modelem."
+          "title": "Test dobré shody a test nezávislosti (slajdy 108–118)",
+          "body": "**Test dobré shody** ověřuje, zda pozorované četnosti kategorické (multinomické) proměnné odpovídají teoretickému rozdělení $p_1, \\dots, p_k$ ($df = k - 1$). **Test nezávislosti** v kontingenční tabulce $r \\times c$ má $df = (r-1)(c-1)$. Oba vyžadují očekávané četnosti $E_{ij} \\ge 5$; při malých četnostech použijeme **Fisherův exaktní (faktoriálový) test** (`fisher.test`)."
+        },
+        {
+          "title": "Poměr šancí (Odds Ratio, slajdy 119–121)",
+          "body": "U čtyřpolní tabulky $2\\times 2$ vyjadřuje šance $\\text{Odds} = \\frac{p}{1-p}$ a **poměr šancí** $OR = \\frac{n_{11} n_{22}}{n_{12} n_{21}}$ udává, kolikrát je větší šance výskytu jevu v 1. skupině oproti 2. skupině. $OR = 1$ znamená stejné šance (nezávislost); test $H_0: OR = 1$ používá normované $Z = \\frac{\\ln(OR)}{\\sqrt{\\frac{1}{n_{11}}+\\frac{1}{n_{12}}+\\frac{1}{n_{21}}+\\frac{1}{n_{22}}}} \\sim N(0, 1)$."
+        }
+      ],
+      "comparison": {
+        "caption": "Volba testu pro 3+ skupin a kategorická data (dle prezentace A. Černíkové)",
+        "headers": ["Situace", "Předpoklady splněny", "Alternativa při porušení", "R příkaz"],
+        "rows": [
+          ["3+ nezávislých skupin", "Klasická ANOVA (norm. + Bartlett)", "Welch ANOVA (různé $\\sigma^2$) / Kruskal–Wallis", "`aov(y ~ g)` / `oneway.test` / `kruskal.test`"],
+          ["Které dvojice se v ANOVĚ liší", "Post-hoc Tukey HSD (IS mimo 0)", "Párový Wilcoxon s korekcí", "`TukeyHSD(aov(y ~ g))`"],
+          ["Shoda s rozdělením kategorií", "Pearsonův $\\chi^2$ test dobré shody", "Simulace `simulate.p.value=TRUE`", "`chisq.test(obs, p = probs)`"],
+          ["Nezávislost v tabulce $r\\times c$", "Pearsonův $\\chi^2$ ($E_{ij} \\ge 5$)", "Fisherův exaktní test ($E_{ij} < 5$)", "`chisq.test(tab)` / `fisher.test(tab)`"]
+        ]
+      },
+      "formulas": [
+        {
+          "name": "Pearsonův χ² test nezávislosti a dobré shody",
+          "latex": "\\chi^2 = \\sum \\frac{(O - E)^2}{E}, \\qquad df_{\\text{nezáv}} = (r - 1)(c - 1), \\quad df_{\\text{shoda}} = k - 1",
+          "note": "Pro $E_{ij} < 5$ nahraďte Fisherovým exaktním testem (`fisher.test`)."
+        },
+        {
+          "name": "Poměr šancí (Odds Ratio) a jeho test",
+          "latex": "OR = \\frac{n_{11}\\,n_{22}}{n_{12}\\,n_{21}}, \\qquad Z = \\frac{\\ln(OR)}{\\sqrt{\\frac{1}{n_{11}} + \\frac{1}{n_{12}} + \\frac{1}{n_{21}} + \\frac{1}{n_{22}}}} \\sim N(0, 1)",
+          "note": "$H_0: OR = 1$ (stejné šance v obou skupinách)."
+        }
+      ],
+      "example": {
+        "title": "Příklad krok za krokem: Poměr šancí (Odds Ratio) na 2×2 tabulce",
+        "steps": [
+          "Město: $30$ s chřipkou ($n_{11}$), $70$ bez chřipky ($n_{12}$) → šance ve městě $\\text{Odds}_1 = 30/70 \\approx 0{,}429$.",
+          "Venkov: $15$ s chřipkou ($n_{21}$), $85$ bez chřipky ($n_{22}$) → šance na venkově $\\text{Odds}_2 = 15/85 \\approx 0{,}176$.",
+          "Poměr šancí: $OR = \\frac{30 \\cdot 85}{70 \\cdot 15} = \\frac{2550}{1050} \\approx 2{,}43$ — šance onemocnět chřipkou je ve městě $2{,}43\\times$ vyšší než na venkově."
+        ]
+      },
+      "pitfalls": [
+        "Spouštět mnohonásobné párové $t$-testy pro $k \\ge 3$ skupin místo ANOVY + post-hoc (nafukuje celkovou chybu I. druhu!).",
+        "Zapomenout na Bartlettův test shody rozptylů před klasickou ANOVOU.",
+        "Zaměnit poměr šancí (Odds Ratio) za poměr pravděpodobností (relativní riziko)."
+      ],
+      "code_tip": "R: `bartlett.test(y ~ g)`, `m <- aov(y ~ g); summary(m); TukeyHSD(m)`, `oneway.test(y ~ g)`, `kruskal.test(y ~ g)`, `chisq.test(tab)`, `fisher.test(tab)`"
+    },
+    {
+      "id": "08-korelace-a-linearni-regrese",
+      "weeks": "Prezentace 6–7 (p. 122–138) · Okruh II.4–5 · III.11, 18–19",
+      "title": "Kovariance, korelační test a lineární regrese",
+      "topic_id": "04-testovani-hypotez-a-regrese",
+      "tags": ["Kovariance", "Pearson r", "Spearman ρ", "Korelační test (t)", "lm(Y ~ X)", "R² & diagnostika"],
+      "summary": "Hodnocení vztahu dvou číselných proměnných (tvar, směr, síla), testování významnosti korelace (slajd 125) a modelování závislé proměnné $Y$ regresní přímkou.",
+      "concepts": [
+        {
+          "title": "Kovariance, Pearson r a Spearman ρ",
+          "body": "Kovariance $\\operatorname{cov}(X, Y)$ ukazuje směr společné proměnlivosti, ale závisí na jednotkách. Pearsonův korelační koeficient $r \\in [-1, 1]$ je bezrozměrný a měří sílu a směr výhradně lineárního vztahu. Pro monotónní nelineární vztahy či outliery použijte pořadový Spearmanův koeficient $\\rho$."
+        },
+        {
+          "title": "Korelační test (slajd 125)",
+          "body": "Testuje $H_0: \\rho = 0$ (nulová lineární korelace v populaci). Za platnosti $H_0$ a normality má statistika $T = \\frac{r\\sqrt{n - 2}}{\\sqrt{1 - r^2}}$ Studentovo rozdělení s $df = n - 2$ stupni volnosti (`cor.test(X, Y)`)."
+        },
+        {
+          "title": "Jednoduchý lineární regresní model a odhad MNC",
+          "body": "Model $Y_i = \\beta_0 + \\beta_1 X_i + \\varepsilon_i$ odhadujeme minimalizací součtu čtverců reziduí $\\sum (y_i - \\hat{y}_i)^2$. Směrnice $b_1$ udává očekávanou změnu $Y$ při zvětšení $X$ o 1 jednotku; $b_0$ je úsek pro $X = 0$. Koeficient determinace $R^2 = r^2$ udává podíl variability $Y$ vysvětlený modelem."
         },
         {
           "title": "Předpoklady lineární regrese a jejich diagnostika",
-          "body": "Pro validní intervaly spolehlivosti a $t$-testy parametrů musí platit: 1) linearita vztahu, 2) nezávislost chyb $\\varepsilon_i$, 3) homoskedasticita (konstantní rozptyl reziduí napříč hodnotami $\\hat{y}$), 4) normalita reziduí ($\\varepsilon_i \\sim N(0, \\sigma^2)$), plus absence extrémních vlivných bodů (Cookova vzdálenost). V R ověřujeme čtveřicí diagnostických grafů `plot(model)`."
+          "body": "1) linearita vztahu, 2) nezávislost chyb $\\varepsilon_i$, 3) homoskedasticita (konstantní rozptyl reziduí), 4) normalita reziduí ($\\varepsilon_i \\sim N(0, \\sigma^2)$), plus absence extrémních vlivných bodů. V R ověřujeme čtveřicí grafů `plot(model)`."
         }
       ],
       "formulas": [
         {
-          "name": "Pearsonova korelace a směrnice regrese",
-          "latex": "r = \\frac{\\operatorname{cov}(x, y)}{s_x s_y}, \\qquad b_1 = r\\frac{s_y}{s_x}, \\qquad b_0 = \\bar{y} - b_1 \\bar{x}",
-          "note": "Směrnice $b_1$ má vždy stejné znaménko jako korelace $r$."
+          "name": "Pearsonova korelace a korelační test (df = n − 2)",
+          "latex": "r = \\frac{\\operatorname{cov}(x, y)}{s_x s_y}, \\qquad T = \\frac{r\\sqrt{n - 2}}{\\sqrt{1 - r^2}} \\sim t_{n - 2}",
+          "note": "R: `cor(X, Y)` a `cor.test(X, Y)`."
         },
         {
-          "name": "Koeficient determinace",
-          "latex": "R^2 = 1 - \\frac{\\sum (y_i - \\hat{y}_i)^2}{\\sum (y_i - \\bar{y})^2} \\in [0, 1]",
-          "note": "V jednoduché lineární regresi platí přesně $R^2 = r^2$."
+          "name": "Regresní koeficienty a koeficient determinace",
+          "latex": "b_1 = \\frac{\\sum x_i y_i - n\\bar{x}\\bar{y}}{\\sum x_i^2 - n\\bar{x}^2} = r\\frac{s_y}{s_x}, \\quad b_0 = \\bar{y} - b_1\\bar{x}, \\quad R^2 = 1 - \\frac{\\sum(y_i - \\hat{y}_i)^2}{\\sum(y_i - \\bar{y})^2} = r^2",
+          "note": "Směrnice $b_1$ má vždy stejné znaménko jako korelace $r$."
         }
       ],
       "pitfalls": [
-        "Počítat Pearsonovo $r$ bez kontroly bodového grafu (nelineární tvar nebo jeden vzdálený outlier zkreslí $r$).",
-        "Predikovat z regresní přímky daleko mimo rozsah naměřených hodnot $X$ (nebezpečná extrapolace).",
+        "Počítat Pearsonovo $r$ bez kontroly bodového grafu (nelineární tvar nebo jeden outlier zkreslí $r$).",
+        "Predikovat z regresní přímky daleko mimo rozsah naměřených hodnot $X$ (extrapolace).",
         "Zaměnit normalitu samotné proměnné $Y$ za předpoklad normality reziduí $\\varepsilon_i$."
       ],
       "code_tip": "R: `plot(Y ~ X)`, `cor(X, Y)`, `cor.test(X, Y)`, `m <- lm(Y ~ X)`, `abline(m)`, `summary(m)`, `confint(m)`, `plot(m)`"
     },
     {
-      "id": "08-r-tahak-ke-zkousce",
-      "weeks": "Praktická část · R-ko",
+      "id": "09-r-tahak-ke-zkousce",
+      "weeks": "Praktická část · R-ko.pdf",
       "title": "Tahák R příkazů k zápočtu a ústní zkoušce",
       "topic_id": "05-r-code-tasks",
-      "tags": ["DescTools", "fitdistrplus", "d/p/q/r", "MeanCI", "lm & plot"],
-      "summary": "Stručná mapa příkazů dostupných u zkoušky z KMA/PAS (seřazená podle toho, co zrovna řešíte na datech).",
+      "tags": ["DescTools", "fitdistrplus", "d/p/q/r", "MeanCI & BootCI", "aov & TukeyHSD", "lm & plot"],
+      "summary": "Úplná mapa příkazů ze souboru `R-ko.pdf` dostupného u zkoušky z KMA/PAS (seřazená podle typu úlohy).",
       "concepts": [
         {
           "title": "Načtení dat a popis jedné proměnné",
-          "body": "Datový soubor načtete přes `load(\"soubor.RData\")`. Pro číselnou proměnnou aktivujte `library(DescTools)` a použijte `summary(X)`, `sd(X)`, `IQR(X)`, `MAD(X)`, `Skew(X)`, `Kurt(X)`, `hist(X)`, `boxplot(X)`. Pro kategorickou proměnnou `table(X)`, `prop.table(table(X))`, `barplot(table(X))`."
+          "body": "`load(\"soubor.RData\")`, `library(DescTools)`. Číselná: `summary(X)`, `quantile(X, z)`, `mean(X, trim=z)`, `HuberM(X)`, `var(X)`, `sd(X)`, `IQR(X)`, `MAD(X)`, `CoefVar(X)`, `Skew(X)`, `Kurt(X)`, `scale(X)`, `hist(X)`, `boxplot(X)`, `PlotQQ(X)`. Kategorická: `table(X)`, `cumsum(Y)`, `prop.table(table(X))`, `barplot(table(X))`, `pie(table(X))`."
         },
         {
-          "title": "Vztah dvou proměnných a skupiny",
-          "body": "Univerzální graf `plot(Y ~ X)` (funguje pro číselné i kategorické dvojice). Číselná podle skupin: `tapply(Y, X, mean)` nebo `summary`. Dvě kategorické: `table(X, Y)`, `addmargins(...)`, řádková/sloupcová procenta `prop.table(table(X, Y), 1)` (resp. `2`)."
+          "title": "Hledání modu a vztah dvou proměnných",
+          "body": "Modus: `density(X, bw = z)`, `which.max(X)`, `hist(X, plot = F)$breaks`, `hist(X, plot = F)$counts`. Vztah dvou proměnných: `plot(Y ~ X)`, `lines(X, Y)`, `cov(X, Y)`, `cor(X, Y)`, `tapply(Y, X, f)`, `table(X, Y)`, `addmargins(table(X, Y))`, `prop.table(table(X, Y), 1)` (řádky) / `2` (sloupce)."
         },
         {
-          "title": "Rozdělení, odhady, testy a regrese",
-          "body": "Identifikace rozdělení: `library(fitdistrplus)`, `descdist(X, discrete=FALSE, boot=1000)`, `fitdist(X, \"norm\")`. Intervaly spolehlivosti (`DescTools`): `MeanCI`, `MeanDiffCI`, `BinomCI`, `BinomDiffCI`, `BootCI`. Regrese: `m <- lm(Y ~ X)`, `coef(m)`, `summary(m)`, `confint(m)`, `plot(m)`."
+          "title": "Rozdělení, odhady, testy, ANOVA a regrese",
+          "body": "Rozdělení: `d/p/q/r` pro `binom`, `hyper`, `geom`, `pois`, `norm`, `lnorm`, `exp`; `library(fitdistrplus)`, `descdist(X, discrete=FALSE, boot=1000)`, `fitdist(X, \"norm\")`. IS (`DescTools`): `MeanCI`, `MeanDiffCI`, `BinomCI`, `BinomDiffCI`, `BootCI`. Testy: `t.test`, `wilcox.test`, `bartlett.test`, `aov` + `TukeyHSD`, `kruskal.test`, `chisq.test`, `fisher.test`. Regrese: `m <- lm(Y ~ X)`, `coef(m)`, `summary(m)`, `confint(m)`, `plot(m)`."
         }
       ],
       "formulas": [
         {
           "name": "Čtyři prefixy rozdělení v R",
           "latex": "\\texttt{d*} \\text{ (hustota/pmf)}, \\quad \\texttt{p*} \\text{ (CDF } P(X\\le x)\\text{)}, \\quad \\texttt{q*} \\text{ (kvantil)}, \\quad \\texttt{r*} \\text{ (generátor)}",
-          "note": "Např. `pnorm(1.96, 0, 1) ≈ 0.975`, `qt(0.975, df = 15)`, `dbinom(3, 10, 0.5)`."
+          "note": "Např. `pnorm(1.96, 0, 1) ≈ 0.975`, `dhyper(k, w, b, n)`, `pgeom(k, p)`, `plnorm(x, mu, sigma)`."
         }
       ],
       "pitfalls": [
-        "U funkcí `mean`, `sd`, `var`, `IQR`, `quantile` na datech s chybějícími hodnotami `NA` přidejte `na.rm = TRUE`.",
-        "U `prop.table(table(X, Y), margin)` znamená `1` řádková procenta (součet v řádku = 1) a `2` sloupcová procenta."
+        "U funkcí `mean`, `sd`, `var`, `IQR`, `quantile` na datech s `NA` přidejte `na.rm = TRUE`.",
+        "U `prop.table(table(X, Y), margin)` znamená `1` řádková procenta a `2` sloupcová procenta."
       ],
-      "code_tip": "R: `library(DescTools); library(fitdistrplus)` — oba balíčky pokrývají většinu ústní zkoušky."
+      "code_tip": "R: `library(DescTools); library(fitdistrplus)` + pomocné `round(X, z)`, `sort(X)`, `unique(X)`."
     }
   ]
 }

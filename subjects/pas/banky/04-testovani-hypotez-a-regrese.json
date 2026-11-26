@@ -238,6 +238,79 @@
         "Vysvětlení: Protože $p < 0{,}01$, je směrnice statisticky významně nenulová i na přísnější $1\\,\\%$ hladině."
       ],
       "explanation": "Predikce pro $8$ hodin je $30 + 5{,}5\\cdot 8 = 74$ bodů. Protože $p = 0{,}0012 < 0{,}01$, zamítáme hypotézu nulové směrnice."
+    },
+    {
+      "id": "pas-04-q13",
+      "number": 13,
+      "type": "choice",
+      "text": "Chceme porovnat střední hodnotu číselné proměnné mezi **4 nezávislými skupinami** (prezentace A. Černíkové, slajdy 92–96). Data jsou normální, ale **Bartlettův test** zamítl shodu rozptylů ($p = 0{,}004$). Jaký test zvolíte?",
+      "options": {
+        "A": "Klasickou ANOVU s předpokladem shodných rozptylů",
+        "B": "**Welchovu ANOVU** (`oneway.test(y ~ g)`), případně neparametrický Kruskal–Wallis při pochybnosti o normalitě",
+        "C": "Šest samostatných párových $t$-testů bez korekce",
+        "D": "Pearsonův $\\chi^2$ test dobré shody"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Klasická ANOVA vyžaduje normalitu i shodu rozptylů (homoskedasticitu).",
+        "Krok 2: Bartlettův test ($p < 0{,}05$) odhalil rozdílné rozptyly mezi skupinami.",
+        "Vysvětlení: Pro normální data s různými rozptyly slouží Welchova ANOVA (`oneway.test`); bez normality Kruskal–Wallisův test (`kruskal.test`)."
+      ],
+      "explanation": "Při porušení shody rozptylů u normálních dat ve $3+$ skupinách se místo klasické ANOVY používá Welchova ANOVA (`oneway.test`)."
+    },
+    {
+      "id": "pas-04-q14",
+      "number": 14,
+      "type": "choice",
+      "text": "ANOVA zamítla $H_0$ ($p = 0{,}0013$) a spustili jsme post-hoc **Tukey HSD** (`TukeyHSD`, prezentace slajd 102). Podle čeho v grafu párových srovnání poznáme, mezi kterými dvojicemi skupin je **statisticky významný rozdíl**?",
+      "options": {
+        "A": "U dvojic, jejichž interval spolehlivosti pro rozdíl průměrů **neprotíná svislou čáru v nule**",
+        "B": "U dvojic, jejichž interval spolehlivosti prochází přesně nulou",
+        "C": "U všech dvojic automaticky, jakmile vyšla ANOVA významná",
+        "D": "Pouze u dvojice s nejmenším počtem pozorování"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Každý vodorovný úsek v grafu Tukey HSD je interval spolehlivosti pro rozdíl průměrů dané dvojice skupin.",
+        "Krok 2: Hodnota $0$ znamená nulový rozdíl mezi dvojicí skupin.",
+        "Vysvětlení: Neobsahuje-li interval spolehlivosti nulu, liší se daná dvojice skupin statisticky významně."
+      ],
+      "explanation": "V post-hoc grafu Tukey HSD indikuje statisticky významný rozdíl každá dvojice skupin, jejíž interval spolehlivosti neobsahuje nulu."
+    },
+    {
+      "id": "pas-04-q15",
+      "number": 15,
+      "type": "input_numeric",
+      "text": "Ve čtyřpolní tabulce (slajdy 119–120) onemocnělo ve městě $30$ osob a neonemocnělo $70$ ($n_{11}=30, n_{12}=70$); na venkově onemocnělo $15$ a neonemocnělo $85$ ($n_{21}=15, n_{22}=85$). Spočítejte **poměr šancí (Odds Ratio)** $OR = \\frac{n_{11}n_{22}}{n_{12}n_{21}}$.",
+      "answer": 2.4286,
+      "tolerance": 0.02,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Šance ve městě je $30/70$, šance na venkově $15/85$.",
+        "Krok 2: Poměr šancí $OR = \\frac{30 \\cdot 85}{70 \\cdot 15} = \\frac{2550}{1050}$.",
+        "Vysvětlení: $\\frac{2550}{1050} = \\frac{17}{7} \\approx 2{,}4286$ (šance onemocnět je ve městě $2{,}43\\times$ vyšší)."
+      ],
+      "explanation": "Poměr šancí $OR = \\frac{n_{11}n_{22}}{n_{12}n_{21}} = \\frac{30 \\cdot 85}{70 \\cdot 15} = \\frac{17}{7} \\approx 2{,}4286$."
+    },
+    {
+      "id": "pas-04-q16",
+      "number": 16,
+      "type": "choice",
+      "text": "Jaké rozdělení má testová statistika **korelačního testu** $T = \\frac{r\\sqrt{n - 2}}{\\sqrt{1 - r^2}}$ za platnosti nulové hypotézy $H_0: \\rho = 0$ (prezentace slajd 125)?",
+      "options": {
+        "A": "Studentovo $t$-rozdělení s **$n - 2$ stupni volnosti**",
+        "B": "Studentovo $t$-rozdělení s $n$ stupni volnosti",
+        "C": "Exponenciální rozdělení s $\\lambda = 1$",
+        "D": "Binomické rozdělení $\\mathrm{Bi}(n, r)$"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Odhadujeme dva parametry lineární vazby (dva výběrové průměry / směrnici a úsek).",
+        "Krok 2: Proto ztrácíme 2 stupně volnosti.",
+        "Vysvětlení: Statistika $T = r\\sqrt{n - 2}/\\sqrt{1 - r^2}$ má pod $H_0$ Studentovo $t_{n-2}$ rozdělení (`cor.test(X, Y)`)."
+      ],
+      "explanation": "Testová statistika Pearsonova korelačního testu má za platnosti $H_0: \\rho = 0$ Studentovo $t$-rozdělení o $n - 2$ stupních volnosti."
     }
   ]
 }

@@ -94,6 +94,30 @@
       {
         "term": "Korelace a koeficient determinace R²",
         "body": "Pearsonův $r$ měří lineární vazbu, Spearmanův $\\rho$ monotónní vazbu; $R^2$ vyjadřuje podíl vysvětlené variability v lineární regresi."
+      },
+      {
+        "term": "Senzitivita a specificita testu",
+        "body": "Senzitivita = $P(\\text{test +} \\mid \\text{nemocný})$, specificita = $P(\\text{test -} \\mid \\text{zdravý})$; pravděpodobnost nemoci při pozitivním testu určí Bayesova věta."
+      },
+      {
+        "term": "Hypergeometrické, geometrické a lognormální rozdělení",
+        "body": "Hypergeometrické (`dhyper`) modeluje výběr bez vracení, geometrické (`dgeom`) počet neúspěchů do 1. úspěchu, lognormální (`plnorm`) kladná šikmá data s $\\ln X \\sim N$."
+      },
+      {
+        "term": "Informační kritéria AIC a BIC",
+        "body": "$\\mathrm{AIC} = 2k - 2\\ln L$ a $\\mathrm{BIC} = k\\ln n - 2\\ln L$: porovnávají kvalitu modelů/rozdělení s penalizací za počet parametrů $k$ (nižší hodnota je lepší)."
+      },
+      {
+        "term": "Analýza rozptylu (ANOVA), Bartlett a Tukey HSD",
+        "body": "ANOVA (`aov`) porovnává střední hodnoty u $k \\ge 3$ skupin (shodu rozptylů ověřuje `bartlett.test`); při zamítnutí $H_0$ určí odlišné dvojice `TukeyHSD`, při nenormalitě `kruskal.test`."
+      },
+      {
+        "term": "Test dobré shody a Fisherův exaktní test",
+        "body": "Test dobré shody (`chisq.test(obs, p=...)`) testuje shodu kategorií s multinomickým rozdělením; Fisherův exaktní test (`fisher.test`) nahrazuje $\\chi^2$ při očekávaných četnostech $< 5$."
+      },
+      {
+        "term": "Poměr šancí (Odds Ratio)",
+        "body": "U $2\\times 2$ tabulky $OR = \\frac{n_{11}n_{22}}{n_{12}n_{21}}$ udává poměr šancí výskytu jevu ve dvou populacích ($OR = 1$ značí stejné šance)."
       }
     ],
     "05-r-code-tasks": [

@@ -13,24 +13,24 @@
   "requirements": "Zápočet: praktická práce v R na školním PC (internet i AI povoleny). Zkouška: ústní v počítačové učebně bez internetu (k dispozici seznam vzorců a příkazů R), losování ze 3 okruhů (popis proměnné, statistické metody v praxi, teoretické pojmy).",
   "syllabus": [
     {
-      "weeks": "Okruh I",
-      "title": "Popisná statistika: klasifikace proměnných, četnosti, histogram (Sturges, Scott), míry polohy/variability/tvaru, grafy a interpretace v R"
+      "weeks": "Okruh I · Prez. 3–4",
+      "title": "Popisná statistika: klasifikace proměnných, histogram (Sturges, Scott), tradiční vs. robustní míry (Huber, MAD, IQR, Bowley, Moors), grafy a interpretace v R"
     },
     {
-      "weeks": "Okruh II (1–3)",
-      "title": "Statistická inference: bodové a intervalové odhady průměru, rozdílu průměrů, podílu a rozdílu podílů; testování hypotéz a p-hodnota"
+      "weeks": "Okruh II (1–2) · Prez. 5",
+      "title": "Odhady populačních charakteristik: bodové a intervalové odhady průměru, rozdílu průměrů, podílu, rozdílu podílů a rozptylu (χ²), bootstrap"
     },
     {
-      "weeks": "Okruh II (4–5)",
-      "title": "Souvislost dvou číselných proměnných (tvar, směr, síla), kovariance, korelace a lineární regresní přímka včetně předpokladů"
+      "weeks": "Okruh II (3) · Prez. 6",
+      "title": "Testování hypotéz: jedno-/dvouvýběrový a párový t-test, Wilcoxon, ANOVA + Bartlett + Tukey HSD, Kruskal–Wallis, test dobré shody, χ²/Fisher a poměr šancí (OR)"
     },
     {
-      "weeks": "Okruh II (6–8)",
-      "title": "Identifikace podkladového rozdělení dat (descdist, fitdist, Q-Q plot), hodnocení normality, jádrový odhad hustoty a odlehlé hodnoty"
+      "weeks": "Okruh II (4–5) · Prez. 7",
+      "title": "Souvislost dvou číselných proměnných (tvar, směr, síla), kovariance, korelační test a lineární regrese včetně předpokladů"
     },
     {
-      "weeks": "Okruh III",
-      "title": "Teoretické pojmy: populace a výběr, diskrétní a spojité NV, ZVČ a CLV, tradiční vs. robustní a bootstrapový přístup, transformace dat"
+      "weeks": "Okruh II (6–8) · Prez. 1–2",
+      "title": "Pravděpodobnost, Bayes, senzitivita/specificita, diskrétní a spojitá rozdělení (Bi, Hyper, Geom, Po, Exp, Norm, Lognorm), ZVČ/CLV, KDE, outliery a AIC/BIC"
     }
   ],
   "literature": [

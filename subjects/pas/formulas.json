@@ -17,6 +17,11 @@
           "name": "Z-skór (standardizace)",
           "latex": "z_i = \\frac{x_i - \\bar{x}}{s}",
           "note": "Převádí data na průměr $0$ a směrodatnou odchylku $1$ (`scale(x)`)."
+        },
+        {
+          "name": "MAD, variační koeficient CV a Bowleyho šikmost",
+          "latex": "\\mathrm{MAD} = \\frac{\\mathrm{median}(|x_i - \\tilde{x}|)}{0{,}6745}, \\quad CV = \\frac{s_x}{\\bar{x}}, \\quad SQ_4 = \\frac{(Q_3 - Q_2) + (Q_1 - Q_2)}{(Q_3 - Q_2) - (Q_1 - Q_2)}",
+          "note": "Vzorce z `Vzorce.pdf`; v R: `MAD(x)`, `CoefVar(x)` (`DescTools`)."
         }
       ]
     },
@@ -32,6 +37,11 @@
           "name": "Bayesova věta",
           "latex": "P(A_k \\mid B) = \\frac{P(B \\mid A_k)\\,P(A_k)}{\\sum_j P(B \\mid A_j)\\,P(A_j)}",
           "note": "Jmenovatel je dán větou o úplné pravděpodobnosti $P(B)$."
+        },
+        {
+          "name": "Senzitivita a specificita testu",
+          "latex": "\\mathrm{Se} = P(\\text{test +} \\mid \\text{nemoc}), \\qquad \\mathrm{Sp} = P(\\text{test -} \\mid \\text{zdravý})",
+          "note": "Pozitivní prediktivní hodnotu $P(\\text{nemoc} \\mid +)$ počítáme přes Bayesovu větu."
         },
         {
           "name": "Rozptyl a lineární transformace",
@@ -62,11 +72,16 @@
           "name": "Normální rozdělení N(μ, σ²) a CLV",
           "latex": "U = \\frac{X - \\mu}{\\sigma} \\sim N(0, 1), \\qquad \\bar{X} \\approx N\\!\\left(\\mu, \\frac{\\sigma^2}{n}\\right)",
           "note": "R bere $\\sigma$ (nikoli $\\sigma^2$!): `pnorm(x, mu, sigma)`, `qnorm(p, mu, sigma)`."
+        },
+        {
+          "name": "Informační kritéria AIC a BIC",
+          "latex": "\\mathrm{AIC} = 2k - 2\\ln L, \\qquad \\mathrm{BIC} = k\\ln n - 2\\ln L",
+          "note": "Nižší hodnota = lepší shoda modelu s daty (s penalizací za počet parametrů $k$)."
         }
       ]
     },
     {
-      "title": "4. Intervaly spolehlivosti a testy hypotéz",
+      "title": "4. Intervaly spolehlivosti, testy hypotéz, ANOVA a OR",
       "items": [
         {
           "name": "IS pro průměr (neznámé σ)",
@@ -79,6 +94,11 @@
           "note": "Vhodný pro větší $n$ ($n\\hat{p} \\ge 5$ a $n(1-\\hat{p}) \\ge 5$)."
         },
         {
+          "name": "IS pro rozptyl σ² (asymetrické χ²)",
+          "latex": "\\left[\\frac{(n - 1)s^2}{\\chi^2_{n-1}(1 - \\alpha/2)},\\; \\frac{(n - 1)s^2}{\\chi^2_{n-1}(\\alpha/2)}\\right]",
+          "note": "Větší kvantil $\\chi^2(1-\\alpha/2)$ jde do jmenovatele dolní meze!"
+        },
+        {
           "name": "Jednovýběrový t-test",
           "latex": "t = \\frac{\\bar{x} - \\mu_0}{s / \\sqrt{n}} \\sim t_{n - 1}",
           "note": "Zamítáme $H_0$, pokud $|t| > t_{1-\\alpha/2,\\,n-1}$ neboli $p < \\alpha$. R: `t.test(x, mu = mu0)`."
@@ -87,6 +107,11 @@
           "name": "Pearsonův χ² test nezávislosti",
           "latex": "\\chi^2 = \\sum_{i,j} \\frac{(O_{ij} - E_{ij})^2}{E_{ij}}, \\qquad df = (r - 1)(c - 1)",
           "note": "R: `chisq.test(tabulka)`. Pro malé očekávané četnosti $< 5$ použijte `fisher.test`."
+        },
+        {
+          "name": "Poměr šancí (Odds Ratio) a korelační test",
+          "latex": "OR = \\frac{n_{11}\\,n_{22}}{n_{12}\\,n_{21}}, \\qquad T = \\frac{r\\sqrt{n - 2}}{\\sqrt{1 - r^2}} \\sim t_{n - 2}",
+          "note": "$H_0: OR = 1$ (stejné šance); korelační test $H_0: \\rho = 0$ (`cor.test(x, y)`)."
         },
         {
           "name": "Lineární regrese a koeficient determinace",
