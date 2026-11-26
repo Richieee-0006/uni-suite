@@ -109,6 +109,7 @@
     if (typeof ns.initNavDrawer === "function") ns.initNavDrawer();
     if (typeof ns.initCmdPalette === "function") ns.initCmdPalette();
     if (typeof ns.initScratchpad === "function") ns.initScratchpad();
+    if (typeof ns.initFeedback === "function") ns.initFeedback();
     wireDialogs();
     wireFocusToggle();
     wireSubjectControls();

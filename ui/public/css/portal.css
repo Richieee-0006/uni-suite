@@ -198,6 +198,58 @@
     gap: var(--sp-3);
   }
 
+  .footer-link-btn {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-2);
+    font: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .footer-link-btn:hover {
+    color: var(--text-1);
+  }
+
+  .feedback-form {
+    display: contents;
+  }
+
+  .feedback-fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .feedback-textarea {
+    min-block-size: 8rem;
+    line-height: 1.5;
+    resize: vertical;
+  }
+
+  .feedback-status {
+    display: block;
+    padding-block: var(--sp-3);
+    padding-inline: var(--sp-4);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    line-height: 1.45;
+  }
+
+  .feedback-status[data-tone="error"] {
+    border: 1px solid var(--status-err-border);
+    background-color: var(--status-err-bg);
+    color: var(--status-err);
+  }
+
+  .feedback-status[data-tone="success"] {
+    border: 1px solid var(--status-ok-border, var(--accent-border));
+    background-color: var(--status-ok-bg, var(--status-info-bg));
+    color: var(--text-1);
+  }
+
   /* Left Engineering Notebook Rail (desktop persistent sidebar + mobile swipeable popover drawer) */
   .nav-rail {
     grid-area: rail;
