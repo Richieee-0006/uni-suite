@@ -165,10 +165,13 @@ def test_real_catalog_subjects_valid_html5(
         for token in (
             "Sturgesovo a Scottovo pravidlo",
             "Jádrový odhad hustoty",
-            "Bayesova věta",
-            "Centrální limitní věta",
+            "Senzitivita, specificita a Bayesova věta",
+            "Informační kritéria AIC a BIC",
             "Interval spolehlivosti",
             "Interpretační pasti p-hodnoty",
+            "Analýza rozptylu (ANOVA)",
+            "Bartlettův test",
+            "Poměr šancí (Odds Ratio)",
             "Předpoklady lineární regrese",
         ):
             assert token in pas_theory_html, f"Missing PAS theory content: {token}"
@@ -180,7 +183,11 @@ def test_real_catalog_subjects_valid_html5(
 
         r_pas_theory = tc.get("/api/pas/tools/theory")
         assert r_pas_theory.status_code == 200
-        assert r_pas_theory.json()["total"] == 8
+        assert r_pas_theory.json()["total"] == 9
+
+        r_pas_code = tc.get("/api/pas/questions?mode=practice&type=code_task&limit=50")
+        assert r_pas_code.status_code == 200
+        assert len(r_pas_code.json().get("questions", [])) == 9
 
         r_tzi_theory = tc.get("/api/tzi/tools/theory")
         assert r_tzi_theory.status_code == 200

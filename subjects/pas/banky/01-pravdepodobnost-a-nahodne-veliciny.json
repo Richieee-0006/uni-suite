@@ -197,6 +197,60 @@
         "Vysvětlení: $P(A \\cup B) = \\frac{1}{2} + \\frac{1}{3} - \\frac{1}{6} = \\frac{3 + 2 - 1}{6} = \\frac{4}{6} = \\frac{2}{3}$."
       ],
       "explanation": "Pro nezávislé jevy $A, B$ platí $P(A \\cap B) = 1/6$, tedy $P(A \\cup B) = 1/2 + 1/3 - 1/6 = 2/3$."
+    },
+    {
+      "id": "pas-01-q11",
+      "number": 11,
+      "type": "choice",
+      "text": "Co přesně vyjadřuje **senzitivita** a **specificita** diagnostického testu (prezentace A. Černíkové, slajd 16)?",
+      "options": {
+        "A": "Senzitivita = $P(\\text{nemoc} \\mid +)$, specificita = $P(\\text{zdravý} \\mid -)$",
+        "B": "Senzitivita = $P(+ \\mid \\text{nemoc})$, specificita = $P(- \\mid \\text{zdravý})$",
+        "C": "Senzitivita = $P(+ \\cap \\text{nemoc})$, specificita = $P(- \\cap \\text{zdravý})$",
+        "D": "Senzitivita = prevalence nemoci, specificita = $1 - \\alpha$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Senzitivita popisuje citlivost testu na nemocné osoby (podmínkou je, že osoba JE nemocná).",
+        "Krok 2: Specificita popisuje schopnost testu správně označit zdravého jako negativního (podmínkou je, že osoba JE zdravá).",
+        "Vysvětlení: Opačné podmíněné pravděpodobnosti $P(\\text{nemoc} \\mid +)$ se nazývají prediktivní hodnoty a počítají se Bayesovou větou."
+      ],
+      "explanation": "Senzitivita je $P(\\text{test +} \\mid \\text{nemocný})$ a specificita $P(\\text{test -} \\mid \\text{zdravý})$."
+    },
+    {
+      "id": "pas-01-q12",
+      "number": 12,
+      "type": "input_numeric",
+      "text": "Příklad z prezentace (slajd 17): Z 2000 pacientů má 50 danou nemoc. Test vyšel pozitivně u 45 nemocných a u 200 zdravých. Jaká je pravděpodobnost $P(\\text{nemoc} \\mid \\text{test +})$?",
+      "answer": 0.1837,
+      "tolerance": 0.005,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Celkový počet pozitivních testů je $45 + 200 = 245$.",
+        "Krok 2: Z těchto $245$ pozitivně testovaných je skutečně nemocných jen $45$.",
+        "Vysvětlení: $P(\\text{nemoc} \\mid +) = \\frac{45}{245} \\approx 0{,}1837$ (i při $90\\,\\%$ senzitivitě a $89{,}7\\,\\%$ specificitě je většina pozitivních testů falešná kvůli nízké prevalenci!)."
+      ],
+      "explanation": "Z 245 pozitivních výsledků je jen 45 skutečně nemocných, tedy $P(\\text{nemoc} \\mid +) = 45/245 \\approx 0{,}1837$."
+    },
+    {
+      "id": "pas-01-q13",
+      "number": 13,
+      "type": "choice",
+      "text": "Která dvojice ukazatelů z `Vzorce.pdf` představuje **robustní (kvantilové) míry tvaru** rozdělení odolné vůči odlehlým hodnotám?",
+      "options": {
+        "A": "Klasická šikmost (`Skew`) a klasická špičatost (`Kurt`)",
+        "B": "Bowleyho kvartilový koeficient šikmosti ($SQ_4$) a Moorsův oktilový koeficient špičatosti ($KQ_8$)",
+        "C": "Výběrový průměr a rozptyl",
+        "D": "Variační koeficient $CV$ a Pearsonův korelační koeficient"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Klasická šikmost a špičatost umocňují odchylky na 3. a 4. mocninu — jediný outlier je silně zkreslí.",
+        "Krok 2: Kvantilové koeficienty pracují jen s kvartily ($Q_1, Q_2, Q_3$) a oktily ($Q_{81}, \\dots, Q_{87}$).",
+        "Vysvětlení: Bowleyho $SQ_4$ měří robustní šikmost a Moorsův $KQ_8$ robustní špičatost."
+      ],
+      "explanation": "Bowleyho $SQ_4$ (z kvartilů) a Moorsův $KQ_8$ (z oktilů) jsou robustní míry tvaru rozdělení uvedené ve `Vzorce.pdf`."
     }
   ]
 }

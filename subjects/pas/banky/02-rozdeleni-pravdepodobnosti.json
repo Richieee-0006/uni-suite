@@ -197,6 +197,63 @@
         "Vysvětlení: $P(X > 5) = e^{-0{,}2 \\cdot 5} = e^{-1} \\approx 0{,}3679$ (všimněte si, že medián je menší než průměr!)."
       ],
       "explanation": "Pro $\\operatorname{Exp}(0{,}2)$ je $E(X) = 5\\text{ s}$ a $P(X > 5) = e^{-1} \\approx 0{,}368$. Díky pravostranné šikmosti je pravděpodobnost překročení průměru menší než $50\\,\\%$."
+    },
+    {
+      "id": "pas-02-q11",
+      "number": 11,
+      "type": "choice",
+      "text": "Kdy použijeme **hypergeometrické rozdělení** (`dhyper(k, w, b, n)`) místo binomického rozdělení $\\mathrm{Bi}(n, p)$?",
+      "options": {
+        "A": "Když táhneme $n$ kusů z konečného souboru ($w$ bílých, $b$ černých) **bez vracení**, takže pravděpodobnost úspěchu se v průběhu tahů mění",
+        "B": "Když počítáme dobu čekání do první poruchy",
+        "C": "Když táhneme s vracením z nekonečné populace",
+        "D": "Pouze pro spojité proměnné se symetrickou hustotou"
+      },
+      "correct": ["A"],
+      "hints": [
+        "Krok 1: Binomické rozdělení předpokládá nezávislé pokusy s konstantní pravděpodobností $p$ (výběr s vracením).",
+        "Krok 2: Při výběru bez vracení z konečného osudí se složení osudí po každém tahu mění.",
+        "Vysvětlení: Přesně tento případ popisuje hypergeometrické rozdělení (`dhyper`, `phyper` v `R-ko.pdf`)."
+      ],
+      "explanation": "Hypergeometrické rozdělení modeluje počet úspěchů při výběru $n$ prvků **bez vracení** z konečné populace ($w$ bílých a $b$ černých)."
+    },
+    {
+      "id": "pas-02-q12",
+      "number": 12,
+      "type": "choice",
+      "text": "Která vlastnost definuje **lognormální rozdělení** (`plnorm`, `qlnorm` v `R-ko.pdf`)?",
+      "options": {
+        "A": "Veličina nabývá i záporných hodnot a je dokonale symetrická",
+        "B": "Kladná pravostranně šikmá veličina $X$, jejíž přirozený logaritmus $\\ln(X)$ má normální rozdělení $N(\\mu, \\sigma^2)$",
+        "C": "Diskrétní rozdělení počtu poruch za hodinu",
+        "D": "Rozdělení s konstantní hustotou na $[0, 1]$"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Název „log-normální“ znamená, že po zlogaritmování $Y = \\ln(X)$ dostaneme normální rozdělení.",
+        "Krok 2: Proto musí platit $X > 0$ a rozdělení má typicky dlouhý pravý chvost (příjmy, koncentrace, ceny).",
+        "Vysvětlení: V R pracujeme s funkcemi `dlnorm`, `plnorm`, `qlnorm` a v `fitdist(X, 'lnorm')`."
+      ],
+      "explanation": "Veličina $X > 0$ má lognormální rozdělení právě tehdy, když $\\ln(X) \\sim N(\\mu, \\sigma^2)$."
+    },
+    {
+      "id": "pas-02-q13",
+      "number": 13,
+      "type": "choice",
+      "text": "Při hledání nejvhodnějšího podkladového rozdělení v `fitdist` porovnáváme **informační kritéria AIC a BIC** (`Vzorce.pdf`). Které tvrzení platí?",
+      "options": {
+        "A": "Vybíráme model s **nejvyšší** hodnotou AIC a BIC",
+        "B": "Vybíráme model s **nejnižší** hodnotou AIC/BIC; obě kritéria vyvažují shodu ($-2\\ln L$) a penalizaci za počet parametrů $k$ (BIC penalizuje složitost přísněji pro $n \\ge 8$)",
+        "C": "AIC nezávisí na počtu parametrů modelu",
+        "D": "BIC se používá výhradně pro normální rozdělení"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: $\\mathrm{AIC} = 2k - 2\\ln L$ a $\\mathrm{BIC} = k\\ln n - 2\\ln L$.",
+        "Krok 2: Vyšší věrohodnost $L$ zmenšuje $-2\\ln L$, více parametrů $k$ naopak hodnotu zvětšuje (penalizace proti přeučení).",
+        "Vysvětlení: Preferujeme tedy model s nejnižší hodnotou AIC / BIC."
+      ],
+      "explanation": "Nižší hodnota AIC i BIC značí lepší kompromis mezi věrohodností modelu a jeho jednoduchostí; BIC má penalizaci $k\\ln n$, která pro $n \\ge 8$ převyšuje $2k$ v AIC."
     }
   ]
 }

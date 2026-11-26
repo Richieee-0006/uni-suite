@@ -200,6 +200,44 @@
         "Vysvětlení: Vydatnost (efektivita) porovnává rozptyly nestranných odhadů; spodní mez rozptylu udává Rao–Cramérova nerovnost."
       ],
       "explanation": "Z nestranných odhadů je vydatnější (efektivnější) ten s menším rozptylem (např. u normálního rozdělení je výběrový průměr vydatnější než výběrový medián)."
+    },
+    {
+      "id": "pas-03-q11",
+      "number": 11,
+      "type": "choice",
+      "text": "Které rozdělení a tvar se používá pro **interval spolehlivosti populačního rozptylu $\\sigma^2$** (prezentace p. 62 & `Vzorce.pdf`)?",
+      "options": {
+        "A": "Symetrický interval $s^2 \\pm u_{1-\\alpha/2}\\frac{s^2}{\\sqrt{n}}$ z normálního rozdělení",
+        "B": "Asymetrický interval $\\left[\\frac{(n-1)s^2}{\\chi^2(1-\\alpha/2)},\\; \\frac{(n-1)s^2}{\\chi^2(\\alpha/2)}\\right]$ založený na $\\chi^2$ rozdělení",
+        "C": "Interval založený na rovnoměrném rozdělení $R(0, s^2)$",
+        "D": "Rozptyl nemá interval spolehlivosti"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Pro normální data platí, že $(n - 1)s^2 / \\sigma^2$ má $\\chi^2$ rozdělení, které není symetrické.",
+        "Krok 2: Po vyjádření $\\sigma^2$ z nerovnosti se kvantily ve jmenovateli prohodí — větší kvantil $\\chi^2(1-\\alpha/2)$ určuje dolní mez!",
+        "Vysvětlení: Interval pro rozptyl je proto asymetrický kolem bodového odhadu $s^2$."
+      ],
+      "explanation": "Interval spolehlivosti pro $\\sigma^2$ vychází z asymetrického $\\chi^2$ rozdělení veličiny $(n-1)s^2/\\sigma^2$, s větším kvantilem ve jmenovateli dolní meze."
+    },
+    {
+      "id": "pas-03-q12",
+      "number": 12,
+      "type": "choice",
+      "text": "Spočítali jsme v R `MeanDiffCI(vyska ~ pohlavi)` a dostali $95\\,\\%$ interval spolehlivosti pro rozdíl průměrů $[8{,}4;\\; 14{,}2]\\text{ cm}$. Co z toho plyne na hladině $\\alpha = 0{,}05$?",
+      "options": {
+        "A": "Průměry obou skupin se statisticky významně neliší",
+        "B": "Interval **neobsahuje nulu** → rozdíl populačních průměrů je statisticky významný na hladině $\\alpha = 0{,}05$",
+        "C": "Každý muž je o $8{,}4$ až $14{,}2\\text{ cm}$ vyšší než každá žena",
+        "D": "Rozdíl nelze vyhodnotit bez výpočtu korelace"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Nulová hypotéza rovnosti průměrů odpovídá rozdílu $\\mu_1 - \\mu_2 = 0$.",
+        "Krok 2: Zkontrolujte, zda hodnota $0$ leží uvnitř intervalu $[8{,}4;\\; 14{,}2]$.",
+        "Vysvětlení: Protože celý $95\\,\\%$ IS leží nad nulou, zamítáme $H_0: \\mu_1 = \\mu_2$ na hladině $5\\,\\%$."
+      ],
+      "explanation": "Pokud $95\\,\\%$ interval spolehlivosti pro rozdíl průměrů neobsahuje $0$, je rozdíl středních hodnot statisticky významný na hladině $\\alpha = 0{,}05$."
     }
   ]
 }

@@ -284,6 +284,144 @@
         "Vysvětlení: Funkce `abline(reg_model)` umí přijmout přímo objekt `lm` a vykreslí proloženou přímku do aktivního grafu."
       ],
       "explanation": "Vizuální kontrola bodovým grafem s regresní přímkou (`plot` + `abline`) rychle ukáže těsnost lineárního vztahu i případné odlehlé body."
+    },
+    {
+      "id": "pas-code-07",
+      "number": 7,
+      "type": "code_task",
+      "language": "r",
+      "title": "Senzitivita, specificita a PPV (slajdy 16–17) v R",
+      "text": "Implementujte funkci `diag_metrics(tp, fp, fn, tn)`, která z počtů čtyřpolní tabulky diagnostického testu (`tp` = správně pozitivní, `fp` = falešně pozitivní, `fn` = falešně negativní, `tn` = správně negativní) vrátí `list(sensitivity, specificity, ppv)`.",
+      "formula": "\\mathrm{Se} = \\frac{TP}{TP + FN}, \\qquad \\mathrm{Sp} = \\frac{TN}{TN + FP}, \\qquad \\mathrm{PPV} = \\frac{TP}{TP + FP}",
+      "starter_code": "diag_metrics <- function(tp, fp, fn, tn) {\n  # Spočítejte sensitivity, specificity a ppv a vraťte je v list()\n  \n}\n",
+      "solution_code": "diag_metrics <- function(tp, fp, fn, tn) {\n  list(\n    sensitivity = tp / (tp + fn),\n    specificity = tn / (tn + fp),\n    ppv = tp / (tp + fp)\n  )\n}\n",
+      "produces_plot": false,
+      "visible_tests": [
+        {
+          "name": "Příklad ze slajdu 17: senzitivita (45 / 50 = 0.90)",
+          "code": "diag_metrics(45, 200, 5, 1750)$sensitivity",
+          "expected": 0.9,
+          "tolerance": 1e-6
+        },
+        {
+          "name": "Příklad ze slajdu 17: P(nemoc | +) = 45 / 245 ≈ 0.18367",
+          "code": "diag_metrics(45, 200, 5, 1750)$ppv",
+          "expected": 0.1836735,
+          "tolerance": 1e-5
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "Příklad ze slajdu 17: specificita (1750 / 1950 ≈ 0.89744)",
+          "code": "diag_metrics(45, 200, 5, 1750)$specificity",
+          "expected": 0.8974359,
+          "tolerance": 1e-5
+        },
+        {
+          "name": "Vysoká prevalence: TP=95, FP=10, FN=5, TN=90 -> PPV = 95/105",
+          "code": "diag_metrics(95, 10, 5, 90)$ppv",
+          "expected": 0.9047619,
+          "tolerance": 1e-5
+        }
+      ],
+      "hints": [
+        "Krok 1: Nemocných je celkem `tp + fn`, zdravých `tn + fp`, pozitivních testů `tp + fp`.",
+        "Krok 2: `sensitivity = tp / (tp + fn)`, `specificity = tn / (tn + fp)`, `ppv = tp / (tp + fp)`.",
+        "Vysvětlení: Na příkladu ze slajdu 17 (2000 pacientů, 50 nemocných) vidíte, jak nízká prevalence sráží PPV na 18,4 % i při 90 % senzitivitě."
+      ],
+      "explanation": "Oddělení senzitivity $P(+\\mid N)$, specificity $P(-\\mid Z)$ a pozitivní prediktivní hodnoty $P(N\\mid +)$ je klíčové pro správnou interpretaci diagnostických testů."
+    },
+    {
+      "id": "pas-code-08",
+      "number": 8,
+      "type": "code_task",
+      "language": "r",
+      "title": "Jednofaktorová ANOVA a Bartlettův test v R (`aov`, `bartlett.test`)",
+      "text": "Implementujte funkci `anova_summary(values, groups)`, která na číselném vektoru `values` a skupinovém vektoru `groups` provede jednofaktorovou ANOVU (`aov(values ~ factor(groups))`) i Bartlettův test shody rozptylů (`bartlett.test`) a vrátí `list(f_stat, p_value, bartlett_p)`.",
+      "formula": "F = \\frac{\\mathrm{MSB}}{\\mathrm{MSW}} \\sim F_{k - 1,\\; n - k}",
+      "starter_code": "anova_summary <- function(values, groups) {\n  # Spusťte aov() a bartlett.test() a vraťte list(f_stat, p_value, bartlett_p)\n  \n}\n",
+      "solution_code": "anova_summary <- function(values, groups) {\n  g <- factor(groups)\n  fit <- summary(aov(values ~ g))[[1]]\n  bt <- bartlett.test(values ~ g)\n  list(\n    f_stat = as.numeric(fit$`F value`[1]),\n    p_value = as.numeric(fit$`Pr(>F)`[1]),\n    bartlett_p = as.numeric(bt$p.value)\n  )\n}\n",
+      "produces_plot": false,
+      "visible_tests": [
+        {
+          "name": "3 odlišné skupiny: F-statistika z aov()",
+          "code": "anova_summary(c(10, 11, 12, 20, 21, 22, 30, 31, 32), c('A','A','A','B','B','B','C','C','C'))$f_stat",
+          "expected": 300.0,
+          "tolerance": 1e-4
+        },
+        {
+          "name": "Shodné rozptyly ve všech 3 skupinách -> bartlett_p = 1.0",
+          "code": "anova_summary(c(10, 11, 12, 20, 21, 22, 30, 31, 32), c('A','A','A','B','B','B','C','C','C'))$bartlett_p",
+          "expected": 1.0,
+          "tolerance": 1e-4
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "Stejné 3 skupiny: ANOVA p-hodnota velmi malá (< 0.0001)",
+          "code": "anova_summary(c(10, 11, 12, 20, 21, 22, 30, 31, 32), c('A','A','A','B','B','B','C','C','C'))$p_value",
+          "expected": 9.811e-07,
+          "tolerance": 1e-5
+        },
+        {
+          "name": "Shodné průměry napříč skupinami -> F = 0",
+          "code": "anova_summary(c(9, 10, 11, 9, 10, 11, 9, 10, 11), c('A','A','A','B','B','B','C','C','C'))$f_stat",
+          "expected": 0.0,
+          "tolerance": 1e-6
+        }
+      ],
+      "hints": [
+        "Krok 1: Tabulku ANOVY vytáhnete jako `tab <- summary(aov(values ~ factor(groups)))[[1]]`.",
+        "Krok 2: Sloupce se jmenují `tab$'F value'[1]` a `tab$'Pr(>F)'[1]`, Bartlettova p-hodnota je `bartlett.test(values ~ factor(groups))$p.value`.",
+        "Vysvětlení: Pokud `bartlett_p < 0.05`, přejděte z klasické ANOVY na Welchovu ANOVU `oneway.test()`."
+      ],
+      "explanation": "Klasická ANOVA vyžaduje nejprve ověření shody rozptylů Bartlettovým testem; při zamítnutí $H_0$ následuje post-hoc srovnání `TukeyHSD`."
+    },
+    {
+      "id": "pas-code-09",
+      "number": 9,
+      "type": "code_task",
+      "language": "r",
+      "title": "Poměr šancí (Odds Ratio) a Z-test v R (slajdy 119–120)",
+      "text": "Implementujte funkci `odds_ratio_test(n11, n12, n21, n22)`, která pro čtyřpolní tabulku $2\\times 2$ spočítá poměr šancí $OR = \\frac{n_{11}n_{22}}{n_{12}n_{21}}$, testovou statistiku $Z = \\frac{\\ln(OR)}{\\sqrt{\\frac{1}{n_{11}}+\\frac{1}{n_{12}}+\\frac{1}{n_{21}}+\\frac{1}{n_{22}}}}$ a oboustrannou $p$-hodnotu $2(1 - \\Phi(|Z|))$, a vrátí `list(or, z_stat, p_value)`.",
+      "formula": "OR = \\frac{n_{11}\\,n_{22}}{n_{12}\\,n_{21}}, \\qquad Z = \\frac{\\ln(OR)}{\\sqrt{\\frac{1}{n_{11}} + \\frac{1}{n_{12}} + \\frac{1}{n_{21}} + \\frac{1}{n_{22}}}}",
+      "starter_code": "odds_ratio_test <- function(n11, n12, n21, n22) {\n  # Spočítejte or, z_stat a oboustrannou p_value a vraťte list(or, z_stat, p_value)\n  \n}\n",
+      "solution_code": "odds_ratio_test <- function(n11, n12, n21, n22) {\n  or_val <- (n11 * n22) / (n12 * n21)\n  se_log <- sqrt(1 / n11 + 1 / n12 + 1 / n21 + 1 / n22)\n  z_val <- log(or_val) / se_log\n  p_val <- 2 * (1 - pnorm(abs(z_val)))\n  list(or = or_val, z_stat = z_val, p_value = p_val)\n}\n",
+      "produces_plot": false,
+      "visible_tests": [
+        {
+          "name": "Tabulka 30/70 vs. 15/85 -> OR = 17/7 ≈ 2.4286",
+          "code": "odds_ratio_test(30, 70, 15, 85)$or",
+          "expected": 2.4285714,
+          "tolerance": 1e-5
+        },
+        {
+          "name": "Tabulka 30/70 vs. 15/85 -> Z-statistika ≈ 2.4992",
+          "code": "odds_ratio_test(30, 70, 15, 85)$z_stat",
+          "expected": 2.4991936,
+          "tolerance": 1e-4
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "Tabulka 30/70 vs. 15/85 -> oboustranná p-hodnota ≈ 0.01245",
+          "code": "odds_ratio_test(30, 70, 15, 85)$p_value",
+          "expected": 0.0124476,
+          "tolerance": 1e-4
+        },
+        {
+          "name": "Stejné šance (20/80 vs. 20/80) -> OR = 1.0",
+          "code": "odds_ratio_test(20, 80, 20, 80)$or",
+          "expected": 1.0,
+          "tolerance": 1e-8
+        }
+      ],
+      "hints": [
+        "Krok 1: Poměr šancí je `or_val <- (n11 * n22) / (n12 * n21)`.",
+        "Krok 2: Směrodatná chyba $\\ln(OR)$ je `sqrt(1/n11 + 1/n12 + 1/n21 + 1/n22)` a `z_val <- log(or_val) / se_log`.",
+        "Vysvětlení: Oboustranná p-hodnota normálního Z-testu je `2 * (1 - pnorm(abs(z_val)))`."
+      ],
+      "explanation": "Test poměru šancí z prezentace (slajd 120) ověřuje $H_0: OR = 1$; pro $p < 0{,}05$ se šance výskytu v obou populacích statisticky významně liší."
     }
   ]
 }
