@@ -145,7 +145,7 @@
       "hints": [
         "Krok 1: Porovnejte poměr $(h/2)^p / h^p = (1/2)^p$ pro $p = 1$ (Euler) a $p = 4$ (RK4).",
         "Krok 2: Pro $p = 4$ je $(1/2)^4 = 1/16$.",
-        "Vysvětlení: Zjemnění kroku na polovinu u RK4 zmenší chybu 16× (a na desetinu dokonce $10\,000\\times$!)."
+        "Vysvětlení: Zjemnění kroku na polovinu u RK4 zmenší chybu 16× (a na desetinu dokonce $10\\,000\\times$!)."
       ],
       "explanation": "Řád metody $p$ přímo určuje zisk přesnosti při zjemnění kroku: poloviční krok redukuje globální chybu faktorem $2^p$ (2× pro Euler, 4× pro RK2, 16× pro RK4)."
     }

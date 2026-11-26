@@ -1,0 +1,365 @@
+{
+  "intro": "Kompletní výklad ke všem sedmi okruhům KI/NUM: jak metody fungují v praxi, kdy zaručeně konvergují, jakou mají rychlost a jaké chytáky se objevují u zkoušky v R a Pythonu.",
+  "chapters": [
+    {
+      "id": "01-chyby-a-aritmetika",
+      "weeks": "1. týden",
+      "title": "Chyby, strojová aritmetika, korektnost a podmíněnost",
+      "topic_id": "01-chyby-a-aritmetika",
+      "summary": "Počítač ukládá reálná čísla s konečnou přesností (IEEE 754 double ≈ 15–17 platných cifer). Numerická analýza řeší, jak velká chyba vznikne, jak se šíří a zda je na vině úloha, nebo algoritmus.",
+      "concepts": [
+        {
+          "title": "Absolutní a relativní chyba",
+          "body": "Absolutní chyba $\\Delta x = |\\tilde{x} - x|$ měří odchylku v původních jednotkách. Relativní chyba $\\delta x = \\frac{|\\tilde{x} - x|}{|x|}$ (pro $x \\neq 0$) je bezrozměrná a určuje počet platných cifer."
+        },
+        {
+          "title": "Zdroje chyb a strojové epsilon",
+          "body": "Rozlišujeme chybu modelu (zjednodušení reality), chybu vstupních dat (měření), chybu metody (utržení nekonečné řady / konečný krok $h$) a zaokrouhlovací chybu. Strojové epsilon $\\varepsilon_M$ je nejmenší kladné číslo, pro něž platí $\\mathrm{fl}(1 + \\varepsilon_M) > 1$ (v double $2^{-52} \\approx 2{,}22 \\cdot 10^{-16}$)."
+        },
+        {
+          "title": "Katastrofické krácení",
+          "body": "Při odečítání dvou téměř stejných zaokrouhlených čísel se ztratí vedoucí platné cifry a relativní chyba prudce naroste. Typický případ je kvadratická rovnice s $b^2 \\gg 4ac$: jeden kořen počítejte standardně a druhý přes Vietův vztah $x_2 = \\frac{c}{a x_1}$."
+        },
+        {
+          "title": "Hadamardova korektnost, podmíněnost a stabilita",
+          "body": "Úloha je korektní, pokud řešení existuje, je jednoznačné a spojitě závisí na datech. Podmíněnost ($\\kappa$) je vlastnost samotné úlohy — u špatně podmíněné úlohy malá změna vstupu výrazně změní výsledek. Stabilita je vlastnost algoritmu: nestabilní postup (třeba GEM bez pivotace) nafoukne zaokrouhlovací chyby i u dobře podmíněné úlohy."
+        },
+        {
+          "title": "Hornerovo schéma",
+          "body": "Polynom stupně $n$ nevyhodnocujeme počítáním mocnin $x^k$, ale vnořeným zápisem $P_n(x) = (\\dots(a_n x + a_{n-1})x + \\dots)x + a_0$. Stačí $n$ násobení a $n$ sčítání ($O(n)$), méně zaokrouhlování a stejný postup dá i derivaci $P'_n(x)$."
+        }
+      ],
+      "formulas": [
+        {
+          "name": "Šíření chyb (součin a podíl)",
+          "latex": "\\delta(a \\cdot b) \\approx \\delta a + \\delta b, \\qquad \\delta\\!\\left(\\frac{a}{b}\\right) \\approx \\delta a + \\delta b",
+          "note": "Při sčítání se sčítají absolutní chyby; při násobení a dělení přibližně relativní chyby."
+        },
+        {
+          "name": "Číslo podmíněnosti matice",
+          "latex": "\\kappa(A) = \\|A\\|\\cdot\\|A^{-1}\\| \\ge 1",
+          "note": "Řádově $\\kappa(A) \\approx 10^k$ znamená možnou ztrátu až $k$ platných desítkových cifer."
+        },
+        {
+          "name": "Bezpečné porovnání čísel s plovoucí čárkou",
+          "latex": "|a - b| \\le \\varepsilon \\cdot \\max(1, |a|, |b|)",
+          "note": "Nikdy nepoužívejte přímé `a == b` (např. `0.1 + 0.2 != 0.3`)."
+        }
+      ],
+      "pitfalls": [
+        "Záměna podmíněnosti úlohy (vlastnost zadání) za stabilitu algoritmu (vlastnost výpočetního postupu).",
+        "Porovnávání dvou floatů přes `==` místo kombinované absolutní/relativní tolerance.",
+        "Zmenšování kroku $h$ donekonečna: chyba metody sice klesá, ale za určitou hranicí převáží zaokrouhlovací chyba."
+      ],
+      "code_tip": "R: `.Machine$double.eps`, `all.equal(a, b, tolerance = 1e-8)` · Python: `sys.float_info.epsilon`, `math.isclose(a, b, rel_tol=1e-9, abs_tol=1e-12)`"
+    },
+    {
+      "id": "02-hledani-korenu",
+      "weeks": "2.–3. týden",
+      "title": "Řešení nelineárních rovnic f(x) = 0",
+      "topic_id": "02-hledani-korenu",
+      "summary": "Hledáme bod $x^*$, v němž $f(x^*) = 0$ (průsečík křivek $g(x)=h(x)$ přepíšeme na $f(x)=g(x)-h(x)=0$). Postup má vždy dvě fáze: separaci (lokalizaci) kořene na intervalu a zpřesnění iterační metodou.",
+      "concepts": [
+        {
+          "title": "Separace kořenů a Bolzanova věta",
+          "body": "Je-li $f$ spojitá na $[a, b]$ a platí $f(a)\\cdot f(b) < 0$, leží v $(a, b)$ alespoň jeden kořen. Při sudé násobnosti kořene (např. $f(x) = x^2$) funkce nemění znaménko a metody založené na ohraničení ho neuvidí."
+        },
+        {
+          "title": "Metoda půlení intervalu (bisekce)",
+          "body": "V každém kroku vezmeme střed $c = \\frac{a+b}{2}$ a vybereme tu polovinu intervalu, kde zůstává opačné znaménko. Konvergence je lineární (1 bit přesnosti za krok), ale při splnění předpokladů naprosto jistá a počet kroků $n$ lze spočítat předem."
+        },
+        {
+          "title": "Regula falsi a metoda sečen",
+          "body": "Graf nahradíme sečnou. Regula falsi drží změnu znaménka (konvergence jistá, ale u konvexní/konkávní funkce jeden konec intervalu uvízne). Metoda sečen bere vždy poslední dva body — má superlineární řád $\\varphi = \\frac{1+\\sqrt{5}}{2} \\approx 1{,}618$, ale nemusí konvergovat."
+        },
+        {
+          "title": "Metoda prostých iterací",
+          "body": "Rovnici přepíšeme na tvar pevného bodu $x = \\varphi(x)$ a počítáme $x_{k+1} = \\varphi(x_k)$. Z Banachovy věty o pevném bodě stačí, aby $\\varphi$ zobrazovala uzavřený interval do sebe a platilo $|\\varphi'(x)| \\le q < 1$."
+        },
+        {
+          "title": "Newtonova metoda tečen a Newton–Horner",
+          "body": "V bodě $x_k$ proložíme tečnu a vezmeme její průsečík s osou $x$. Pro jednoduchý kořen a dobrý start $x_0$ konverguje kvadraticky (počet platných cifer se v každém kroku zhruba zdvojnásobí). U polynomů získáme $P(x_k)$ i $P'(x_k)$ dvojitým Hornerovým schématem a nalezený kořen lze vydělit (deflace)."
+        }
+      ],
+      "formulas": [
+        {
+          "name": "Odhad chyby a počet kroků bisekce",
+          "latex": "|x^* - c_n| \\le \\frac{b - a}{2^{n+1}}, \\qquad n \\ge \\left\\lceil \\log_2\\frac{b - a}{\\varepsilon} \\right\\rceil",
+          "note": "Každý krok zkrátí interval přesně na polovinu."
+        },
+        {
+          "name": "Newtonova metoda tečen",
+          "latex": "x_{k+1} = x_k - \\frac{f(x_k)}{f'(x_k)}",
+          "note": "Řád konvergence $p = 2$ u jednoduchého kořene; u násobného kořene klesá na lineární."
+        },
+        {
+          "name": "Metoda sečen / Regula falsi",
+          "latex": "x_{k+1} = x_k - f(x_k)\\frac{x_k - x_{k-1}}{f(x_k) - f(x_{k-1})}",
+          "note": "Nepotřebuje analytickou derivaci $f'(x)$."
+        }
+      ],
+      "pitfalls": [
+        "Newtonova metoda selže nebo ulétne, pokud je $f'(x_k) \\approx 0$ (lokální extrém) nebo $x_0$ leží daleko od kořene.",
+        "U prostých iterací vede špatná úprava rovnice na $|\\varphi'(x)| > 1$, a tedy k divergenci.",
+        "V praxi je nutné hlídat obě zastavovací podmínky ($|x_{k+1}-x_k| < \\varepsilon$ i $|f(x_k)| < \\varepsilon$) a limit iterací `max_iter`."
+      ],
+      "code_tip": "R: `uniroot(f, c(a, b))` (Brentova metoda), `polyroot(coefs)` · Python: `scipy.optimize.brentq(f, a, b)`, `scipy.optimize.newton(f, x0, fprime)`"
+    },
+    {
+      "id": "03-soustavy-a-matice",
+      "weeks": "4.–5. týden",
+      "title": "Řešení soustav lineárních rovnic Ax = b",
+      "topic_id": "03-soustavy-a-matice",
+      "summary": "Přímé metody najdou řešení v konečném počtu operací ($O(n^3)$) a hodí se pro menší až střední husté matice. Iterační metody zpřesňují odhad $\\vec{x}^{(k)}$ a jsou ideální pro velké řídké matice.",
+      "concepts": [
+        {
+          "title": "Gaussova eliminační metoda (GEM) a pivotace",
+          "body": "Převádí rozšířenou matici $(A \\mid \\vec{b})$ na horní trojúhelníkový tvar ($\\sim \\frac{2}{3}n^3$ operací) a pak běží zpětná substituce ($O(n^2)$). Částečná pivotace v každém kroku prohodí řádek tak, aby na diagonále stál prvek s největší absolutní hodnotou ve sloupci — zabrání dělení nulou i nafouknutí chyb."
+        },
+        {
+          "title": "LU rozklad a Choleskyho rozklad",
+          "body": "Matici rozložíme na $PA = LU$ (dolní $L$ s jedničkami na diagonále, horní $U$, permutační $P$). Jednou zaplatíme $O(n^3)$, a pak každou další pravou stranu $\\vec{b}$ vyřešíme za $O(n^2)$ přes $L\\vec{y} = P\\vec{b}$ a $U\\vec{x} = \\vec{y}$. Pro symetrickou pozitivně definitní (SPD) matici stačí Cholesky $A = LL^T$ s polovičním počtem operací."
+        },
+        {
+          "title": "Jacobiho iterační metoda",
+          "body": "Každou $i$-tou rovnici vyjádříme pro $x_i$ a při výpočtu $\\vec{x}^{(k+1)}$ dosazujeme na pravou stranu výhradně složky z předchozího kroku $\\vec{x}^{(k)}$. Metoda se výborně paralelizuje, ale konverguje pomaleji."
+        },
+        {
+          "title": "Gaussova–Seidelova metoda",
+          "body": "Jakmile spočítáme nové $x_1^{(k+1)}, \\dots, x_{i-1}^{(k+1)}$, hned je použijeme pro výpočet $x_i^{(k+1)}$. Spotřebuje jen jeden vektor v paměti a u typických úloh konverguje zhruba dvakrát rychleji než Jacobi."
+        },
+        {
+          "title": "Podmínky konvergence iteračních metod",
+          "body": "Nutná a postačující podmínka pro iterační schéma $\\vec{x}^{(k+1)} = B\\vec{x}^{(k)} + \\vec{c}$ je spektrální poloměr $\\rho(B) < 1$. V praxi se nejčastěji ověřuje snadno zkontrolovatelná postačující podmínka: ostrá řádková diagonální dominance."
+        }
+      ],
+      "formulas": [
+        {
+          "name": "LU rozklad a determinant",
+          "latex": "PA = LU, \\qquad \\det(A) = (-1)^s \\prod_{i=1}^{n} u_{ii}",
+          "note": "$s$ je počet prohození řádků v permutaci $P$."
+        },
+        {
+          "name": "Ostrá diagonální dominance",
+          "latex": "|a_{ii}| > \\sum_{\\substack{j=1 \\\\ j \\neq i}}^{n} |a_{ij}| \\quad \\forall i = 1, \\dots, n",
+          "note": "Zaručuje konvergenci Jacobiho i Gaussovy–Seidelovy metody z libovolného $\\vec{x}^{(0)}$."
+        },
+        {
+          "name": "Gaussův–Seidelův krok",
+          "latex": "x_i^{(k+1)} = \\frac{1}{a_{ii}}\\left(b_i - \\sum_{j < i} a_{ij}x_j^{(k+1)} - \\sum_{j > i} a_{ij}x_j^{(k)}\\right)",
+          "note": "U Jacobiho jsou v první sumě staré hodnoty $x_j^{(k)}$."
+        }
+      ],
+      "pitfalls": [
+        "Výpočet $A^{-1}\\vec{b}$ přes explicitní inverzi matice je pomalejší a numericky méně přesný než přímo `solve(A, b)` nebo LU rozklad.",
+        "Bez pivotace selže GEM i na regulární matici s malým prvkem (nebo nulou) na diagonále.",
+        "Chybějící diagonální dominance ještě neznamená divergenci — je to postačující, nikoli nutná podmínka (ale stačí přehodit řádky, aby platila)."
+      ],
+      "code_tip": "R: `solve(A, b)`, `chol(A)`, `qr.solve(A, b)` · Python: `np.linalg.solve(A, b)`, `scipy.linalg.lu_factor(A)`"
+    },
+    {
+      "id": "04-interpolace",
+      "weeks": "6.–7. týden",
+      "title": "Interpolace: po částech lineární, Lagrangeův a Newtonův polynom",
+      "topic_id": "04-interpolace-integrace-aproximace",
+      "summary": "Známe přesné hodnoty funkce v uzlech $(x_0, y_0), \\dots, (x_n, y_n)$ a hledáme funkci, která projde každým z nich bez odchylky: $P(x_i) = y_i$.",
+      "concepts": [
+        {
+          "title": "Jednoznačnost interpolačního polynomu",
+          "body": "Pro $n + 1$ navzájem různých uzlů $x_0, \\dots, x_n$ existuje právě jeden polynom $P_n$ stupně nejvýše $n$, který všemi body prochází. Vandermondův, Lagrangeův i Newtonův tvar tedy představují tentýž polynom, liší se jen výpočtem a stabilitou."
+        },
+        {
+          "title": "Po částech lineární interpolace",
+          "body": "Sousední body spojíme úsečkami. Výsledek je spojitý ($C^0$), lokální (změna jednoho bodu ovlivní jen dva sousední intervaly) a netrpí oscilacemi, ale v uzlech není hladký (má zlomy)."
+        },
+        {
+          "title": "Lagrangeův interpolační polynom",
+          "body": "Bázový polynom $L_i(x)$ má hodnotu $1$ v uzlu $x_i$ a $0$ ve všech ostatních uzlech $x_j$. Tvar je přehledný pro teorii a odvození kvadraturních vzorců, ale při přidání nového bodu musíme všechny $L_i(x)$ spočítat znovu."
+        },
+        {
+          "title": "Newtonův tvar a poměrné diference",
+          "body": "Polynom se staví postupně po členech $a_0 + a_1(x-x_0) + a_2(x-x_0)(x-x_1) + \\dots$, kde $a_k = f[x_0, \\dots, x_k]$ je poměrná diference $k$-tého řádu. Přidání nového uzlu pouze dopíše jeden další člen na konec."
+        },
+        {
+          "title": "Rungeho fenomén a jak se mu vyhnout",
+          "body": "Interpolace mnoha ekvidistantních bodů jedním polynomem vysokého stupně způsobí silné kmitání u krajů intervalu (klasický příklad $f(x) = \\frac{1}{1+25x^2}$). Řešením jsou po částech kubické spliny nebo zahuštění uzlů u krajů (Čebyševovy uzly)."
+        }
+      ],
+      "formulas": [
+        {
+          "name": "Lagrangeův interpolační polynom",
+          "latex": "P_n(x) = \\sum_{i=0}^{n} y_i L_i(x), \\qquad L_i(x) = \\prod_{\\substack{j=0 \\\\ j \\neq i}}^{n} \\frac{x - x_j}{x_i - x_j}",
+          "note": "Pro každé $i, j$ platí $L_i(x_j) = \\delta_{ij}$."
+        },
+        {
+          "name": "Poměrné diference (Newtonův tvar)",
+          "latex": "f[x_i, \\dots, x_{i+k}] = \\frac{f[x_{i+1}, \\dots, x_{i+k}] - f[x_i, \\dots, x_{i+k-1}]}{x_{i+k} - x_i}",
+          "note": "Nultá poměrná diference je $f[x_i] = y_i$."
+        },
+        {
+          "name": "Zbytek polynomiální interpolace",
+          "latex": "R_n(x) = f(x) - P_n(x) = \\frac{f^{(n+1)}(\\xi)}{(n+1)!}\\prod_{i=0}^{n}(x - x_i)",
+          "note": "U po částech lineární interpolace na kroku $h$: $|R| \\le \\frac{h^2}{8}\\max|f''|$."
+        }
+      ],
+      "pitfalls": [
+        "Sestavování Vandermondovy matice pro vyšší stupeň $n$ — má velmi špatnou podmíněnost.",
+        "Extrapolace daleko mimo interval $[x_0, x_n]$: interpolační polynom mimo uzly rychle diverguje.",
+        "Použití interpolace na zašuměná měření (polynom kopíruje šum; tam patří metoda nejmenších čtverců)."
+      ],
+      "code_tip": "R: `approx(x, y, xout)` (po částech lineární), `splinefun(x, y)` · Python: `np.interp(xout, x, y)`, `scipy.interpolate.BarycentricInterpolator`"
+    },
+    {
+      "id": "05-aproximace-mnc",
+      "weeks": "8.–9. týden",
+      "title": "Aproximace metodou nejmenších čtverců (MNC)",
+      "topic_id": "04b-aproximace-mnc",
+      "summary": "Máme-li mnoho zašuměných měření $(x_i, y_i)$, nechceme procházet každým bodem. Hledáme jednoduchou funkci $\\varphi(x) = \\sum c_j \\psi_j(x)$, která minimalizuje součet čtverců svislých odchylek.",
+      "concepts": [
+        {
+          "title": "Princip nejmenších čtverců",
+          "body": "Minimalizujeme funkcionál $S(\\vec{c}) = \\sum_{i=1}^{m} (\\varphi(x_i) - y_i)^2 = \\|A\\vec{c} - \\vec{y}\\|_2^2$. Kladné i záporné odchylky se nekrátí, velké odchylky mají větší váhu a funkce $S$ je hladká a konvexní."
+        },
+        {
+          "title": "Normální soustava rovnic",
+          "body": "Položením parciálních derivací $\\frac{\\partial S}{\\partial c_k} = 0$ dostaneme čtvercovou symetrickou soustavu $A^T A \\vec{c} = A^T \\vec{y}$. Pro lineární funkci $y = c_0 + c_1 x$ má $A$ dva sloupce $(1, x_i)$."
+        },
+        {
+          "title": "Podmíněnost normálních rovnic vs. QR rozklad",
+          "body": "Násobením $A^T A$ se číslo podmíněnosti umocní na druhou: $\\kappa(A^T A) = \\kappa(A)^2$. Pro vyšší stupně polynomů je numericky výrazně stabilnější QR rozklad $A = QR \\implies R\\vec{c} = Q^T \\vec{y}$ nebo ortogonální báze."
+        },
+        {
+          "title": "Linearizace nelineárních modelů",
+          "body": "Některé nelineární vztahy lze převést na lineární MNC logaritmováním či převrácenou hodnotou: exponenciální $y = a e^{bx} \\implies \\ln y = \\ln a + bx$; mocninný $y = a x^b \\implies \\ln y = \\ln a + b \\ln x$. Pozor: minimalizuje se chyba v transformovaných souřadnicích."
+        }
+      ],
+      "formulas": [
+        {
+          "name": "Normální soustava MNC",
+          "latex": "A^T A \\vec{c} = A^T \\vec{y}",
+          "note": "Řádky matice $A$ tvoří hodnoty bázových funkcí $\\psi_j(x_i)$ v měřených bodech."
+        },
+        {
+          "name": "Řešení přes QR rozklad",
+          "latex": "A = Q R \\implies R \\vec{c} = Q^T \\vec{y}",
+          "note": "Zabraňuje kvadrátu podmíněnosti $\\kappa(A^T A) = \\kappa(A)^2$."
+        },
+        {
+          "name": "Lineární trend y = a + b x",
+          "latex": "b = \\frac{m\\sum x_i y_i - (\\sum x_i)(\\sum y_i)}{m\\sum x_i^2 - (\\sum x_i)^2}, \\qquad a = \\bar{y} - b\\bar{x}",
+          "note": "Přímka vždy prochází těžištěm bodů $(\\bar{x}, \\bar{y})$."
+        }
+      ],
+      "pitfalls": [
+        "Přeučení (overfitting): proložení $m$ bodů polynomem stupně $m - 1$ přejde v interpolaci se všemi riziky šumu.",
+        "Po linearizaci $\\ln y = \\tilde{a} + bx$ nezapomeňte zpětně spočítat $a = e^{\\tilde{a}}$.",
+        "U polynomů vyššího stupně raději centrujte $x$ nebo použijte `qr.solve` / `lm` místo ručního `solve(t(A) %*% A, ...)`."
+      ],
+      "code_tip": "R: `lm(y ~ x)`, `lm(y ~ poly(x, 2, raw = TRUE))`, `qr.solve(A, y)` · Python: `np.linalg.lstsq(A, y, rcond=None)`, `np.polyfit(x, y, deg)`"
+    },
+    {
+      "id": "06-derivovani-integrace",
+      "weeks": "10.–11. týden",
+      "title": "Numerické derivování a integrace",
+      "topic_id": "04c-derivovani-integrace",
+      "summary": "Derivaci odhadujeme z hodnot funkce pomocí diferencí (pozor na zesílení zaokrouhlovacích chyb). Určitý integrál počítáme náhradou integrandu jednoduššími polynomy (Newtonovy–Cotesovy vzorce) a extrapolací (Romberg).",
+      "concepts": [
+        {
+          "title": "Numerické derivování a optimální krok h",
+          "body": "Dopředná diference $\\frac{f(x+h)-f(x)}{h}$ má chybu metody $O(h)$. Centrální diference $\\frac{f(x+h)-f(x-h)}{2h}$ ruší sudý člen Taylorova rozvoje a má chybu $O(h^2)$. Příliš malé $h$ však zničí výsledek katastrofickým krácením v čitateli — optimální krok je přibližně $h \\approx \\sqrt{\\varepsilon_M}$ pro dopřednou a $h \\approx \\varepsilon_M^{1/3}$ pro centrální diferenci."
+        },
+        {
+          "title": "Jednoduché vs. složené Newtonovy–Cotesovy vzorce",
+          "body": "Vznikají integrací interpolačního polynomu na ekvidistantní síti. Na velkém intervalu $[a, b]$ nepoužíváme jeden polynom vysokého stupně (záporné váhy a oscilace), ale rozdělíme $[a, b]$ na $n$ podintervalů šířky $h = \\frac{b-a}{n}$ a použijeme složené pravidlo."
+        },
+        {
+          "title": "Obdélníkové, lichoběžníkové a Simpsonovo pravidlo",
+          "body": "Středové obdélníkové i složené lichoběžníkové pravidlo mají řád chyby $O(h^2)$ (přesná pro polynomy do stupně 1). Složené Simpsonovo pravidlo prokládá trojice bodů parabolou, vyžaduje sudý počet podintervalů $n$, dosahuje chyby $O(h^4)$ a díky symetrii je přesné až pro kubické polynomy (3. stupeň)!"
+        },
+        {
+          "title": "Rombergova kvadratura (Richardsonova extrapolace)",
+          "body": "Složené lichoběžníkové pravidlo má asymetricky jen sudé mocniny chyby ($c_1 h^2 + c_2 h^4 + \\dots$). Zkombinováním $T(h)$ a $T(h/2)$ se eliminuje člen $O(h^2)$ (první extrapolace odpovídá Simpsonovu pravidlu), dalším krokem $O(h^4)$ atd."
+        },
+        {
+          "title": "Gaussova kvadratura",
+          "body": "Kromě vah optimalizuje i samotné polohy uzlů (kořeny Legendrových polynomů). S pouhými $n$ vyhodnoceními funkce je přesná pro polynomy až do stupně $2n - 1$."
+        }
+      ],
+      "formulas": [
+        {
+          "name": "Centrální diference (1. a 2. derivace)",
+          "latex": "f'(x) \\approx \\frac{f(x+h)-f(x-h)}{2h} + O(h^2), \\qquad f''(x) \\approx \\frac{f(x+h)-2f(x)+f(x-h)}{h^2} + O(h^2)",
+          "note": "Pro 1. derivaci je centrální diference o celý řád přesnější než jednostranná."
+        },
+        {
+          "name": "Složené lichoběžníkové a Simpsonovo pravidlo",
+          "latex": "T_n = h\\!\\left(\\frac{f_0+f_n}{2} + \\sum_{i=1}^{n-1} f_i\\right), \\qquad S_n = \\frac{h}{3}\\!\\left(f_0 + 4\\sum_{\\text{lichá}} f_i + 2\\sum_{\\text{sudá}} f_i + f_n\\right)",
+          "note": "Chyba $T_n$ je $O(h^2)$, chyba $S_n$ je $O(h^4)$ (nutné sudé $n$)."
+        },
+        {
+          "name": "Rombergova extrapolace",
+          "latex": "R_{k,j} = \\frac{4^j R_{k,j-1} - R_{k-1,j-1}}{4^j - 1}",
+          "note": "Sloupec $R_{k,0}$ tvoří složená lichoběžníková pravidla s $2^k$ podintervaly."
+        }
+      ],
+      "pitfalls": [
+        "Použití liché hodnoty $n$ pro složené Simpsonovo pravidlo poruší váhy 1–4–2–4–…–1.",
+        "U funkcí se skokem nebo nespojitou derivací ztrácí Simpson i Romberg svůj vysoký řád konvergence.",
+        "Volba $h = 10^{-15}$ při derivování vrátí kvůli zaokrouhlení nulu nebo úplný šum."
+      ],
+      "code_tip": "R: `integrate(f, a, b)` (adaptivní Gauss–Kronrod) · Python: `scipy.integrate.quad(f, a, b)`, `scipy.integrate.simpson(y, x=x)`"
+    },
+    {
+      "id": "07-odr",
+      "weeks": "12.–13. týden",
+      "title": "Numerické řešení ODR (Euler, Heun/RK2, RK4)",
+      "topic_id": "04d-odr",
+      "summary": "Řešíme Cauchyovu počáteční úlohu $y'(x) = f(x, y(x)),\\; y(x_0) = y_0$. Známe startovní stav a předpis pro směr tečny v každém bodě; řešení krokujeme vpřed po síti $x_{k+1} = x_k + h$.",
+      "concepts": [
+        {
+          "title": "Lokální vs. globální chyba",
+          "body": "Lokální chyba vznikne v jednom kroku (za předpokladu přesného vstupu) a pro metodu řádu $p$ je $O(h^{p+1})$. Protože na intervalu $[a, b]$ děláme $n = \\frac{b-a}{h}$ kroků, chyby se kumulují a výsledná globální chyba je $O(h^p)$."
+        },
+        {
+          "title": "Explicitní Eulerova metoda (řád 1)",
+          "body": "Vezme směr tečny na začátku kroku $f(x_k, y_k)$ a posune se rovně: $y_{k+1} = y_k + h f(x_k, y_k)$. Je jednoduchá a levná (1 vyhodnocení $f$ na krok), ale nepřesná ($O(h)$) a pouze podmíněně stabilní."
+        },
+        {
+          "title": "Stabilita na testovací rovnici y' = λy",
+          "body": "Pro $\\lambda < 0$ přesné řešení exponenciálně klesá k nule. Explicitní Euler dá $y_{k+1} = (1 + h\\lambda) y_k$, takže zůstane stabilní jen při $|1 + h\\lambda| \\le 1$, tedy $h \\le \\frac{2}{|\\lambda|}$. Pro tzv. tuhé (stiff) rovnice je nutné použít implicitní metodu."
+        },
+        {
+          "title": "Heunova metoda (RK2) a klasická RK4",
+          "body": "Rungeho–Kuttovy metody odhadují sklon ve více bodech uvnitř kroku a kombinují je do váženého průměru bez potřeby analytických derivací $f$. Heun (RK2) zprůměruje sklon na začátku a v odhadnutém konci ($O(h^2)$). RK4 provede 4 vyhodnocení $f$ a dosáhne globálního řádu $O(h^4)$ — zmenšení kroku na polovinu sníží chybu $16\\times$."
+        },
+        {
+          "title": "Převod ODR vyššího řádu na soustavu 1. řádu",
+          "body": "Rovnici 2. řádu $y'' = g(x, y, y')$ přepíšeme substitucí $u_1 = y,\\; u_2 = y'$ na soustavu dvou rovnic prvního řádu: $u_1' = u_2$ a $u_2' = g(x, u_1, u_2)$, kterou řešíme vektorovým RK4."
+        }
+      ],
+      "formulas": [
+        {
+          "name": "Explicitní Eulerova metoda",
+          "latex": "y_{k+1} = y_k + h\\,f(x_k, y_k), \\qquad E_{\\text{glob}} = O(h)",
+          "note": "Podmínka stability pro $y' = \\lambda y\\; (\\lambda < 0)$: $|1 + h\\lambda| \\le 1$."
+        },
+        {
+          "name": "Heunova metoda (RK2)",
+          "latex": "k_1 = f(x_k, y_k), \\quad k_2 = f(x_k + h, y_k + h k_1), \\quad y_{k+1} = y_k + \\frac{h}{2}(k_1 + k_2)",
+          "note": "Globální chyba $O(h^2)$, 2 vyhodnocení funkce $f$ za krok."
+        },
+        {
+          "name": "Runge–Kutta 4. řádu (RK4)",
+          "latex": "y_{k+1} = y_k + \\frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4), \\qquad E_{\\text{glob}} = O(h^4)",
+          "note": "$k_1 = f(x_k, y_k)$, $k_2 = f(x_k+\\tfrac{h}{2}, y_k+\\tfrac{h}{2}k_1)$, $k_3 = f(x_k+\\tfrac{h}{2}, y_k+\\tfrac{h}{2}k_2)$, $k_4 = f(x_k+h, y_k+hk_3)$."
+        }
+      ],
+      "pitfalls": [
+        "Záměna lokální chyby $O(h^{p+1})$ a globální chyby $O(h^p)$.",
+        "U RK4 se $k_3$ počítá s $k_2$ (nikoli s $k_1$) a $k_4$ v celém kroku $x_k + h$ s $k_3$.",
+        "Příliš velký krok $h$ u explicitního Eulera způsobí rozkmitání řešení, i když je fyzikálně tlumené."
+      ],
+      "code_tip": "R: vlastní smyčka RK4 nebo `deSolve::ode()` · Python: `scipy.integrate.solve_ivp(f, [t0, t1], y0, method='RK45')`"
+    }
+  ]
+}

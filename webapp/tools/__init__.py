@@ -27,9 +27,10 @@ from webapp.tools.numeric_lab import (
     compute_newton,
     get_numeric_lab_data,
 )
+from webapp.tools.theory import get_theory_tool_data
 
 SUPPORTED_TOOLS = frozenset(
-    {"glossary", "formulas", "numeric_lab", "dist_tables", "automata"}
+    {"glossary", "formulas", "theory", "numeric_lab", "dist_tables", "automata"}
 )
 
 __all__ = [
@@ -47,6 +48,7 @@ __all__ = [
     "get_formulas_tool_data",
     "get_glossary_tool_data",
     "get_numeric_lab_data",
+    "get_theory_tool_data",
     "normal_cdf",
     "normal_pdf",
     "normal_quantile",

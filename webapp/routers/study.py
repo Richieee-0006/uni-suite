@@ -30,6 +30,7 @@ from webapp.tools import (
     get_formulas_tool_data,
     get_glossary_tool_data,
     get_numeric_lab_data,
+    get_theory_tool_data,
     simulate_automaton,
 )
 from webapp.verifiers import default_verifier_registry
@@ -764,6 +765,10 @@ async def api_subject_tool_get(
         )
     if clean_tool == "formulas":
         return get_formulas_tool_data(
+            subject["slug"], query=q, subjects_dir=_subjects_root()
+        )
+    if clean_tool == "theory":
+        return get_theory_tool_data(
             subject["slug"], query=q, subjects_dir=_subjects_root()
         )
     if clean_tool == "numeric_lab":

@@ -1,0 +1,382 @@
+{% extends "base.html" %}
+{%- set _subj = subject or {'slug': 'num', 'code': 'KI/NUM', 'short': 'NUM', 'title': 'Předmět', 'description': ''} %}
+{%- set _has_sandbox = _subj.get('sandbox') is not none and _subj.get('sandbox') %}
+{%- set _tools = _subj.get('tools') or [] %}
+{%- set _theory = theory or {'intro': '', 'chapters': [], 'total': 0} %}
+{%- set _chapters = _theory.chapters or [] %}
+{%- set _formulas = (formulas.sections if formulas else []) or [] %}
+{%- set _glossary_banks = (glossary.banks if glossary else {}) or {} %}
+{%- set _glossary_total = glossary.total if glossary else 0 %}
+{%- set _topic_titles = topic_titles or {} %}
+
+{%- block extra_head %}
+  <link rel="stylesheet" href="/static/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="/static/css/engine.css">
+{%- endblock %}
+
+{%- block rail_content %}
+          <div class="rail-header">
+            <div class="rail-brand">
+              <a href="/" class="rail-back">
+                <span aria-hidden="true">←</span>
+                <span>{{ site.title if site else 'UNI Suite' }}</span>
+              </a>
+              <span class="code-pill">{{ _subj.code }}</span>
+            </div>
+            <button type="button" id="rail-close-btn" class="icon-btn rail-close-btn" aria-label="Zavřít navigaci">
+              <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <div class="rail-sections">
+            <nav class="rail-group" aria-label="Moduly předmětu">
+              <span class="rail-group-label">Moduly předmětu</span>
+              <ul class="rail-list">
+                <li>
+                  <a href="/predmet/{{ _subj.slug }}" class="rail-item">
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>Procvičování</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="/predmet/{{ _subj.slug }}/teorie" class="rail-item" aria-current="page">
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                    <span>Teorie a glosář</span>
+                  </a>
+                </li>
+                <li>
+                  <button type="button" class="rail-item" data-open-reference data-close-drawer>
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <span>Přehled vzorců</span>
+                    <kbd class="rail-item-meta">F</kbd>
+                  </button>
+                </li>
+{%- if _has_sandbox %}
+                <li>
+                  <a href="/predmet/{{ _subj.slug }}/code" class="rail-item">
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <polyline points="4 17 10 11 4 5"></polyline>
+                      <line x1="12" y1="19" x2="20" y2="19"></line>
+                    </svg>
+                    <span>Lab a sandbox</span>
+                  </a>
+                </li>
+{%- endif %}
+              </ul>
+            </nav>
+
+            <nav class="rail-group" aria-label="Předměty">
+              <span class="rail-group-label">Předměty</span>
+              <ul class="rail-list">
+{%- for item in (subjects or []) %}
+{%- set is_ext = item.kind == 'external' and item.url %}
+                <li>
+                  <a href="{{ item.url if is_ext else '/predmet/' ~ item.slug ~ '/teorie' }}" class="rail-item"{% if is_ext %} target="_blank" rel="noopener noreferrer"{% endif %}{% if item.slug == _subj.slug %} aria-current="page"{% endif %}>
+                    <span class="status-dot {{ 'status-dot-info' if item.slug == _subj.slug else ('status-dot-active' if item.status == 'active' else 'status-dot-preparing') }}" aria-hidden="true"></span>
+                    <span class="rail-subject-code">{{ item.short or item.code }}</span>
+                    <span class="rail-subject-title">{{ item.title }}</span>
+                  </a>
+                </li>
+{%- endfor %}
+              </ul>
+            </nav>
+{%- if user and user.role == 'admin' %}
+            <nav class="rail-group" aria-label="Správa">
+              <span class="rail-group-label">Správa</span>
+              <ul class="rail-list">
+                <li>
+                  <a href="/admin" class="rail-item">
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    <span>Správa platformy</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+{%- endif %}
+          </div>
+{%- endblock %}
+
+{%- block topbar_context %}
+          <span class="code-pill">{{ _subj.code }}</span>
+          <span class="topbar-title">{{ _subj.title }} · Teorie</span>
+{%- endblock %}
+
+{%- block content %}
+        <div class="page-header">
+          <div class="page-heading">
+            <div class="page-title-row">
+              <span class="code-pill">{{ _subj.code }}</span>
+              <h1>Teorie a glosář — {{ _subj.title }}</h1>
+            </div>
+            <p class="page-subtitle">{{ _theory.intro or _subj.description }}</p>
+          </div>
+          <div class="page-tools">
+            <a href="/predmet/{{ _subj.slug }}" class="btn btn-primary btn-sm">Procvičovat →</a>
+            <button type="button" class="btn btn-secondary btn-sm" data-open-reference>
+              <span>Tahák</span>
+              <kbd>F</kbd>
+            </button>
+{%- if _has_sandbox %}
+            <a href="/predmet/{{ _subj.slug }}/code" class="btn btn-secondary btn-sm">Code Sandbox</a>
+{%- endif %}
+          </div>
+        </div>
+
+        <section class="card theory-toolbar" aria-label="Filtrování a rychlá navigace v teorii">
+          <div class="theory-toolbar-row">
+            <label class="visually-hidden" for="theory-search">Filtrovat kapitoly, vzorce nebo pojmy</label>
+            <input
+              type="search"
+              id="theory-search"
+              class="ref-search-input theory-search-input"
+              placeholder="Filtrovat kapitoly, vzorce nebo pojmy..."
+              autocomplete="off"
+              data-theory-search
+            >
+{%- if _chapters %}
+            <button
+              type="button"
+              class="btn btn-secondary btn-sm"
+              data-theory-toggle-all
+              aria-expanded="false"
+            >
+              <span class="theory-expand-label">Rozbalit vše</span>
+              <span class="theory-collapse-label">Sbalit vše</span>
+            </button>
+{%- endif %}
+            <span class="mono theory-match-meta" id="theory-match-status" role="status" aria-live="polite">
+              {{ _chapters | length }} kapitol · {{ _glossary_total }} pojmů
+            </span>
+          </div>
+
+          <nav class="theory-toc" aria-label="Obsah teorie">
+{%- for ch in _chapters %}
+            <a href="#kapitola-{{ ch.id }}" class="tab-pill theory-toc-link" data-theory-jump="kapitola-{{ ch.id }}">
+              {{ '%02d' | format(loop.index) }} · {{ ch.title }}
+            </a>
+{%- endfor %}
+{%- if _formulas %}
+            <a href="#vzorce" class="tab-pill theory-toc-link">Přehled vzorců</a>
+{%- endif %}
+{%- if _glossary_banks %}
+            <a href="#glosar" class="tab-pill theory-toc-link">Glosář ({{ _glossary_total }})</a>
+{%- endif %}
+{%- if _subj.syllabus or _subj.literature %}
+            <a href="#sylabus" class="tab-pill theory-toc-link">Sylabus a literatura</a>
+{%- endif %}
+          </nav>
+        </section>
+
+{%- if _chapters %}
+        <section id="kapitoly" class="theory-section" aria-labelledby="kapitoly-heading">
+          <div class="theory-section-head">
+            <h2 id="kapitoly-heading">Výklad podle kapitol</h2>
+            <span class="eyebrow">{{ _chapters | length }} kapitol</span>
+          </div>
+
+          <div class="theory-accordion" id="theory-chapters-accordion">
+{%- for ch in _chapters %}
+            <details
+              id="kapitola-{{ ch.id }}"
+              class="card theory-chapter"
+              data-theory-item
+              {% if loop.first %}open{% endif %}
+            >
+              <summary class="theory-chapter-summary">
+                <span class="theory-chapter-index mono">{{ '%02d' | format(loop.index) }}</span>
+                <span class="theory-chapter-title">{{ ch.title }}</span>
+{%- if ch.weeks %}
+                <span class="code-pill theory-chapter-weeks">{{ ch.weeks }}</span>
+{%- endif %}
+              </summary>
+
+              <div class="theory-chapter-body">
+{%- if ch.summary %}
+                <p class="theory-summary" data-rich-math>{{ ch.summary }}</p>
+{%- endif %}
+
+{%- if ch.concepts %}
+                <div class="theory-block">
+                  <h3>Klíčové pojmy a postup</h3>
+                  <dl class="theory-concepts">
+{%- for concept in ch.concepts %}
+                    <div class="theory-concept-item">
+                      <dt data-rich-math>{{ concept.title }}</dt>
+                      <dd data-rich-math>{{ concept.body }}</dd>
+                    </div>
+{%- endfor %}
+                  </dl>
+                </div>
+{%- endif %}
+
+{%- if ch.formulas %}
+                <div class="theory-block">
+                  <h3>Klíčové vzorce</h3>
+                  <div class="theory-formula-grid">
+{%- for f in ch.formulas %}
+                    <article class="ref-card">
+                      <h4 class="ref-name" data-rich-math>{{ f.name }}</h4>
+                      <div class="ref-expr" data-display-math>{{ f.latex }}</div>
+{%- if f.note %}
+                      <p class="ref-note" data-rich-math>{{ f.note }}</p>
+{%- endif %}
+                    </article>
+{%- endfor %}
+                  </div>
+                </div>
+{%- endif %}
+
+{%- if ch.pitfalls %}
+                <div class="theory-block theory-pitfalls">
+                  <h3>Na co si dát pozor u zkoušky</h3>
+                  <ul class="theory-bullet-list">
+{%- for pit in ch.pitfalls %}
+                    <li data-rich-math>{{ pit }}</li>
+{%- endfor %}
+                  </ul>
+                </div>
+{%- endif %}
+
+{%- if ch.code_tip %}
+                <div class="theory-block theory-code-tip">
+                  <h3>V praxi (R / Python)</h3>
+                  <p data-rich-math>{{ ch.code_tip }}</p>
+                </div>
+{%- endif %}
+
+{%- if ch.topic_id %}
+                <div class="theory-chapter-actions">
+                  <a href="/predmet/{{ _subj.slug }}?mode=blocks&amp;topic={{ ch.topic_id | urlencode }}" class="btn btn-secondary btn-sm">
+                    Procvičit tento okruh →
+                  </a>
+                  <a href="/predmet/{{ _subj.slug }}?mode=study_then_test&amp;topic={{ ch.topic_id | urlencode }}" class="btn btn-ghost btn-sm">
+                    Studuj, pak testuj
+                  </a>
+                </div>
+{%- endif %}
+              </div>
+            </details>
+{%- endfor %}
+          </div>
+        </section>
+{%- endif %}
+
+{%- if _formulas %}
+        <section id="vzorce" class="card theory-section" aria-labelledby="vzorce-heading">
+          <div class="theory-section-head">
+            <h2 id="vzorce-heading">Souhrn vzorců a rozhodovací pravidla</h2>
+            <span class="eyebrow">{{ formulas.total if formulas else 0 }} vzorců</span>
+          </div>
+{%- for sec in _formulas %}
+          <div class="theory-formula-section" data-theory-group>
+            <h3 class="ref-section-title">{{ sec.title }}</h3>
+            <div class="theory-formula-grid">
+{%- for item in sec['items'] %}
+              <article class="ref-card" data-theory-item>
+                <h4 class="ref-name" data-rich-math>{{ item.name }}</h4>
+                <div class="ref-expr" data-display-math>{{ item.latex }}</div>
+{%- if item.note %}
+                <p class="ref-note" data-rich-math>{{ item.note }}</p>
+{%- endif %}
+              </article>
+{%- endfor %}
+            </div>
+          </div>
+{%- endfor %}
+        </section>
+{%- endif %}
+
+{%- if _glossary_banks %}
+        <section id="glosar" class="card theory-section" aria-labelledby="glosar-heading">
+          <div class="theory-section-head">
+            <h2 id="glosar-heading">Glosář pojmů</h2>
+            <span class="eyebrow">{{ _glossary_total }} pojmů</span>
+          </div>
+{%- for bank_id, entries in _glossary_banks.items() %}
+          <div class="theory-glossary-group" id="glosar-{{ loop.index }}" data-theory-group>
+            <h3 class="ref-section-title">{{ _topic_titles.get(bank_id) or bank_id }}</h3>
+            <div class="theory-glossary-grid">
+{%- for entry in entries %}
+              <article class="ref-card" data-theory-item>
+                <h4 class="ref-name" data-rich-math>{{ entry.term }}</h4>
+                <p class="ref-note" data-rich-math>{{ entry.body }}</p>
+              </article>
+{%- endfor %}
+            </div>
+          </div>
+{%- endfor %}
+        </section>
+{%- endif %}
+
+{%- if _subj.annotation or _subj.requirements or _subj.syllabus or _subj.literature %}
+        <section id="sylabus" class="card theory-section" aria-labelledby="sylabus-heading">
+          <h2 id="sylabus-heading">Sylabus, požadavky na zkoušku a literatura</h2>
+          <div class="syllabus-body">
+{%- if _subj.annotation %}
+            <p>{{ _subj.annotation }}</p>
+{%- endif %}
+{%- if _subj.requirements %}
+            <p><strong>Požadavky na studenta:</strong> {{ _subj.requirements }}</p>
+{%- endif %}
+{%- if _subj.syllabus %}
+            <div class="syllabus-group">
+              <h3>Osnova</h3>
+              <ol class="syllabus-list">
+{%- for item in _subj.syllabus %}
+                <li class="syllabus-row">
+                  <span class="code-pill">{{ item.weeks }}</span>
+                  <span>{{ item.title }}</span>
+                </li>
+{%- endfor %}
+              </ol>
+            </div>
+{%- endif %}
+{%- if _subj.literature %}
+            <div class="syllabus-group">
+              <h3>Doporučená literatura</h3>
+              <ul class="syllabus-list">
+{%- for ref in _subj.literature %}
+                <li class="syllabus-row">
+                  <span class="eyebrow">{{ ref.kind }}</span>
+{%- if ref.url and ref.url.startswith('https://') %}
+                  <a href="{{ ref.url }}" class="text-link" target="_blank" rel="noopener noreferrer">{{ ref.citation }} ↗</a>
+{%- else %}
+                  <span>{{ ref.citation }}</span>
+{%- endif %}
+                </li>
+{%- endfor %}
+              </ul>
+            </div>
+{%- endif %}
+          </div>
+        </section>
+{%- endif %}
+{%- endblock %}
+
+{%- block state_json %}{{ {
+  'user': {'username': user.username, 'is_authenticated': user.is_authenticated} if user else None,
+  'prefs': prefs or {},
+  'subject': {'slug': _subj.slug, 'code': _subj.code, 'short': _subj.short, 'title': _subj.title, 'tools': _tools, 'sandbox': _subj.get('sandbox')},
+  'is_theory_route': True
+} | tojson }}{% endblock %}
+
+{%- block extra_scripts %}
+  <script src="/static/vendor/katex/katex.min.js" defer></script>
+  <script src="/static/js/engine/katex_render.js" defer></script>
+  <script src="/static/js/tools/reference_drawer.js" defer></script>
+  <script src="/static/js/tools/theory.js" defer></script>
+{%- endblock %}

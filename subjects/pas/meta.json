@@ -9,6 +9,40 @@
     "type": "obsidian",
     "folder": "PAS"
   },
+  "annotation": "Předmět pokrývá základy popisné statistiky, teorie pravděpodobnosti, náhodných veličin a statistické inference (bodové a intervalové odhady, testování hypotéz, korelace a lineární regrese) s důrazem na praktické zpracování dat v jazyce R.",
+  "requirements": "Zápočet: praktická práce v R na školním PC (internet i AI povoleny). Zkouška: ústní v počítačové učebně bez internetu (k dispozici seznam vzorců a příkazů R), losování ze 3 okruhů (popis proměnné, statistické metody v praxi, teoretické pojmy).",
+  "syllabus": [
+    {
+      "weeks": "Okruh I",
+      "title": "Popisná statistika: klasifikace proměnných, četnosti, histogram (Sturges, Scott), míry polohy/variability/tvaru, grafy a interpretace v R"
+    },
+    {
+      "weeks": "Okruh II (1–3)",
+      "title": "Statistická inference: bodové a intervalové odhady průměru, rozdílu průměrů, podílu a rozdílu podílů; testování hypotéz a p-hodnota"
+    },
+    {
+      "weeks": "Okruh II (4–5)",
+      "title": "Souvislost dvou číselných proměnných (tvar, směr, síla), kovariance, korelace a lineární regresní přímka včetně předpokladů"
+    },
+    {
+      "weeks": "Okruh II (6–8)",
+      "title": "Identifikace podkladového rozdělení dat (descdist, fitdist, Q-Q plot), hodnocení normality, jádrový odhad hustoty a odlehlé hodnoty"
+    },
+    {
+      "weeks": "Okruh III",
+      "title": "Teoretické pojmy: populace a výběr, diskrétní a spojité NV, ZVČ a CLV, tradiční vs. robustní a bootstrapový přístup, transformace dat"
+    }
+  ],
+  "literature": [
+    {
+      "kind": "Základní",
+      "citation": "Přednáškové prezentace KMA/PAS (UJEP — M. Boďa, A. Černíková), seznam vzorců a přehled příkazů R (DescTools, fitdistrplus)."
+    },
+    {
+      "kind": "Doporučená",
+      "citation": "ANDĚL, J. Základy matematické statistiky. Praha: Matfyzpress, 2005."
+    }
+  ],
   "engines": ["choice", "input_numeric", "recall", "code_task", "multi_step"],
   "sandbox": {
     "languages": ["r"],

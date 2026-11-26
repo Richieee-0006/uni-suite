@@ -10,6 +10,7 @@ from fastapi.templating import Jinja2Templates
 from jinja2 import Environment, FileSystemLoader
 
 import db
+from webapp import config as cfg
 from webapp.config import TEMPLATES_DIR
 from webapp.csrf import get_or_create_csrf_token, verify_csrf
 from webapp.preferences import load_user_preferences, prefs_to_html_attrs
@@ -19,6 +20,11 @@ from webapp.subjects import (
     load_site_meta,
     load_subjects,
     search_catalog,
+)
+from webapp.tools import (
+    get_formulas_tool_data,
+    get_glossary_tool_data,
+    get_theory_tool_data,
 )
 
 router = APIRouter(dependencies=[Depends(verify_csrf)])
@@ -157,6 +163,50 @@ def subject_detail_page(request: Request, slug: str) -> Any:
 @router.get("/predmet/{slug}/code", response_model=None)
 def subject_code_page(request: Request, slug: str) -> Any:
     return _render_subject_page(request, slug, is_code_route=True)
+
+
+@router.get("/predmet/{slug}/teorie", response_model=None)
+def subject_theory_page(request: Request, slug: str) -> Any:
+    user = get_current_user(request)
+    admin = is_admin_user(user)
+    user_id = (
+        int(user["id"])
+        if user and user.get("is_authenticated") and user.get("id") is not None
+        else None
+    )
+
+    detail = get_subject_detail(slug, user_id=user_id, is_admin=admin)
+    if detail is None:
+        raise HTTPException(status_code=404, detail="Not Found")
+
+    subject, topics, _ = detail
+    if subject["kind"] == "external":
+        raise HTTPException(status_code=404, detail="Not Found")
+
+    subjects_root = cfg.SUBJECTS_DIR
+    theory = get_theory_tool_data(subject["slug"], subjects_dir=subjects_root)
+    formulas = get_formulas_tool_data(subject["slug"], subjects_dir=subjects_root)
+    glossary = get_glossary_tool_data(subject["slug"], subjects_dir=subjects_root)
+    topic_titles = {str(t["id"]): str(t["title"]) for t in topics if t.get("id")}
+
+    site = load_site_meta()
+    ctx = build_base_context(
+        request,
+        user=user,
+        page_title=f"{subject['code']} — Teorie a glosář | {site['title']}",
+        active_nav=f"theory:{subject['slug']}",
+    )
+    ctx.update(
+        {
+            "subject": subject,
+            "topics": topics,
+            "topic_titles": topic_titles,
+            "theory": theory,
+            "formulas": formulas,
+            "glossary": glossary,
+        }
+    )
+    return get_public_templates().TemplateResponse(request, "theory.html", ctx)
 
 
 @router.get("/api/portal")
