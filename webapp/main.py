@@ -14,7 +14,16 @@ import db
 from webapp.config import PUBLIC_DIR, load_settings
 from webapp.cookie_utils import is_https_request
 from webapp.csrf import attach_csrf_cookie_if_needed, get_or_create_csrf_token
-from webapp.routers import admin, auth, internal, portal, preferences, sandbox, study
+from webapp.routers import (
+    admin,
+    auth,
+    feedback,
+    internal,
+    portal,
+    preferences,
+    sandbox,
+    study,
+)
 
 _CODE_ROUTE_RE = re.compile(r"^/predmet/[a-z0-9_-]{1,32}/code$")
 
@@ -52,6 +61,7 @@ _CODE_CSP = (
 _NO_STORE_PREFIXES = (
     "/admin",
     "/api/admin",
+    "/api/feedback",
     "/api/preferences",
     "/internal",
     "/login",
@@ -122,6 +132,7 @@ def create_app() -> FastAPI:
     application.include_router(preferences.router)
     application.include_router(study.router)
     application.include_router(sandbox.router)
+    application.include_router(feedback.router)
     application.include_router(admin.router)
     application.include_router(internal.router)
 

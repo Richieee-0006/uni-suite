@@ -95,6 +95,21 @@ def get_admin_seed_config() -> tuple[str, str] | None:
     return None
 
 
+def get_github_issues_config() -> tuple[str, str] | None:
+    """Return (token, owner/repo) when GitHub Issues feedback is configured."""
+    token = os.getenv("GITHUB_ISSUES_TOKEN", "").strip()
+    repo = os.getenv("GITHUB_ISSUES_REPO", "Richieee-0006/uni-suite").strip()
+    if not token or not repo:
+        return None
+    parts = repo.split("/")
+    if len(parts) != 2 or not all(parts):
+        return None
+    allowed = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_.-")
+    if not all(set(part) <= allowed for part in parts):
+        return None
+    return token, repo
+
+
 def cookie_secure_forced() -> bool:
     """Return True if COOKIE_SECURE=1 forces Secure flag even over loopback HTTP."""
     return os.getenv("COOKIE_SECURE", "").strip().lower() in {"1", "true", "yes"}
