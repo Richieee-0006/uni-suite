@@ -141,13 +141,18 @@ def test_real_catalog_subjects_valid_html5(
         for token in (
             "Katastrofické krácení",
             "Newtonova metoda tečen",
+            "Steffensenova metoda",
+            "Halleyova metoda",
             "Gaussova eliminační metoda",
             "Jacobiho metoda",
             "Gaussova–Seidelova metoda",
             "Jacobi vs. Gauss–Seidel",
+            "Sylvestrovo kritérium",
             "Rungeho fenomén",
+            "Gaussova kvadratura",
             "Rombergova kvadratura",
             "Runge–Kutta 4. řádu",
+            "physics.ujep.cz/~jskvor/NME/skripta/",
             "/static/css/portal.css?v=",
         ):
             assert token in num_theory_html, f"Missing NUM theory content: {token}"

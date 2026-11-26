@@ -18,7 +18,7 @@
     },
     {
       "weeks": "2.–3. týden",
-      "title": "Řešení nelineárních rovnic: metoda půlení intervalu, regula falsi, metoda prostých iterací, Newtonova metoda tečen, Hornerovo schéma a kořeny polynomu (Newtonova–Hornerova metoda)"
+      "title": "Řešení nelineárních rovnic: metoda půlení intervalu, regula falsi, Newtonova metoda tečen, Steffensenova a Halleyova metoda, prosté iterace (fixed-point), Hornerovo schéma a Newtonova–Hornerova metoda"
     },
     {
       "weeks": "4.–5. týden",
@@ -26,7 +26,7 @@
     },
     {
       "weeks": "6.–7. týden",
-      "title": "Interpolace: po částech lineární a polynomem (v Lagrangově a Newtonově tvaru)"
+      "title": "Interpolace: po částech lineární, kubický spline a polynomem (v Lagrangově a Newtonově tvaru)"
     },
     {
       "weeks": "8.–9. týden",
@@ -34,7 +34,7 @@
     },
     {
       "weeks": "10.–11. týden",
-      "title": "Numerické derivování a integrace (Newtonovy–Cotesovy vzorce jednoduché a složené, Rombergova kvadratura)"
+      "title": "Numerické derivování a integrace (Newtonovy–Cotesovy vzorce jednoduché a složené, Gaussova kvadratura, Rombergova kvadratura)"
     },
     {
       "weeks": "12.–13. týden",
@@ -42,6 +42,21 @@
     }
   ],
   "literature": [
+    {
+      "kind": "Hlavní skripta · HTML",
+      "citation": "Kassal, T. a M. Kuchař. Numerické metody — hlavní interaktivní skripta ke kurzu s R implementacemi (UJEP, RNDr. J. Škvor).",
+      "url": "https://physics.ujep.cz/~jskvor/NME/skripta/"
+    },
+    {
+      "kind": "Materiály vyučujícího",
+      "citation": "Škvor, J. Archiv zadání, R skriptů (Source2017–2025), dat a doplňkových skript ke kurzu KI/NUM.",
+      "url": "https://physics.ujep.cz/~jskvor/NME/"
+    },
+    {
+      "kind": "Okruhy ke zkoušce · PDF",
+      "citation": "Zkušební okruhy Numerické metody (Okruhy/okruhy.pdf — UJEP).",
+      "url": "https://physics.ujep.cz/~jskvor/NME/Okruhy/okruhy.pdf"
+    },
     {
       "kind": "Základní · PDF",
       "citation": "Vicher, M. Numerická matematika, skripta UJEP, Ústí n. Lab., 2003 (77 s.).",
