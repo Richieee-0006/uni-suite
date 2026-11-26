@@ -1458,6 +1458,230 @@
         "Vysvětlení: Nezapomeňte vynásobit součet `f(x_1) + f(x_2)` jakobiánem `0.5 * (b - a)`."
       ],
       "explanation": "Dvoubodová Gaussova kvadratura vyžaduje jen 2 vyhodnocení integrandu a integruje přesně všechny polynomy až do stupně $2n - 1 = 3$ (včetně $x^3$!)."
+    },
+    {
+      "id": "num-code-14",
+      "number": 14,
+      "type": "code_task",
+      "language": "r",
+      "title": "Halleyova metoda (kubická konvergence)",
+      "text": "Implementujte funkci `halley_root(f, df, ddf, x0, tol=1e-10, max_iter=100)` podle kap. 2.6 skript. Využijte hodnotu funkce `f(x)`, první derivaci `df(x)` a druhou derivaci `ddf(x)` pro kubicky konvergující krok $x_{k+1} = x_k - \\frac{f(x_k)f'(x_k)}{[f'(x_k)]^2 - \\frac{1}{2}f(x_k)f''(x_k)}$.",
+      "formula": "x_{k+1} = x_k - \\frac{f(x_k)\\,f'(x_k)}{[f'(x_k)]^2 - \\tfrac{1}{2}f(x_k)\\,f''(x_k)}",
+      "starter_code": "halley_root <- function(f, df, ddf, x0, tol = 1e-10, max_iter = 100) {\n  x <- x0\n  # Doplňte iterační krok Halleyovy metody\n  \n  x\n}\n",
+      "solution_code": "halley_root <- function(f, df, ddf, x0, tol = 1e-10, max_iter = 100) {\n  x <- x0\n  for (i in seq_len(max_iter)) {\n    fx <- f(x)\n    dfx <- df(x)\n    ddfx <- ddf(x)\n    denom <- dfx * dfx - 0.5 * fx * ddfx\n    if (abs(denom) < 1e-15) stop(\"Jmenovatel prilis blizko nuly\")\n    x_new <- x - (fx * dfx) / denom\n    if (abs(x_new - x) < tol) return(x_new)\n    x <- x_new\n  }\n  x\n}\n",
+      "produces_plot": false,
+      "visible_tests": [
+        {
+          "name": "Kořen x^2 - 2 = 0 z x0 = 1.5",
+          "code": "halley_root(function(x) x^2 - 2, function(x) 2 * x, function(x) 2, 1.5)",
+          "expected": 1.4142135624,
+          "tolerance": 1e-7
+        },
+        {
+          "name": "Kořen x^3 - 2x - 5 = 0 z x0 = 2.0",
+          "code": "halley_root(function(x) x^3 - 2 * x - 5, function(x) 3 * x^2 - 2, function(x) 6 * x, 2.0)",
+          "expected": 2.0945514815,
+          "tolerance": 1e-7
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "Kořen cos(x) - x = 0 z x0 = 0.5",
+          "code": "halley_root(function(x) cos(x) - x, function(x) -sin(x) - 1, function(x) -cos(x), 0.5)",
+          "expected": 0.7390851332,
+          "tolerance": 1e-7
+        },
+        {
+          "name": "Kořen exp(x) - 3x = 0 z x0 = 0.5",
+          "code": "halley_root(function(x) exp(x) - 3 * x, function(x) exp(x) - 3, function(x) exp(x), 0.5)",
+          "expected": 0.6190612867,
+          "tolerance": 1e-7
+        }
+      ],
+      "languages": {
+        "r": {
+          "starter_code": "halley_root <- function(f, df, ddf, x0, tol = 1e-10, max_iter = 100) {\n  x <- x0\n  # Doplňte iterační krok Halleyovy metody\n  \n  x\n}\n",
+          "solution_code": "halley_root <- function(f, df, ddf, x0, tol = 1e-10, max_iter = 100) {\n  x <- x0\n  for (i in seq_len(max_iter)) {\n    fx <- f(x)\n    dfx <- df(x)\n    ddfx <- ddf(x)\n    denom <- dfx * dfx - 0.5 * fx * ddfx\n    if (abs(denom) < 1e-15) stop(\"Jmenovatel prilis blizko nuly\")\n    x_new <- x - (fx * dfx) / denom\n    if (abs(x_new - x) < tol) return(x_new)\n    x <- x_new\n  }\n  x\n}\n",
+          "visible_tests": [
+            {
+              "name": "Kořen x^2 - 2 = 0 z x0 = 1.5",
+              "code": "halley_root(function(x) x^2 - 2, function(x) 2 * x, function(x) 2, 1.5)",
+              "expected": 1.4142135624,
+              "tolerance": 1e-7
+            },
+            {
+              "name": "Kořen x^3 - 2x - 5 = 0 z x0 = 2.0",
+              "code": "halley_root(function(x) x^3 - 2 * x - 5, function(x) 3 * x^2 - 2, function(x) 6 * x, 2.0)",
+              "expected": 2.0945514815,
+              "tolerance": 1e-7
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Kořen cos(x) - x = 0 z x0 = 0.5",
+              "code": "halley_root(function(x) cos(x) - x, function(x) -sin(x) - 1, function(x) -cos(x), 0.5)",
+              "expected": 0.7390851332,
+              "tolerance": 1e-7
+            },
+            {
+              "name": "Kořen exp(x) - 3x = 0 z x0 = 0.5",
+              "code": "halley_root(function(x) exp(x) - 3 * x, function(x) exp(x) - 3, function(x) exp(x), 0.5)",
+              "expected": 0.6190612867,
+              "tolerance": 1e-7
+            }
+          ]
+        },
+        "python": {
+          "starter_code": "import math\n\ndef halley_root(f, df, ddf, x0, tol=1e-10, max_iter=100):\n    x = float(x0)\n    # Doplňte iterační krok Halleyovy metody\n    return x\n",
+          "solution_code": "import math\n\ndef halley_root(f, df, ddf, x0, tol=1e-10, max_iter=100):\n    x = float(x0)\n    for _ in range(max_iter):\n        fx = f(x)\n        dfx = df(x)\n        ddfx = ddf(x)\n        denom = dfx * dfx - 0.5 * fx * ddfx\n        if abs(denom) < 1e-15:\n            raise ValueError('Jmenovatel prilis blizko nuly')\n        x_new = x - (fx * dfx) / denom\n        if abs(x_new - x) < tol:\n            return x_new\n        x = x_new\n    return x\n",
+          "visible_tests": [
+            {
+              "name": "Kořen x^2 - 2 = 0 z x0 = 1.5",
+              "code": "halley_root(lambda x: x**2 - 2, lambda x: 2 * x, lambda x: 2.0, 1.5)",
+              "expected": 1.4142135624,
+              "tolerance": 1e-7
+            },
+            {
+              "name": "Kořen x^3 - 2x - 5 = 0 z x0 = 2.0",
+              "code": "halley_root(lambda x: x**3 - 2 * x - 5, lambda x: 3 * x**2 - 2, lambda x: 6 * x, 2.0)",
+              "expected": 2.0945514815,
+              "tolerance": 1e-7
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "Kořen cos(x) - x = 0 z x0 = 0.5",
+              "code": "halley_root(lambda x: math.cos(x) - x, lambda x: -math.sin(x) - 1, lambda x: -math.cos(x), 0.5)",
+              "expected": 0.7390851332,
+              "tolerance": 1e-7
+            },
+            {
+              "name": "Kořen exp(x) - 3x = 0 z x0 = 0.5",
+              "code": "halley_root(lambda x: math.exp(x) - 3 * x, lambda x: math.exp(x) - 3, lambda x: math.exp(x), 0.5)",
+              "expected": 0.6190612867,
+              "tolerance": 1e-7
+            }
+          ]
+        }
+      },
+      "hints": [
+        "Krok 1: V každé iteraci vyhodnoťte `fx = f(x)`, `dfx = df(x)` a `ddfx = ddf(x)`.",
+        "Krok 2: Jmenovatel je `denom = dfx^2 - 0.5 * fx * ddfx`, pak `x_new = x - (fx * dfx) / denom`.",
+        "Vysvětlení: Díky druhé derivaci klesá chyba kubicky — u $x^2 - 2 = 0$ stačí z $x_0 = 1{,}5$ pouhé 3 iterace pro plnou double přesnost."
+      ],
+      "explanation": "Halleyova metoda využívá 1. i 2. derivaci a pro jednoduchý kořen dosahuje kubické konvergence ($p = 3$)."
+    },
+    {
+      "id": "num-code-15",
+      "number": 15,
+      "type": "code_task",
+      "language": "r",
+      "title": "Přirozený kubický spline (S''(x₀) = S''(xₙ) = 0)",
+      "text": "Implementujte funkci `natural_cubic_spline(x_nodes, y_nodes, x0)`, která vyhodnotí **přirozený kubický spline** ($C^2$ s nulovou druhou derivací na krajích) procházející seřazenými uzly `(x_nodes, y_nodes)` v bodě `x0`. V R můžete použít vestavěnou funkci `splinefun(..., method = 'natural')` nebo sestavit tridiagonální soustavu pro momenty $M_i = S''(x_i)$.",
+      "formula": "S_i(x) = \\frac{M_i(x_{i+1}-x)^3 + M_{i+1}(x-x_i)^3}{6h_i} + \\left(y_i - \\frac{M_i h_i^2}{6}\\right)\\frac{x_{i+1}-x}{h_i} + \\left(y_{i+1} - \\frac{M_{i+1} h_i^2}{6}\\right)\\frac{x-x_i}{h_i}",
+      "starter_code": "natural_cubic_spline <- function(x_nodes, y_nodes, x0) {\n  # Vyhodnoťte přirozený kubický spline v bodě x0\n  \n}\n",
+      "solution_code": "natural_cubic_spline <- function(x_nodes, y_nodes, x0) {\n  sf <- splinefun(x_nodes, y_nodes, method = \"natural\")\n  sf(x0)\n}\n",
+      "produces_plot": false,
+      "visible_tests": [
+        {
+          "name": "Lineární data (0,1), (1,3), (2,5) v x0 = 1.5 -> 4.0",
+          "code": "natural_cubic_spline(c(0, 1, 2), c(1, 3, 5), 1.5)",
+          "expected": 4.0,
+          "tolerance": 1e-7
+        },
+        {
+          "name": "3 uzly (0,0), (1,1), (2,0) v x0 = 0.5 -> 0.6875",
+          "code": "natural_cubic_spline(c(0, 1, 2), c(0, 1, 0), 0.5)",
+          "expected": 0.6875,
+          "tolerance": 1e-7
+        }
+      ],
+      "hidden_tests": [
+        {
+          "name": "4 uzly (0,0), (1,1), (2,0), (3,1) v x0 = 0.5 -> 0.75",
+          "code": "natural_cubic_spline(c(0, 1, 2, 3), c(0, 1, 0, 1), 0.5)",
+          "expected": 0.75,
+          "tolerance": 1e-7
+        },
+        {
+          "name": "Přesný průchod uzlem x0 = 2.0 -> 0.0",
+          "code": "natural_cubic_spline(c(0, 1, 2, 3), c(0, 1, 0, 1), 2.0)",
+          "expected": 0.0,
+          "tolerance": 1e-8
+        }
+      ],
+      "languages": {
+        "r": {
+          "starter_code": "natural_cubic_spline <- function(x_nodes, y_nodes, x0) {\n  # Vyhodnoťte přirozený kubický spline v bodě x0\n  \n}\n",
+          "solution_code": "natural_cubic_spline <- function(x_nodes, y_nodes, x0) {\n  sf <- splinefun(x_nodes, y_nodes, method = \"natural\")\n  sf(x0)\n}\n",
+          "visible_tests": [
+            {
+              "name": "Lineární data (0,1), (1,3), (2,5) v x0 = 1.5 -> 4.0",
+              "code": "natural_cubic_spline(c(0, 1, 2), c(1, 3, 5), 1.5)",
+              "expected": 4.0,
+              "tolerance": 1e-7
+            },
+            {
+              "name": "3 uzly (0,0), (1,1), (2,0) v x0 = 0.5 -> 0.6875",
+              "code": "natural_cubic_spline(c(0, 1, 2), c(0, 1, 0), 0.5)",
+              "expected": 0.6875,
+              "tolerance": 1e-7
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "4 uzly (0,0), (1,1), (2,0), (3,1) v x0 = 0.5 -> 0.75",
+              "code": "natural_cubic_spline(c(0, 1, 2, 3), c(0, 1, 0, 1), 0.5)",
+              "expected": 0.75,
+              "tolerance": 1e-7
+            },
+            {
+              "name": "Přesný průchod uzlem x0 = 2.0 -> 0.0",
+              "code": "natural_cubic_spline(c(0, 1, 2, 3), c(0, 1, 0, 1), 2.0)",
+              "expected": 0.0,
+              "tolerance": 1e-8
+            }
+          ]
+        },
+        "python": {
+          "starter_code": "def natural_cubic_spline(x_nodes, y_nodes, x0):\n    # Sestavte tridiagonální soustavu pro M_i = S''(x_i) (M_0 = M_n = 0) a vyhodnoťte S(x0)\n    pass\n",
+          "solution_code": "def natural_cubic_spline(x_nodes, y_nodes, x0):\n    n = len(x_nodes) - 1\n    h = [x_nodes[i + 1] - x_nodes[i] for i in range(n)]\n    m_cnt = n - 1\n    M = [0.0] * (n + 1)\n    if m_cnt > 0:\n        a = [0.0] * m_cnt\n        b = [0.0] * m_cnt\n        c = [0.0] * m_cnt\n        d = [0.0] * m_cnt\n        for k in range(m_cnt):\n            i = k + 1\n            a[k] = h[i - 1]\n            b[k] = 2.0 * (h[i - 1] + h[i])\n            c[k] = h[i]\n            d[k] = 6.0 * ((y_nodes[i + 1] - y_nodes[i]) / h[i] - (y_nodes[i] - y_nodes[i - 1]) / h[i - 1])\n        for k in range(1, m_cnt):\n            w = a[k] / b[k - 1]\n            b[k] -= w * c[k - 1]\n            d[k] -= w * d[k - 1]\n        sol = [0.0] * m_cnt\n        sol[-1] = d[-1] / b[-1]\n        for k in range(m_cnt - 2, -1, -1):\n            sol[k] = (d[k] - c[k] * sol[k + 1]) / b[k]\n        for k in range(m_cnt):\n            M[k + 1] = sol[k]\n    idx = n - 1\n    for i in range(n):\n        if x_nodes[i] <= x0 <= x_nodes[i + 1]:\n            idx = i\n            break\n    hi = h[idx]\n    dx_r = x_nodes[idx + 1] - x0\n    dx_l = x0 - x_nodes[idx]\n    return (\n        (M[idx] * dx_r**3 + M[idx + 1] * dx_l**3) / (6.0 * hi)\n        + (y_nodes[idx] - M[idx] * hi**2 / 6.0) * (dx_r / hi)\n        + (y_nodes[idx + 1] - M[idx + 1] * hi**2 / 6.0) * (dx_l / hi)\n    )\n",
+          "visible_tests": [
+            {
+              "name": "Lineární data (0,1), (1,3), (2,5) v x0 = 1.5 -> 4.0",
+              "code": "natural_cubic_spline([0, 1, 2], [1, 3, 5], 1.5)",
+              "expected": 4.0,
+              "tolerance": 1e-7
+            },
+            {
+              "name": "3 uzly (0,0), (1,1), (2,0) v x0 = 0.5 -> 0.6875",
+              "code": "natural_cubic_spline([0, 1, 2], [0, 1, 0], 0.5)",
+              "expected": 0.6875,
+              "tolerance": 1e-7
+            }
+          ],
+          "hidden_tests": [
+            {
+              "name": "4 uzly (0,0), (1,1), (2,0), (3,1) v x0 = 0.5 -> 0.75",
+              "code": "natural_cubic_spline([0, 1, 2, 3], [0, 1, 0, 1], 0.5)",
+              "expected": 0.75,
+              "tolerance": 1e-7
+            },
+            {
+              "name": "Přesný průchod uzlem x0 = 2.0 -> 0.0",
+              "code": "natural_cubic_spline([0, 1, 2, 3], [0, 1, 0, 1], 2.0)",
+              "expected": 0.0,
+              "tolerance": 1e-8
+            }
+          ]
+        }
+      },
+      "hints": [
+        "Krok 1: V R stačí `splinefun(x_nodes, y_nodes, method = 'natural')(x0)`.",
+        "Krok 2: V Pythonu sestavte tridiagonální soustavu pro vnitřní druhé derivace $M_1, \\dots, M_{n-1}$ (s $M_0 = M_n = 0$): $h_{i-1}M_{i-1} + 2(h_{i-1}+h_i)M_i + h_i M_{i+1} = 6\\left(\\frac{y_{i+1}-y_i}{h_i} - \\frac{y_i-y_{i-1}}{h_{i-1}}\\right)$.",
+        "Vysvětlení: Po vyřešení tridiagonální soustavy Thomasovým algoritmem najděte interval $[x_i, x_{i+1}]$ obsahující `x0` a vyhodnoťte kubický vzorec."
+      ],
+      "explanation": "Přirozený kubický spline řeší tridiagonální soustavu v čase $O(n)$, zaručuje hladkost $C^2$ a na rozdíl od globálního interpolačního polynomu netrpí Rungeho oscilacemi."
     }
   ]
 }

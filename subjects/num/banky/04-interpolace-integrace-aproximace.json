@@ -183,6 +183,44 @@
         "Vysvětlení: Po částech interpolace (lineární pro jednoduchost a zaručenou monotonii, nebo spliny pro hladkost) je pro 50 ekvidistantních bodů ideální."
       ],
       "explanation": "Globální polynom stupně 49 na rovnoměrných uzlech trpí silnými oscilacemi u krajů. Po částech interpolace (lomená čára či spline) pracuje lokálně s nízkým stupněm a zaručuje stabilní výsledky."
+    },
+    {
+      "id": "num-04-q19",
+      "number": 11,
+      "type": "choice",
+      "text": "Jakou třídu hladkosti a okrajovou podmínku splňuje **přirozený kubický spline** $S(x)$ na uzlech $x_0 < x_1 < \\dots < x_n$?",
+      "options": {
+        "A": "Je spojitý pouze v hodnotách ($C^0$) a na krajích platí $S(x_0) = S(x_n) = 0$",
+        "B": "Je dvakrát spojitě diferencovatelný ($C^2$ — v uzlech navazují $S, S', S''$) a na krajích má nulovou druhou derivaci $S''(x_0) = S''(x_n) = 0$",
+        "C": "Je to jediný globální polynom stupně $n$",
+        "D": "Na krajích má nekonečnou derivaci a ve vnitřních uzlech skoky"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Na každém ze $n$ podintervalů má kubika 4 koeficienty (celkem $4n$ neznámých).",
+        "Krok 2: Průchod uzly + spojitost $S, S', S''$ ve vnitřních uzlech dává $4n - 2$ rovnic; chybějící 2 podmínky u přirozeného splinu jsou $S''(x_0) = 0$ a $S''(x_n) = 0$.",
+        "Vysvětlení: Fyzikálně odpovídá pružné liště volně položené na uzlech bez ohybového momentu na koncích."
+      ],
+      "explanation": "Přirozený kubický spline je třídy $C^2$ (spojitá funkce, 1. i 2. derivace) s okrajovou podmínkou nulové křivosti $S''(x_0) = S''(x_n) = 0$, takže netrpí Rungeho oscilacemi."
+    },
+    {
+      "id": "num-04-q20",
+      "number": 12,
+      "type": "choice",
+      "text": "Jaký tvar má soustava lineárních rovnic pro neznámé druhé derivace $M_i = S''(x_i)$ při konstrukci **přirozeného kubického splinu**?",
+      "options": {
+        "A": "Hustá Vandermondova matice s exponenciálním číslem podmíněnosti",
+        "B": "Symetrická, ostře diagonálně dominantní **tridiagonální soustava**, kterou lze vyřešit v lineárním čase $O(n)$ (Thomasův algoritmus)",
+        "C": "Nelineární soustava řešitelná pouze bisekcí",
+        "D": "Singulární matice bez jednoznačného řešení"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Rovnice pro $M_i$ ve vnitřním uzlu $x_i$ spojuje pouze sousední hodnoty $M_{i-1}, M_i, M_{i+1}$.",
+        "Krok 2: Na diagonále je $2(h_{i-1} + h_i)$ a vedle diagonály jen $h_{i-1}$ a $h_i$ — tedy ostrá diagonální dominance.",
+        "Vysvětlení: Tridiagonální soustava se řeší v čase $O(n)$ (Thomasův algoritmus) a vždy má jediné stabilní řešení."
+      ],
+      "explanation": "Rovnice pro momenty $M_i = S''(x_i)$ tvoří ostře diagonálně dominantní tridiagonální soustavu, která se řeší rychle a stabilně v čase $O(n)$."
     }
   ]
 }
