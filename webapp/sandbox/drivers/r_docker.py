@@ -22,12 +22,16 @@ from ..base import (
     PlotArtifact,
     TestResult,
     ValidationError,
+    communicate_bounded,
     compute_table_diff,
 )
 
 DEFAULT_R_IMAGE = "r-base:4.4.1"
 IMAGE_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9._:/-]{0,127}$")
 RESULT_SENTINEL = "__UNI_SANDBOX_JSON_START__"
+# Enough for up to 8 base64-encoded 512 KB PNG plots plus 32 KB stdout JSON.
+_R_MAX_PIPE_STDOUT_BYTES = 6 * 1024 * 1024
+_R_MAX_PIPE_STDERR_BYTES = 64 * 1024
 
 # Pure base-R harness: zero third-party R packages required.
 # Reads JSON payload from stdin, runs student code in a clean child env,
@@ -332,9 +336,11 @@ class RDockerDriver(LanguageDriver):
         self,
         container_name: str,
         docker_bin: str = "docker",
+        sentinel: str = RESULT_SENTINEL,
     ) -> list[str]:
         """Construct the strictly hardened ``docker run`` argument vector."""
         tmpfs_spec = "/tmp:rw,noexec,nosuid,size=32m"  # noqa: S108
+        harness_code = _R_HARNESS_TEMPLATE.replace(RESULT_SENTINEL, sentinel)
         return [
             docker_bin,
             "run",
@@ -368,7 +374,7 @@ class RDockerDriver(LanguageDriver):
             "--no-save",
             "--no-restore",
             "-e",
-            _R_HARNESS_TEMPLATE,
+            harness_code,
         ]
 
     async def _force_remove_container(
@@ -401,7 +407,10 @@ class RDockerDriver(LanguageDriver):
             )
 
         container_name = f"uni-sbx-r-{secrets.token_hex(8)}"
-        cmd = self.build_docker_command(container_name, docker_bin=docker_bin)
+        run_sentinel = f"__UNI_SBX_R_{secrets.token_hex(12)}__"
+        cmd = self.build_docker_command(
+            container_name, docker_bin=docker_bin, sentinel=run_sentinel
+        )
         stdin_payload = _build_r_stdin_payload(request)
         started = time.monotonic()
 
@@ -422,9 +431,12 @@ class RDockerDriver(LanguageDriver):
             )
 
         try:
-            raw_out, raw_err = await asyncio.wait_for(
-                proc.communicate(input=stdin_payload),
-                timeout=request.timeout_sec,
+            raw_out, raw_err, exceeded = await communicate_bounded(
+                proc,
+                stdin_payload,
+                timeout_sec=request.timeout_sec,
+                max_stdout_bytes=_R_MAX_PIPE_STDOUT_BYTES,
+                max_stderr_bytes=_R_MAX_PIPE_STDERR_BYTES,
             )
         except TimeoutError:
             try:
@@ -444,10 +456,20 @@ class RDockerDriver(LanguageDriver):
             )
 
         elapsed_ms = int((time.monotonic() - started) * 1000)
+        if exceeded:
+            await self._force_remove_container(docker_bin, container_name)
+            return ExecutionResult(
+                ok=False,
+                status="error",
+                stderr="Výstup sandboxu překročil maximální povolenou velikost.",
+                elapsed_ms=elapsed_ms,
+                driver=self.driver_id,
+            )
+
         stdout_text = raw_out.decode("utf-8", errors="replace")
         stderr_text = raw_err.decode("utf-8", errors="replace")
 
-        if proc.returncode != 0 and RESULT_SENTINEL not in stdout_text:
+        if proc.returncode != 0 and run_sentinel not in stdout_text:
             low_err = stderr_text.lower()
             if "cannot connect to the docker daemon" in low_err or (
                 "unable to find image" in low_err
@@ -473,6 +495,7 @@ class RDockerDriver(LanguageDriver):
             stderr_text=stderr_text,
             request=request,
             elapsed_ms=elapsed_ms,
+            sentinel=run_sentinel,
         )
 
     def _parse_harness_output(
@@ -481,8 +504,9 @@ class RDockerDriver(LanguageDriver):
         stderr_text: str,
         request: ExecutionRequest,
         elapsed_ms: int,
+        sentinel: str = RESULT_SENTINEL,
     ) -> ExecutionResult:
-        if RESULT_SENTINEL not in stdout_text:
+        if sentinel not in stdout_text:
             return ExecutionResult(
                 ok=False,
                 status="error",
@@ -492,7 +516,7 @@ class RDockerDriver(LanguageDriver):
                 driver=self.driver_id,
             )
 
-        _, json_tail = stdout_text.rsplit(RESULT_SENTINEL, 1)
+        _, json_tail = stdout_text.rsplit(sentinel, 1)
         try:
             parsed = json.loads(json_tail.strip())
         except json.JSONDecodeError:

@@ -81,6 +81,7 @@ def main() -> int:
         print(f"\n{SENTINEL}\n" + json.dumps({"ok": False, "stderr": str(exc)}))
         return 1
 
+    run_sentinel = str(payload.pop("sentinel", SENTINEL) or SENTINEL)
     work_dir = "/tmp/work"
     shutil.copytree("/opt/sandbox-project", work_dir, dirs_exist_ok=True)
 
@@ -144,7 +145,7 @@ def main() -> int:
         "stderr": err_text if not ok else "",
         "tests": results,
     }
-    print(f"\n{SENTINEL}\n" + json.dumps(summary, ensure_ascii=False))
+    print(f"\n{run_sentinel}\n" + json.dumps(summary, ensure_ascii=False))
     return 0 if ok else 1
 
 

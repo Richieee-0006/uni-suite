@@ -315,6 +315,19 @@ def isolated_env(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, A
     )
 
     db.init_db(db_file)
+
+    from webapp.routers import auth as auth_router
+    from webapp.routers import feedback as feedback_router
+    from webapp.routers import sandbox as sandbox_router
+    from webapp.routers import study as study_router
+
+    auth_router.login_rate_limiter.reset()
+    auth_router.register_rate_limiter.reset()
+    auth_router.trial_rate_limiter.reset()
+    study_router.automata_rate_limiter.reset()
+    feedback_router.feedback_rate_limiter.reset()
+    sandbox_router.sandbox_rate_limiter.reset()
+
     return {
         "db_path": db_file,
         "subjects_dir": subjects_root,

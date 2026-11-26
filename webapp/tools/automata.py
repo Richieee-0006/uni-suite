@@ -9,6 +9,9 @@ from typing import Any
 MAX_STATES = 64
 MAX_SUBSET_STATES = 256
 MAX_WORD_LEN = 256
+MAX_ALPHABET = 16
+MAX_SYMBOL_LEN = 16
+MAX_TRANSITIONS = 512
 _EPSILON_TOKENS = frozenset({"", "ε", "eps", "epsilon", "λ"})
 
 
@@ -57,10 +60,17 @@ def parse_automaton(spec: dict[str, Any]) -> Automaton:
     alphabet_list: list[str] = []
     for sym in raw_alphabet:
         s = str(sym)
+        if len(s) > MAX_SYMBOL_LEN:
+            raise ValueError(f"Symbol abecedy může mít nejvýše {MAX_SYMBOL_LEN} znaků.")
         if not _is_epsilon(s) and s not in alphabet_list:
             alphabet_list.append(s)
+            if len(alphabet_list) > MAX_ALPHABET:
+                raise ValueError(
+                    f"Abeceda může mít nejvýše {MAX_ALPHABET} symbolů."
+                )
 
     trans_map: dict[tuple[str, str], set[str]] = {}
+    trans_count = 0
     raw_transitions = spec.get("transitions") or spec.get("delta") or {}
 
     if isinstance(raw_transitions, dict):
@@ -70,13 +80,30 @@ def parse_automaton(spec: dict[str, Any]) -> Automaton:
                 continue
             for sym, dst in edges.items():
                 sym_s = "" if _is_epsilon(str(sym)) else str(sym)
+                if len(sym_s) > MAX_SYMBOL_LEN:
+                    raise ValueError(
+                        f"Symbol abecedy může mít nejvýše {MAX_SYMBOL_LEN} znaků."
+                    )
                 if sym_s and sym_s not in alphabet_list:
                     alphabet_list.append(sym_s)
+                    if len(alphabet_list) > MAX_ALPHABET:
+                        raise ValueError(
+                            f"Abeceda může mít nejvýše {MAX_ALPHABET} symbolů."
+                        )
                 targets = dst if isinstance(dst, list) else [dst]
                 for target in targets:
                     t_s = str(target).strip()
                     if t_s in state_set:
-                        trans_map.setdefault((src_s, sym_s), set()).add(t_s)
+                        bucket = trans_map.setdefault((src_s, sym_s), set())
+                        if t_s not in bucket:
+                            trans_count += 1
+                            if trans_count > MAX_TRANSITIONS:
+                                msg = (
+                                    f"Automat může mít nejvýše "
+                                    f"{MAX_TRANSITIONS} přechodů."
+                                )
+                                raise ValueError(msg)
+                            bucket.add(t_s)
     elif isinstance(raw_transitions, list):
         for edge in raw_transitions:
             if not isinstance(edge, dict):
@@ -85,10 +112,25 @@ def parse_automaton(spec: dict[str, Any]) -> Automaton:
             dst_s = str(edge.get("to") or edge.get("dst") or "").strip()
             raw_sym = edge.get("symbol") if "symbol" in edge else edge.get("on", "")
             sym_s = "" if _is_epsilon(str(raw_sym)) else str(raw_sym)
+            if len(sym_s) > MAX_SYMBOL_LEN:
+                raise ValueError(
+                    f"Symbol abecedy může mít nejvýše {MAX_SYMBOL_LEN} znaků."
+                )
             if src_s in state_set and dst_s in state_set:
                 if sym_s and sym_s not in alphabet_list:
                     alphabet_list.append(sym_s)
-                trans_map.setdefault((src_s, sym_s), set()).add(dst_s)
+                    if len(alphabet_list) > MAX_ALPHABET:
+                        raise ValueError(
+                            f"Abeceda může mít nejvýše {MAX_ALPHABET} symbolů."
+                        )
+                bucket = trans_map.setdefault((src_s, sym_s), set())
+                if dst_s not in bucket:
+                    trans_count += 1
+                    if trans_count > MAX_TRANSITIONS:
+                        raise ValueError(
+                            f"Automat může mít nejvýše {MAX_TRANSITIONS} přechodů."
+                        )
+                    bucket.add(dst_s)
 
     frozen_trans = {k: frozenset(v) for k, v in trans_map.items()}
     return Automaton(
@@ -190,6 +232,10 @@ def are_equivalent(spec_a: dict[str, Any], spec_b: dict[str, Any]) -> dict[str, 
     aut_b = parse_automaton(spec_b)
 
     union_alphabet = tuple(dict.fromkeys((*aut_a.alphabet, *aut_b.alphabet)))
+    if len(union_alphabet) > MAX_ALPHABET:
+        raise ValueError(
+            f"Sjednocená abeceda může mít nejvýše {MAX_ALPHABET} symbolů."
+        )
     start_a, acc_a, trans_a = nfa_to_complete_dfa(aut_a, union_alphabet)
     start_b, acc_b, trans_b = nfa_to_complete_dfa(aut_b, union_alphabet)
 

@@ -14,6 +14,7 @@ import db
 from webapp.config import PUBLIC_DIR, load_settings
 from webapp.cookie_utils import is_https_request
 from webapp.csrf import attach_csrf_cookie_if_needed, get_or_create_csrf_token
+from webapp.sessions import SESSION_COOKIE_NAME, TRIAL_COOKIE_NAME
 from webapp.routers import (
     admin,
     auth,
@@ -122,6 +123,13 @@ def create_app() -> FastAPI:
 
         if any(request.url.path.startswith(prefix) for prefix in _NO_STORE_PREFIXES):
             response.headers.setdefault("Cache-Control", "no-store")
+        elif not request.url.path.startswith("/static/") and (
+            SESSION_COOKIE_NAME in request.cookies
+            or TRIAL_COOKIE_NAME in request.cookies
+            or "set-cookie" in response.headers
+            or response.headers.get("content-type", "").startswith("text/html")
+        ):
+            response.headers.setdefault("Cache-Control", "private, no-store")
 
         return response
 

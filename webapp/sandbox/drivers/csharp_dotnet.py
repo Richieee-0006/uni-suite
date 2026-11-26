@@ -17,12 +17,15 @@ from ..base import (
     LanguageDriver,
     TestResult,
     ValidationError,
+    communicate_bounded,
 )
 from .r_docker import _stripped_host_env
 
 DEFAULT_CSHARP_IMAGE = "uni-sandbox-csharp:latest"
 IMAGE_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9._:/-]{0,127}$")
 RESULT_SENTINEL = "__UNI_CSHARP_JSON_START__"
+_CS_MAX_PIPE_STDOUT_BYTES = 256 * 1024
+_CS_MAX_PIPE_STDERR_BYTES = 64 * 1024
 
 
 class CSharpDotnetDriver(LanguageDriver):
@@ -131,11 +134,13 @@ class CSharpDotnetDriver(LanguageDriver):
             )
 
         container_name = f"uni-sbx-cs-{secrets.token_hex(8)}"
+        run_sentinel = f"__UNI_SBX_CS_{secrets.token_hex(12)}__"
         cmd = self.build_docker_command(container_name, docker_bin=docker_bin)
         payload = json.dumps(
             {
                 "code": request.code,
                 "tests": [tc.to_dict() for tc in request.tests],
+                "sentinel": run_sentinel,
             },
             ensure_ascii=False,
         ).encode("utf-8")
@@ -158,9 +163,12 @@ class CSharpDotnetDriver(LanguageDriver):
             )
 
         try:
-            raw_out, raw_err = await asyncio.wait_for(
-                proc.communicate(input=payload),
-                timeout=request.timeout_sec,
+            raw_out, raw_err, exceeded = await communicate_bounded(
+                proc,
+                payload,
+                timeout_sec=request.timeout_sec,
+                max_stdout_bytes=_CS_MAX_PIPE_STDOUT_BYTES,
+                max_stderr_bytes=_CS_MAX_PIPE_STDERR_BYTES,
             )
         except TimeoutError:
             try:
@@ -180,11 +188,21 @@ class CSharpDotnetDriver(LanguageDriver):
             )
 
         elapsed_ms = int((time.monotonic() - started) * 1000)
+        if exceeded:
+            await self._force_remove_container(docker_bin, container_name)
+            return ExecutionResult(
+                ok=False,
+                status="error",
+                stderr="Výstup sandboxu překročil maximální povolenou velikost.",
+                elapsed_ms=elapsed_ms,
+                driver=self.driver_id,
+            )
+
         stdout_text = raw_out.decode("utf-8", errors="replace")
         stderr_text = raw_err.decode("utf-8", errors="replace")
 
-        if RESULT_SENTINEL in stdout_text:
-            _, tail = stdout_text.rsplit(RESULT_SENTINEL, 1)
+        if run_sentinel in stdout_text:
+            _, tail = stdout_text.rsplit(run_sentinel, 1)
             try:
                 parsed = json.loads(tail.strip())
                 tests_out = [

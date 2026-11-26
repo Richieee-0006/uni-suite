@@ -20,7 +20,7 @@ from webapp.sandbox.base import (
     ValidationError,
 )
 from webapp.sandbox.registry import default_registry
-from webapp.sessions import compute_client_fingerprint, get_current_user
+from webapp.sessions import get_client_ip, get_current_user
 
 MAX_BODY_BYTES: int = 64 * 1024  # 64 KB raw HTTP request cap
 
@@ -32,7 +32,8 @@ _limits = SandboxLimits()
 def _rate_limit_key(request: Request, user: dict[str, Any]) -> str:
     if user.get("is_authenticated") and user.get("id") is not None:
         return f"user:{int(user['id'])}"
-    return f"trial:{compute_client_fingerprint(request)}"
+    # Key trial runs strictly by IP so User-Agent rotation cannot bypass quotas.
+    return f"trial:ip:{get_client_ip(request)}"
 
 
 def _error_payload(status: str, message: str) -> dict[str, Any]:

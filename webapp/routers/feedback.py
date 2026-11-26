@@ -14,7 +14,7 @@ from fastapi.responses import JSONResponse
 from webapp.config import get_github_issues_config
 from webapp.csrf import verify_csrf
 from webapp.sandbox.base import SlidingWindowRateLimiter
-from webapp.sessions import compute_client_fingerprint, get_current_user
+from webapp.sessions import get_client_ip, get_current_user
 
 MAX_BODY_BYTES: int = 16 * 1024
 TITLE_MIN_LEN: int = 4
@@ -37,7 +37,8 @@ feedback_rate_limiter = SlidingWindowRateLimiter(max_requests=5, window_seconds=
 def _rate_limit_key(request: Request, user: dict[str, Any] | None) -> str:
     if user and user.get("is_authenticated") and user.get("id") is not None:
         return f"feedback:user:{int(user['id'])}"
-    return f"feedback:guest:{compute_client_fingerprint(request)}"
+    # Key guests strictly by IP so User-Agent rotation cannot bypass quotas.
+    return f"feedback:ip:{get_client_ip(request)}"
 
 
 def _clean_single_line(raw: Any) -> str:
@@ -118,6 +119,16 @@ async def _create_github_issue(
 @router.post("", dependencies=[Depends(verify_csrf)])
 async def submit_feedback(request: Request) -> JSONResponse:
     """Validate user feedback and forward it to GitHub Issues."""
+    content_length = request.headers.get("content-length")
+    if content_length is not None:
+        try:
+            if int(content_length) > MAX_BODY_BYTES:
+                raise HTTPException(
+                    status_code=413, detail="Požadavek je příliš velký."
+                )
+        except ValueError:
+            pass
+
     raw_body = await request.body()
     if len(raw_body) > MAX_BODY_BYTES:
         raise HTTPException(status_code=413, detail="Požadavek je příliš velký.")
