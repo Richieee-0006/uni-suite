@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import re
 from typing import Any
 from urllib.parse import urlsplit
@@ -12,10 +13,12 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 import db
 from webapp.csrf import verify_csrf
 from webapp.routers.portal import build_base_context, get_public_templates
+from webapp.sandbox.base import SlidingWindowRateLimiter
 from webapp.sessions import (
     clear_all_sessions,
     create_trial_session,
     create_user_session,
+    get_client_ip,
     get_current_user,
 )
 from webapp.subjects import load_site_meta
@@ -23,6 +26,10 @@ from webapp.subjects import load_site_meta
 router = APIRouter(dependencies=[Depends(verify_csrf)])
 
 _SOURCE_RE = re.compile(r"^[a-z0-9_-]{1,24}$")
+
+login_rate_limiter = SlidingWindowRateLimiter(max_requests=10, window_seconds=300.0)
+register_rate_limiter = SlidingWindowRateLimiter(max_requests=5, window_seconds=600.0)
+trial_rate_limiter = SlidingWindowRateLimiter(max_requests=15, window_seconds=300.0)
 
 
 def validate_next_url(raw: str | None) -> str:
@@ -109,6 +116,23 @@ def login_submit(
 ) -> Any:
     safe_next = validate_next_url(next_param)
     safe_from = _sanitize_from_source(from_source)
+
+    allowed, retry_after = login_rate_limiter.check(
+        f"auth:login:{get_client_ip(request)}"
+    )
+    if not allowed:
+        retry_sec = max(1, math.ceil(retry_after))
+        resp = _render_auth(
+            request,
+            mode="login",
+            error=f"Příliš mnoho pokusů o přihlášení. Zkus to za {retry_sec} s.",
+            next_url=safe_next,
+            from_source=safe_from,
+            status_code=429,
+        )
+        resp.headers["Retry-After"] = str(retry_sec)
+        return resp
+
     user = db.authenticate_user(username, password)
     if user is None:
         return _render_auth(
@@ -150,6 +174,23 @@ def register_submit(
 ) -> Any:
     safe_next = validate_next_url(next_param)
     safe_from = _sanitize_from_source(from_source)
+
+    allowed, retry_after = register_rate_limiter.check(
+        f"auth:register:{get_client_ip(request)}"
+    )
+    if not allowed:
+        retry_sec = max(1, math.ceil(retry_after))
+        resp = _render_auth(
+            request,
+            mode="register",
+            error=f"Příliš mnoho pokusů o registraci. Zkus to za {retry_sec} s.",
+            next_url=safe_next,
+            from_source=safe_from,
+            status_code=429,
+        )
+        resp.headers["Retry-After"] = str(retry_sec)
+        return resp
+
     if password_confirm is not None and password != password_confirm:
         return _render_auth(
             request,
@@ -184,7 +225,30 @@ def trial_start(
 ) -> Any:
     safe_next = validate_next_url(next_param)
     accept = request.headers.get("accept", "")
-    if "application/json" in accept and "text/html" not in accept:
+    wants_json = "application/json" in accept and "text/html" not in accept
+
+    allowed, retry_after = trial_rate_limiter.check(
+        f"auth:trial:{get_client_ip(request)}"
+    )
+    if not allowed:
+        retry_sec = max(1, math.ceil(retry_after))
+        if wants_json:
+            return JSONResponse(
+                {"detail": f"Příliš mnoho požadavků. Zkus to za {retry_sec} s."},
+                status_code=429,
+                headers={"Retry-After": str(retry_sec)},
+            )
+        resp = _render_auth(
+            request,
+            mode="login",
+            error=f"Příliš mnoho požadavků. Zkus to za {retry_sec} s.",
+            next_url=safe_next,
+            status_code=429,
+        )
+        resp.headers["Retry-After"] = str(retry_sec)
+        return resp
+
+    if wants_json:
         response: Any = JSONResponse({"ok": True, "trial": True, "next": safe_next})
     else:
         response = RedirectResponse(url=safe_next, status_code=303)

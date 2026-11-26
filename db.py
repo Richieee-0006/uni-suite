@@ -25,6 +25,12 @@ _ARGON2_HASHER = PasswordHasher(
     type=Type.ID,
 )
 
+# Precomputed Argon2id digest matching _ARGON2_HASHER for constant-time misses.
+_TIMING_DUMMY_DIGEST = (
+    "$argon2id$v=19$m=65536,t=3,p=4$"
+    "5aiDFe7Yn85V8Q20YSoQLw$ZqDGSYItGS66nOikWcariG+0S3BDEkmPukxPxR0+uMs"
+)
+
 USERNAME_RE = re.compile(r"^[A-Za-z0-9_.-]{3,32}$")
 MIN_PASSWORD_LEN = 8
 MAX_PASSWORD_LEN = 128
@@ -280,6 +286,8 @@ def authenticate_user(
             (cleaned_user,),
         ).fetchone()
         if row is None:
+            # Equalize response timing with a real Argon2id verification pass.
+            verify_password(password, _TIMING_DUMMY_DIGEST)
             return None
 
         valid, needs_rehash = verify_password(password, str(row["password_hash"]))

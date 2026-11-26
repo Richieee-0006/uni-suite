@@ -38,6 +38,75 @@ TRUNCATION_SUFFIX: bytes = b"\n...[zkraceno na limit 32 KB]"
 EXECUTION_SEMAPHORE: asyncio.Semaphore = asyncio.Semaphore(MAX_CONCURRENT_RUNS)
 
 
+async def _read_stream_bounded(
+    stream: asyncio.StreamReader | None,
+    max_bytes: int,
+    on_exceed: Callable[[], None],
+) -> tuple[bytes, bool]:
+    if stream is None:
+        return b"", False
+    buf = bytearray()
+    exceeded = False
+    while True:
+        chunk = await stream.read(8192)
+        if not chunk:
+            break
+        remaining = max_bytes - len(buf)
+        if remaining > 0:
+            buf.extend(chunk[:remaining])
+        if len(chunk) > remaining:
+            exceeded = True
+            on_exceed()
+            break
+    return bytes(buf), exceeded
+
+
+async def communicate_bounded(
+    proc: asyncio.subprocess.Process,
+    stdin_data: bytes,
+    *,
+    timeout_sec: float,
+    max_stdout_bytes: int,
+    max_stderr_bytes: int,
+) -> tuple[bytes, bytes, bool]:
+    """Send stdin and read stdout/stderr with hard memory caps and wall timeout."""
+    killed_for_cap = False
+
+    def _kill_on_cap() -> None:
+        nonlocal killed_for_cap
+        if not killed_for_cap:
+            killed_for_cap = True
+            try:
+                proc.kill()
+            except ProcessLookupError:
+                pass
+
+    async def _write_stdin() -> None:
+        if proc.stdin is None:
+            return
+        try:
+            proc.stdin.write(stdin_data)
+            await proc.stdin.drain()
+        except (BrokenPipeError, ConnectionResetError):
+            pass
+        finally:
+            try:
+                proc.stdin.close()
+            except OSError:
+                pass
+
+    async def _run() -> tuple[bytes, bytes, bool]:
+        _, (out_b, out_over), (err_b, err_over) = await asyncio.gather(
+            _write_stdin(),
+            _read_stream_bounded(proc.stdout, max_stdout_bytes, _kill_on_cap),
+            _read_stream_bounded(proc.stderr, max_stderr_bytes, _kill_on_cap),
+        )
+        await proc.wait()
+        return out_b, err_b, (out_over or err_over or killed_for_cap)
+
+    return await asyncio.wait_for(_run(), timeout=timeout_sec)
+
+
 class SandboxError(Exception):
     """Base exception for sandbox failures."""
 

@@ -4,10 +4,13 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from pathlib import Path
 from typing import Any
 
+import anyio
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi.responses import JSONResponse
 
 import db
 from webapp import config as cfg
@@ -21,7 +24,8 @@ from webapp.generators import (
     parse_generated_qid,
     reconstruct_generated_question,
 )
-from webapp.sessions import get_current_user, is_admin_user
+from webapp.sandbox.base import SlidingWindowRateLimiter
+from webapp.sessions import get_client_ip, get_current_user, is_admin_user
 from webapp.tools import (
     SUPPORTED_TOOLS,
     are_equivalent,
@@ -36,6 +40,9 @@ from webapp.tools import (
 from webapp.verifiers import default_verifier_registry
 
 router = APIRouter(tags=["study"])
+
+MAX_AUTOMATA_BODY_BYTES = 16 * 1024
+automata_rate_limiter = SlidingWindowRateLimiter(max_requests=30, window_seconds=60.0)
 
 ALLOWED_MODES = frozenset(
     {
@@ -796,14 +803,43 @@ async def api_subject_tool_get(
     return get_automata_tool_data(preset_id=preset, word=word)
 
 
-@router.post("/api/{slug}/tools/automata", dependencies=[Depends(verify_csrf)])
-async def api_subject_tool_automata_post(slug: str, request: Request) -> dict[str, Any]:
+@router.post(
+    "/api/{slug}/tools/automata",
+    dependencies=[Depends(verify_csrf)],
+    response_model=None,
+)
+async def api_subject_tool_automata_post(slug: str, request: Request) -> Any:
     """Simulate a custom DFA/NFA or test equivalence between two automata."""
     _require_visible_local_subject(slug, request)
 
+    content_length = request.headers.get("content-length")
+    if content_length is not None:
+        try:
+            if int(content_length) > MAX_AUTOMATA_BODY_BYTES:
+                raise HTTPException(
+                    status_code=413, detail="Požadavek je příliš velký."
+                )
+        except ValueError:
+            pass
+
+    raw_body = await request.body()
+    if len(raw_body) > MAX_AUTOMATA_BODY_BYTES:
+        raise HTTPException(status_code=413, detail="Požadavek je příliš velký.")
+
+    allowed, retry_after = automata_rate_limiter.check(
+        f"automata:{get_client_ip(request)}"
+    )
+    if not allowed:
+        retry_sec = max(1, math.ceil(retry_after))
+        return JSONResponse(
+            {"detail": f"Příliš mnoho požadavků. Zkus to za {retry_sec} s."},
+            status_code=429,
+            headers={"Retry-After": str(retry_sec)},
+        )
+
     try:
-        body = await request.json()
-    except ValueError as exc:
+        body = json.loads(raw_body.decode("utf-8"))
+    except (UnicodeDecodeError, ValueError) as exc:
         raise HTTPException(status_code=400, detail="Neplatný JSON požadavek.") from exc
     if not isinstance(body, dict):
         raise HTTPException(status_code=400, detail="Požadavek musí být JSON objekt.")
@@ -811,19 +847,23 @@ async def api_subject_tool_automata_post(slug: str, request: Request) -> dict[st
     action = str(body.get("action") or "simulate").strip().lower()
     try:
         if action == "equivalence":
+            res = await anyio.to_thread.run_sync(
+                are_equivalent,
+                body.get("automaton_a") or {},
+                body.get("automaton_b") or {},
+            )
             return {
                 "tool": "automata",
                 "action": "equivalence",
-                **are_equivalent(
-                    body.get("automaton_a") or {}, body.get("automaton_b") or {}
-                ),
+                **res,
             }
         spec = body.get("automaton") or body.get("spec") or {}
         word = str(body.get("word") if body.get("word") is not None else "")
+        res = await anyio.to_thread.run_sync(simulate_automaton, spec, word)
         return {
             "tool": "automata",
             "action": "simulate",
-            **simulate_automaton(spec, word),
+            **res,
         }
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
