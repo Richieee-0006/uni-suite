@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
-  <link rel="stylesheet" href="/static/css/tokens.css">
-  <link rel="stylesheet" href="/static/css/portal.css">
+  <link rel="stylesheet" href="/static/css/tokens.css?v={{ asset_v or '1' }}">
+  <link rel="stylesheet" href="/static/css/portal.css?v={{ asset_v or '1' }}">
 {%- block extra_head %}{% endblock %}
 </head>
 <body>
@@ -28,7 +28,7 @@
   <a href="#main-content" class="skip-link visually-hidden">Přeskočit na obsah</a>
 
   <div class="app-shell">
-    <aside id="nav-rail" class="nav-rail" popover="manual">
+    <aside id="nav-rail" class="nav-rail" popover="manual" aria-label="Hlavní navigace">
       <div id="rail-scroller" class="rail-scroller">
         <div class="rail-panel">
 {%- block rail_content %}
