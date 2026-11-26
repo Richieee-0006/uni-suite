@@ -42,6 +42,16 @@
           "name": "Prosté iterace (Banachova podmínka)",
           "latex": "x_{k+1} = \\varphi(x_k), \\qquad |\\varphi'(x)| \\le q < 1",
           "note": "Postačující podmínka lineární konvergence k jedinému pevnému bodu."
+        },
+        {
+          "name": "Steffensenova metoda (kvadratická bez derivace)",
+          "latex": "x_{k+1} = x_k - \\frac{f(x_k)}{g(x_k)}, \\qquad g(x_k) = \\frac{f(x_k + f(x_k)) - f(x_k)}{f(x_k)}",
+          "note": "Nahrazuje $f'(x_k)$ diferencí s krokem $h_k = f(x_k)$; kvadratická konvergence."
+        },
+        {
+          "name": "Halleyova metoda (kubická konvergence)",
+          "latex": "x_{k+1} = x_k - \\frac{f(x_k)\\,f'(x_k)}{[f'(x_k)]^2 - \\tfrac{1}{2}f(x_k)\\,f''(x_k)}",
+          "note": "Řád konvergence $p = 3$; vyžaduje první i druhou derivaci."
         }
       ]
     },
@@ -112,6 +122,11 @@
           "name": "Rombergova kvadratura (Richardsonova extrapolace)",
           "latex": "R_{k,j} = \\frac{4^j R_{k,j-1} - R_{k-1,j-1}}{4^j - 1}, \\qquad R_{k,1} = \\frac{4 T(h/2) - T(h)}{3}",
           "note": "Postupně eliminuje sudé členy chyby $O(h^2), O(h^4), O(h^6), \\dots$"
+        },
+        {
+          "name": "Gaussova 2bodová kvadratura a transformace na [−1, 1]",
+          "latex": "\\int_a^b f(x)\\,dx = \\frac{b-a}{2}\\int_{-1}^{1} f\\!\\left(\\frac{b-a}{2}t + \\frac{a+b}{2}\\right)dt \\approx \\frac{b-a}{2}\\left[f(x_1) + f(x_2)\\right]",
+          "note": "Uzly na $[-1, 1]$ jsou $t_{1,2} = \\pm 1/\\sqrt{3}$ s vahami $w_1 = w_2 = 1$; přesné pro polynomy do st. $2n-1 = 3$."
         }
       ]
     },

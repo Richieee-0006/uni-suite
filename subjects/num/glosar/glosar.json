@@ -58,6 +58,14 @@
       {
         "term": "Newtonova–Hornerova metoda",
         "body": "Spojení Newtonovy metody s dvojitým Hornerovým schématem: v čase $O(n)$ získá $P(x_k)$ i $P'(x_k)$ a následně defluje polynom."
+      },
+      {
+        "term": "Steffensenova metoda",
+        "body": "Varianta Newtonovy metody bez analytické derivace s krokem $h_k = f(x_k)$: $x_{k+1} = x_k - f(x_k)/g(x_k)$, dosahuje kvadratické konvergence ($p = 2$)."
+      },
+      {
+        "term": "Halleyova metoda",
+        "body": "Iterační metoda pro $f(x)=0$ využívající $f'(x)$ i $f''(x)$; pro jednoduché kořeny dosahuje kubické konvergence ($p = 3$)."
       }
     ],
     "03-soustavy-a-matice": [
@@ -84,12 +92,20 @@
       {
         "term": "Ostrá diagonální dominance",
         "body": "Vlastnost matice $|a_{ii}| > \\sum_{j \\neq i} |a_{ij}|$ v každém řádku — postačující podmínka konvergence Jacobiho i Gaussovy–Seidelovy metody."
+      },
+      {
+        "term": "Sylvestrovo kritérium",
+        "body": "Test pozitivní definitnosti symetrické matice: všechny hlavní vedoucí minory (determinanty horních levých podmatic) musí být ostře kladné."
       }
     ],
     "04-interpolace-integrace-aproximace": [
       {
         "term": "Po částech lineární interpolace",
         "body": "Spojitá ($C^0$) lokální interpolace propojující sousední uzly úsečkami; netrpí Rungeho fenoménem a má chybu $O(h^2)$."
+      },
+      {
+        "term": "Přirozený kubický spline",
+        "body": "Po částech kubická interpolace třídy $C^2$ s okrajovou podmínkou $S''(x_0) = S''(x_n) = 0$; hladká křivka bez Rungeho oscilací."
       },
       {
         "term": "Lagrangeův interpolační polynom",
@@ -114,6 +130,10 @@
       {
         "term": "Newtonovy–Cotesovy vzorce",
         "body": "Kvadraturní vzorce (obdélníkové, lichoběžníkové $O(h^2)$, Simpsonovo $O(h^4)$) vzniklé integrací interpolačního polynomu na ekvidistantní síti; v praxi se používají složené."
+      },
+      {
+        "term": "Gaussova kvadratura",
+        "body": "Kvadraturní vzorec s optimálními uzly (kořeny Legendrových polynomů na $[-1,1]$) a vahami: s $n$ body integruje přesně polynomy až do stupně $2n - 1$."
       },
       {
         "term": "Rombergova kvadratura",
