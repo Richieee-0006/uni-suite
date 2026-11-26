@@ -1,11 +1,12 @@
 {
-  "intro": "Kompletní výklad k předmětu KI/PAS pokrývající všechny tři zkušební okruhy (popisnou statistiku, prakticko-teoretické metody i všech 19 teoretických pojmů) včetně vzorců a odpovídajících příkazů v R.",
+  "intro": "Kompletní výklad k předmětu KI/PAS pokrývající všechny tři zkušební okruhy (popisnou statistiku, prakticko-teoretické metody i všech 19 teoretických pojmů) včetně srovnávacích tabulek, vzorců a příkazů v R.",
   "chapters": [
     {
       "id": "01-popisna-statistika",
       "weeks": "Okruh I · III.1, 13–17",
       "title": "Klasifikace dat, populace, histogram a popisné statistiky",
       "topic_id": "01-pravdepodobnost-a-nahodne-veliciny",
+      "tags": ["Typy proměnných", "Sturges & Scott", "Průměr vs. Medián", "IQR & MAD", "Z-skór"],
       "summary": "Základ popisné statistiky: správné určení typu proměnné rozhoduje o tom, jaké grafy a charakteristiky polohy či variability vůbec dávají smysl.",
       "concepts": [
         {
@@ -29,6 +30,16 @@
           "body": "Při lineární transformaci $Y = aX + b$: míry polohy se posunou i přeškálují ($\\bar{y} = a\\bar{x} + b$), zatímco míry variability jsou na posun $+b$ necitlivé ($s_Y = |a|s_X$, $s_Y^2 = a^2 s_X^2$, $\\mathrm{IQR}_Y = |a|\\mathrm{IQR}_X$). Normování $U_i = \\frac{X_i - \\bar{x}}{s_x}$ převede data na bezrozměrný Z-skór s průměrem $0$ a směrodatnou odchylkou $1$."
         }
       ],
+      "comparison": {
+        "caption": "Tradiční vs. robustní popisné statistiky v R",
+        "headers": ["Účel", "Tradiční (citlivá na outliery)", "Robustní (odolná)", "Reakce na aX + b"],
+        "rows": [
+          ["Poloha", "Průměr `mean(X)`", "Medián `median(X)`, `mean(X, trim=0.1)`, `HuberM(X)`", "$a \\cdot \\text{míra} + b$"],
+          ["Variabilita", "Směr. odchylka `sd(X)`, `var(X)`", "`IQR(X)`, `MAD(X)`", "$|a| \\cdot \\text{míra}$ (u $s^2$: $a^2 s^2$)"],
+          ["Relativní variabilita", "Koeficient variace `CoefVar(X)`", "$\\mathrm{IQR} / \\text{medián}$", "Bezrozměrná ($b = 0$)"],
+          ["Tvar rozdělení", "Šikmost `Skew(X)`, špičatost `Kurt(X)`", "Kvantilové míry tvaru", "Beze změny při $a > 0$"]
+        ]
+      },
       "formulas": [
         {
           "name": "Sturgesovo a Scottovo pravidlo pro histogram",
@@ -53,6 +64,7 @@
       "weeks": "Okruh II.8 · III.12",
       "title": "Jádrový odhad hustoty, modus a odlehlé hodnoty",
       "topic_id": "01-pravdepodobnost-a-nahodne-veliciny",
+      "tags": ["KDE", "Epanechnikovo jádro", "Modus", "1,5 IQR", "3σ pravidlo", "Log transformace"],
       "summary": "Jak hladce odhadnout hustotu a modus bez citlivosti histogramu na offset a jak systematicky odhalit odlehlé hodnoty (outliery).",
       "concepts": [
         {
@@ -95,6 +107,7 @@
       "weeks": "Okruh III.2–4",
       "title": "Pravděpodobnost, Bayesova věta a náhodné veličiny",
       "topic_id": "01-pravdepodobnost-a-nahodne-veliciny",
+      "tags": ["Podmíněná P", "Nezávislost", "Bayesova věta", "Diskrétní NV", "Spojitá NV", "E(X) & Var(X)"],
       "summary": "Formální popis náhody: podmíněné jevy, obracení podmínky Bayesovou větou a charakterizace diskrétních i spojitých náhodných veličin.",
       "concepts": [
         {
@@ -142,6 +155,7 @@
       "weeks": "Okruh II.6–7 · III.3–4, 8",
       "title": "Klíčová rozdělení, ZVČ, CLV a hodnocení normality",
       "topic_id": "02-rozdeleni-pravdepodobnosti",
+      "tags": ["Bi(n,p)", "Po(λ)", "Exp(λ)", "N(μ,σ²)", "Student t", "ZVČ & CLV", "Q-Q plot"],
       "summary": "Přehled nejdůležitějších teoretických rozdělení, limitních vět propojujících pravděpodobnost se statistikou a postupů pro ověření rozdělení reálných dat.",
       "concepts": [
         {
@@ -161,6 +175,17 @@
           "body": "Normalitu posuzujeme kombinací grafů (histogram s křivkou hustoty, Q-Q plot — body u přímky, boxplot), čísel (šikmost $\\approx 0$, špičatost $\\approx 0$ u excesu) a testů (Shapiro–Wilk). Pro výběr podkladového rozdělení v R slouží Cullen–Freyův graf `descdist` a odhad parametrů `fitdist`."
         }
       ],
+      "comparison": {
+        "caption": "Přehled nejčastějších rozdělení pravděpodobnosti",
+        "headers": ["Rozdělení", "Typ", "Modeluje", "E(X) a Var(X)", "R funkce"],
+        "rows": [
+          ["Binomické $\\mathrm{Bi}(n, p)$", "Diskrétní", "Počet úspěchů v $n$ pokusech", "$np$, $np(1-p)$", "`dbinom`, `pbinom`"],
+          ["Poissonovo $\\mathrm{Po}(\\lambda)$", "Diskrétní", "Vzácné události za čas/prostor", "$\\lambda$, $\\lambda$", "`dpois`, `ppois`"],
+          ["Exponenciální $\\mathrm{Exp}(\\lambda)$", "Spojité", "Doba čekání (bezpaměťové)", "$1/\\lambda$, $1/\\lambda^2$", "`dexp`, `pexp`, `qexp`"],
+          ["Normální $N(\\mu, \\sigma^2)$", "Spojité", "Součet mnoha malých vlivů", "$\\mu$, $\\sigma^2$", "`dnorm`, `pnorm`, `qnorm` (bere $\\sigma$!)"],
+          ["Studentovo $t_\\nu$", "Spojité", "Průměr při neznámém $\\sigma$", "$0$, $\\frac{\\nu}{\\nu-2}$", "`dt`, `pt`, `qt`"]
+        ]
+      },
       "formulas": [
         {
           "name": "Hustota normálního rozdělení a standardizace",
@@ -185,6 +210,7 @@
       "weeks": "Okruh II.1–2 · III.5–7, 10",
       "title": "Bodové a intervalové odhady, robustní a bootstrapový přístup",
       "topic_id": "03-odhady-a-intervaly-spolehlivosti",
+      "tags": ["Nestrannost", "IS pro průměr", "IS pro podíl", "Bootstrap", "MeanCI & BootCI"],
       "summary": "Z náhodného výběru usuzujeme na neznámé parametry populace: jedním číslem (bodový odhad) nebo intervalem spolehlivosti s řízenou mírou nejistoty.",
       "concepts": [
         {
@@ -232,6 +258,7 @@
       "weeks": "Okruh II.3 · III.9–10",
       "title": "Testování statistických hypotéz a p-hodnota",
       "topic_id": "04-testovani-hypotez-a-regrese",
+      "tags": ["H₀ vs. H₁", "p-hodnota", "Chyby α a β", "t-test", "Wilcoxon", "χ² test"],
       "summary": "Formální rozhodování o tvrzeních nad populací: nastavíme nulovou hypotézu $H_0$, spočítáme testovou statistiku a přes $p$-hodnotu nebo kritický obor vyhodnotíme sílu důkazů proti $H_0$.",
       "concepts": [
         {
@@ -255,6 +282,17 @@
           "body": "$p$-hodnota je pravděpodobnost naměření alespoň tak extrémní testové statistiky za předpokladu, že platí $H_0$: $P(\\text{data} \\mid H_0)$. Není to pravděpodobnost, že platí $H_0$! Nezamítnutí $H_0$ neznamená důkaz její pravdivosti a statistická významnost ($p < 0{,}05$) neznamená automaticky praktickou významnost."
         }
       ],
+      "comparison": {
+        "caption": "Výběr statistického testu podle situace a dat",
+        "headers": ["Situace", "Parametrický test", "Neparametrická alternativa", "R příkaz"],
+        "rows": [
+          ["Průměr jednoho výběru vs. $\\mu_0$", "Jednovýběrový $t$-test", "Wilcoxonův jednovýběrový", "`t.test(x, mu = mu0)`"],
+          ["2 nezávislé skupiny (číselná)", "Welchův $t$-test", "Mann–Whitney / Wilcoxon", "`t.test(x ~ g)` / `wilcox.test(x ~ g)`"],
+          ["2 závislá měření (před / po)", "Párový $t$-test", "Párový Wilcoxonův test", "`t.test(x1, x2, paired = TRUE)`"],
+          ["Podíl úspěchů vs. $p_0$", "Test podílu (asympt.)", "Binomický exaktní test", "`prop.test(k, n, p = p0)`"],
+          ["2 kategorické proměnné", "Pearsonův $\\chi^2$ test", "Fisherův exaktní ($E_{ij} < 5$)", "`chisq.test(table(X, Y))`"]
+        ]
+      },
       "formulas": [
         {
           "name": "Jednovýběrový t-test",
@@ -267,6 +305,15 @@
           "note": "Očekávaná četnost $E_{ij} = \\frac{R_i \\cdot C_j}{n}$; platí při $E_{ij} \\ge 5$."
         }
       ],
+      "example": {
+        "title": "Příklad krok za krokem: jednovýběrový t-test (n = 16, x̄ = 104, s = 8, H₀: μ = 100)",
+        "steps": [
+          "Hypotézy na hladině $\\alpha = 0{,}05$: $H_0: \\mu = 100$ vs. oboustranná $H_1: \\mu \\neq 100$.",
+          "Testová statistika: $t = \\frac{104 - 100}{8 / \\sqrt{16}} = \\frac{4}{2} = 2{,}00$ při $df = n - 1 = 15$.",
+          "Kritická hodnota: z tabulky Studentova rozdělení $t_{0{,}975,\\, 15} = 2{,}131$.",
+          "Rozhodnutí: $|t| = 2{,}00 < 2{,}131$ (ekvivalentně $p \\approx 0{,}064 > 0{,}05$) → na hladině $5\\,\\%$ **nezamítáme $H_0$** (nemáme dostatečný důkaz, že se populační průměr liší od 100)."
+        ]
+      },
       "pitfalls": [
         "Interpretovat $p = 0{,}03$ jako „3 % šance, že platí $H_0$“ — je to pravděpodobnost dat za platnosti $H_0$.",
         "Říkat „přijímáme $H_0$“ místo „nezamítáme $H_0$“ (nemáme dost důkazů proti $H_0$).",
@@ -279,6 +326,7 @@
       "weeks": "Okruh II.4–5 · III.11, 18–19",
       "title": "Kovariance, korelace a lineární regrese",
       "topic_id": "04-testovani-hypotez-a-regrese",
+      "tags": ["Kovariance", "Pearson r", "Spearman ρ", "lm(Y ~ X)", "R²", "Předpoklady regrese"],
       "summary": "Hodnocení vztahu dvou číselných proměnných (tvar, směr, síla) a modelování závislé proměnné $Y$ pomocí vysvětlující proměnné $X$ regresní přímkou.",
       "concepts": [
         {
@@ -322,6 +370,7 @@
       "weeks": "Praktická část · R-ko",
       "title": "Tahák R příkazů k zápočtu a ústní zkoušce",
       "topic_id": "05-r-code-tasks",
+      "tags": ["DescTools", "fitdistrplus", "d/p/q/r", "MeanCI", "lm & plot"],
       "summary": "Stručná mapa příkazů dostupných u zkoušky z KMA/PAS (seřazená podle toho, co zrovna řešíte na datech).",
       "concepts": [
         {

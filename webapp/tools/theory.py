@@ -45,6 +45,43 @@ def _clean_concept_list(raw_items: Any) -> list[dict[str, str]]:
     return out
 
 
+def _clean_comparison(raw_table: Any) -> dict[str, Any] | None:
+    if not isinstance(raw_table, dict):
+        return None
+    headers = [
+        str(h).strip()
+        for h in (raw_table.get("headers") or [])
+        if isinstance(h, str) and h.strip()
+    ]
+    rows_out: list[list[str]] = []
+    for row in raw_table.get("rows") or []:
+        if isinstance(row, list) and row:
+            cells = [str(c).strip() for c in row]
+            if any(cells):
+                rows_out.append(cells)
+    if not headers or not rows_out:
+        return None
+    return {
+        "caption": str(raw_table.get("caption") or "").strip(),
+        "headers": headers,
+        "rows": rows_out,
+    }
+
+
+def _clean_example(raw_ex: Any) -> dict[str, Any] | None:
+    if not isinstance(raw_ex, dict):
+        return None
+    title = str(raw_ex.get("title") or "").strip()
+    steps = [
+        str(s).strip()
+        for s in (raw_ex.get("steps") or [])
+        if isinstance(s, str) and s.strip()
+    ]
+    if not steps:
+        return None
+    return {"title": title, "steps": steps}
+
+
 def get_theory_tool_data(
     slug: str,
     *,
@@ -77,8 +114,15 @@ def get_theory_tool_data(
             weeks = str(chapter.get("weeks") or "").strip()
             topic_id = str(chapter.get("topic_id") or "").strip()
             summary = str(chapter.get("summary") or "").strip()
+            tags = [
+                str(t).strip()
+                for t in (chapter.get("tags") or [])
+                if isinstance(t, str) and t.strip()
+            ]
             concepts = _clean_concept_list(chapter.get("concepts"))
             formulas = _clean_formula_list(chapter.get("formulas"))
+            comparison = _clean_comparison(chapter.get("comparison"))
+            example = _clean_example(chapter.get("example"))
             pitfalls = [
                 str(p).strip()
                 for p in (chapter.get("pitfalls") or [])
@@ -87,11 +131,19 @@ def get_theory_tool_data(
             code_tip = str(chapter.get("code_tip") or "").strip()
 
             if q_norm:
-                haystack_parts = [title, weeks, summary, code_tip, *pitfalls]
+                haystack_parts = [title, weeks, summary, code_tip, *tags, *pitfalls]
                 for c in concepts:
                     haystack_parts.extend((c["title"], c["body"]))
                 for f in formulas:
                     haystack_parts.extend((f["name"], f["note"], f["latex"]))
+                if comparison:
+                    haystack_parts.append(comparison["caption"])
+                    haystack_parts.extend(comparison["headers"])
+                    for r in comparison["rows"]:
+                        haystack_parts.extend(r)
+                if example:
+                    haystack_parts.append(example["title"])
+                    haystack_parts.extend(example["steps"])
                 if q_norm not in _normalize_search(" ".join(haystack_parts)):
                     continue
 
@@ -101,9 +153,12 @@ def get_theory_tool_data(
                     "weeks": weeks,
                     "title": title,
                     "topic_id": topic_id,
+                    "tags": tags,
                     "summary": summary,
                     "concepts": concepts,
                     "formulas": formulas,
+                    "comparison": comparison,
+                    "example": example,
                     "pitfalls": pitfalls,
                     "code_tip": code_tip,
                 }

@@ -142,9 +142,13 @@ def test_real_catalog_subjects_valid_html5(
             "Katastrofické krácení",
             "Newtonova metoda tečen",
             "Gaussova eliminační metoda",
+            "Jacobiho metoda",
+            "Gaussova–Seidelova metoda",
+            "Jacobi vs. Gauss–Seidel",
             "Rungeho fenomén",
             "Rombergova kvadratura",
             "Runge–Kutta 4. řádu",
+            "/static/css/portal.css?v=",
         ):
             assert token in num_theory_html, f"Missing NUM theory content: {token}"
 

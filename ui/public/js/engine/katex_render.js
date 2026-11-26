@@ -219,7 +219,7 @@
     const source = String(text || "");
     if (!source) return;
 
-    const pattern = /(\$\$[\s\S]+?\$\$|\$(?:\\.|[^$\n])+?\$|\*\*[^*]+?\*\*|`[^`]+?`|\n)/g;
+    const pattern = /(`[^`]+?`|\$\$[\s\S]+?\$\$|\$(?:\\.|[^$\n])+?\$|\*\*[^*]+?\*\*|\n)/g;
     let cursor = 0;
     let match;
 

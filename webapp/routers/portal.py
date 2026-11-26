@@ -9,9 +9,11 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from jinja2 import Environment, FileSystemLoader
 
+import hashlib
+
 import db
 from webapp import config as cfg
-from webapp.config import TEMPLATES_DIR
+from webapp.config import PUBLIC_DIR, TEMPLATES_DIR
 from webapp.csrf import get_or_create_csrf_token, verify_csrf
 from webapp.preferences import load_user_preferences, prefs_to_html_attrs
 from webapp.sessions import get_current_user, is_admin_user
@@ -30,6 +32,26 @@ from webapp.tools import (
 router = APIRouter(dependencies=[Depends(verify_csrf)])
 
 _public_templates: Jinja2Templates | None = None
+
+
+def _compute_asset_version() -> str:
+    """Short deterministic version token for static CSS/JS cache busting."""
+    h = hashlib.sha256()
+    for rel in (
+        "css/tokens.css",
+        "css/portal.css",
+        "css/engine.css",
+        "js/tools/theory.js",
+        "js/engine/katex_render.js",
+    ):
+        p = PUBLIC_DIR / rel
+        if p.is_file():
+            st = p.stat()
+            h.update(f"{rel}:{st.st_size}:{st.st_mtime_ns};".encode())
+    return h.hexdigest()[:10]
+
+
+_ASSET_VERSION = _compute_asset_version()
 
 
 def build_templates(directory: str) -> Jinja2Templates:
@@ -90,6 +112,7 @@ def build_base_context(
         "page_title": page_title,
         "active_nav": active_nav,
         "html_attrs": prefs_to_html_attrs(prefs),
+        "asset_v": _ASSET_VERSION,
     }
 
 
