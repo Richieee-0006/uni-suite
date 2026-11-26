@@ -102,9 +102,12 @@ def test_real_catalog_subjects_valid_html5(
         "real_portal.html": "/",
         "real_num.html": "/predmet/num",
         "real_num_code.html": "/predmet/num/code",
+        "real_num_teorie.html": "/predmet/num/teorie",
         "real_pas.html": "/predmet/pas",
         "real_pas_code.html": "/predmet/pas/code",
+        "real_pas_teorie.html": "/predmet/pas/teorie",
         "real_tzi.html": "/predmet/tzi",
+        "real_tzi_teorie.html": "/predmet/tzi/teorie",
     }
     written: list[str] = []
     with TestClient(app) as tc:
@@ -129,8 +132,54 @@ def test_real_catalog_subjects_valid_html5(
             "script_num.pdf",
             "nm.pdf",
             "NUMER.PDF",
+            "/predmet/num/teorie",
         ):
             assert token in num_html, f"Missing NUM syllabus content: {token}"
+
+        # Verify NUM & PAS structured theory pages & PAS syllabus
+        num_theory_html = (tmp_path / "real_num_teorie.html").read_text(encoding="utf-8")
+        for token in (
+            "Katastrofické krácení",
+            "Newtonova metoda tečen",
+            "Gaussova eliminační metoda",
+            "Rungeho fenomén",
+            "Rombergova kvadratura",
+            "Runge–Kutta 4. řádu",
+        ):
+            assert token in num_theory_html, f"Missing NUM theory content: {token}"
+
+        pas_html = (tmp_path / "real_pas.html").read_text(encoding="utf-8")
+        assert "Okruh I" in pas_html
+        assert "/predmet/pas/teorie" in pas_html
+
+        pas_theory_html = (tmp_path / "real_pas_teorie.html").read_text(encoding="utf-8")
+        for token in (
+            "Sturgesovo a Scottovo pravidlo",
+            "Jádrový odhad hustoty",
+            "Bayesova věta",
+            "Centrální limitní věta",
+            "Interval spolehlivosti",
+            "Interpretační pasti p-hodnoty",
+            "Předpoklady lineární regrese",
+        ):
+            assert token in pas_theory_html, f"Missing PAS theory content: {token}"
+
+        # Verify /api/{slug}/tools/theory endpoints and fixed 04d-odr bank loading
+        r_num_theory = tc.get("/api/num/tools/theory")
+        assert r_num_theory.status_code == 200
+        assert r_num_theory.json()["total"] == 7
+
+        r_pas_theory = tc.get("/api/pas/tools/theory")
+        assert r_pas_theory.status_code == 200
+        assert r_pas_theory.json()["total"] == 8
+
+        r_tzi_theory = tc.get("/api/tzi/tools/theory")
+        assert r_tzi_theory.status_code == 200
+        assert r_tzi_theory.json()["tool"] == "theory"
+
+        r_odr = tc.get("/api/num/questions?mode=practice&topic=04d-odr&limit=20")
+        assert r_odr.status_code == 200
+        assert len(r_odr.json().get("questions", [])) >= 1
 
         r_code_q = tc.get("/api/num/questions?mode=practice&type=code_task&limit=50")
         assert r_code_q.status_code == 200
