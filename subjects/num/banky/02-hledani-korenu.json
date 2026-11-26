@@ -232,6 +232,76 @@
         "Vysvětlení: Hledáním dalších kořenů na $Q_{n-1}(x)$ zabráníme opakovanému nalezení téhož kořene a snížíme složitost výpočtu."
       ],
       "explanation": "Hornerovo schéma splňuje $P_n(x) = (x - x^*)Q_{n-1}(x) + P_n(x^*)$. Jakmile $P_n(x^*) \\approx 0$, koeficienty $b_n, \\dots, b_1$ tvoří redukovaný (deflovaný) polynom $Q_{n-1}(x)$ pro hledání zbývajících kořenů."
+    },
+    {
+      "id": "num-02-q13",
+      "number": 13,
+      "type": "choice",
+      "text": "Jakým způsobem **Steffensenova metoda** (skripta 2.5) odstraňuje nutnost znát analytickou derivaci $f'(x)$ při zachování **kvadratické konvergence**?",
+      "options": {
+        "A": "Nahrazuje derivaci náhodným číslem v intervalu $(0, 1)$",
+        "B": "Používá diferenci $g(x_k) = \\frac{f(x_k + f(x_k)) - f(x_k)}{f(x_k)}$ s adaptivním krokem $h_k = f(x_k)$",
+        "C": "Půlí počáteční interval $[a, b]$ jako bisekce",
+        "D": "Používá druhou derivaci $f''(x_k)$ místo první"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Steffensen vychází z Newtonova vzorce $x_{k+1} = x_k - f(x_k)/f'(x_k)$ a nahrazuje $f'(x_k)$ diferencí $(f(x_k + h_k) - f(x_k))/h_k$.",
+        "Krok 2: Jako krok $h_k$ volí samotnou hodnotu funkce $h_k = f(x_k)$, která se s přibližováním ke kořeni zmenšuje k nule.",
+        "Vysvětlení: Díky $h_k = f(x_k) \\to 0$ je odhad derivace stále přesnější a řád konvergence zůstává kvadratický ($p = 2$)."
+      ],
+      "explanation": "Steffensenova metoda aproximuje $f'(x_k)$ diferencí s krokem $h_k = f(x_k)$, takže $x_{k+1} = x_k - \\frac{[f(x_k)]^2}{f(x_k + f(x_k)) - f(x_k)}$ a dosahuje kvadratické konvergence bez derivace."
+    },
+    {
+      "id": "num-02-q14",
+      "number": 14,
+      "type": "input_numeric",
+      "text": "Proveďte **jeden krok Steffensenovy metody** pro rovnici $f(x) = x^2 - 2 = 0$ z počátečního odhadu $x_0 = 1{,}5$. Jaká je hodnota $x_1$?",
+      "answer": 1.423077,
+      "tolerance": 0.001,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Spočítejte $f(1{,}5) = 2{,}25 - 2 = 0{,}25$ a $f(x_0 + f(x_0)) = f(1{,}75) = 3{,}0625 - 2 = 1{,}0625$.",
+        "Krok 2: Sklon $g(1{,}5) = \\frac{1{,}0625 - 0{,}25}{0{,}25} = \\frac{0{,}8125}{0{,}25} = 3{,}25$.",
+        "Vysvětlení: $x_1 = 1{,}5 - \\frac{0{,}25}{3{,}25} = 1{,}5 - \\frac{1}{13} = \\frac{37}{26} \\approx 1{,}4231$."
+      ],
+      "explanation": "Pro $x_0 = 1{,}5$ platí $f(1{,}5) = 0{,}25$, $f(1{,}75) = 1{,}0625$, tedy $g(1{,}5) = 3{,}25$ a $x_1 = 1{,}5 - \\frac{0{,}25}{3{,}25} = \\frac{37}{26} \\approx 1{,}4231$ (přesně $\\sqrt{2} \\approx 1{,}4142$)."
+    },
+    {
+      "id": "num-02-q15",
+      "number": 15,
+      "type": "choice",
+      "text": "Co odlišuje **Halleyovu metodu** (skripta 2.6) od Newtonovy metody tečen u jednoduchého kořene?",
+      "options": {
+        "A": "Nepotřebuje žádnou derivaci a má lineární konvergenci",
+        "B": "Využívá kromě $f'(x)$ i **druhou derivaci $f''(x)$** a dosahuje **kubické konvergence ($p = 3$)**",
+        "C": "Vyžaduje změnu znaménka $f(a)f(b) < 0$ na intervalu",
+        "D": "Používá se výhradně pro soustavy lineárních rovnic"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Halleyův vzorec je $x_{n+1} = x_n - \\frac{f(x_n)f'(x_n)}{[f'(x_n)]^2 - \\frac{1}{2}f(x_n)f''(x_n)}$.",
+        "Krok 2: Zařazení zakřivení přes $f''(x_n)$ zvedne řád konvergence z $p = 2$ na $p = 3$.",
+        "Vysvětlení: Halleyova metoda má kubickou konvergenci — počet platných cifer se v každém kroku zhruba ztrojnásobí."
+      ],
+      "explanation": "Halleyova metoda zahrnuje i druhou derivaci $f''(x)$, čímž pro jednoduché kořeny dosahuje kubické konvergence ($p = 3$) za cenu vyhodnocování $f, f', f''$."
+    },
+    {
+      "id": "num-02-q16",
+      "number": 16,
+      "type": "input_numeric",
+      "text": "Vyhodnoťte **Hornerovým schématem** (příklad ze skript 2.8) polynom $p(x) = 11x^3 - 4x^2 + 3x + 2$ v bodě $x_0 = 3$.",
+      "answer": 272,
+      "tolerance": 0.01,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Začněte od vedoucího koeficientu: $b_3 = 11$, pak $b_2 = 11\\cdot 3 - 4 = 29$.",
+        "Krok 2: Pokračujte $b_1 = 29\\cdot 3 + 3 = 90$.",
+        "Vysvětlení: Poslední krok dá hodnotu polynomu $b_0 = 90\\cdot 3 + 2 = 272$."
+      ],
+      "explanation": "Vnořeným vyhodnocením $((11\\cdot 3 - 4)\\cdot 3 + 3)\\cdot 3 + 2 = (29\\cdot 3 + 3)\\cdot 3 + 2 = 90\\cdot 3 + 2 = 272$."
     }
   ]
 }

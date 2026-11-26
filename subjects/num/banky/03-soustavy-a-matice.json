@@ -238,6 +238,60 @@
         "Vysvětlení: Choleského rozklad šetří 50 % času i paměti a u SPD matic nepotřebuje pivotaci."
       ],
       "explanation": "Choleského faktorizace $A = LL^T$ je ideální pro symetrické pozitivně definitní matice (včetně $A^T A$ v metodě nejmenších čtverců): je dvakrát rychlejší než LU a přirozeně stabilní."
+    },
+    {
+      "id": "num-03-q13",
+      "number": 13,
+      "type": "choice",
+      "text": "Jak ověříme pozitivní definitnost symetrické matice $A$ pomocí **Sylvestrova kritéria** (skripta 3.4)?",
+      "options": {
+        "A": "Součet všech prvků matice $A$ musí být kladný",
+        "B": "Determinanty všech **hlavních vedoucích podmatic** (horních levých podmatic $1\\times 1, 2\\times 2, \\dots, n\\times n$) musí být ostře kladné",
+        "C": "Všechny prvky mimo diagonálu musí být nulové",
+        "D": "Matice musí mít determinant rovný jedné"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Hlavní vedoucí podmatice $A_k$ vznikne z prvních $k$ řádků a prvních $k$ sloupců matice $A$.",
+        "Krok 2: Pro pozitivní definitnost musí platit $\\det(A_1) > 0, \\det(A_2) > 0, \\dots, \\det(A_n) > 0$.",
+        "Vysvětlení: Pokud je matice symetrická a splňuje Sylvestrovo kritérium, zaručeně konverguje Gaussova–Seidelova metoda i Choleského rozklad."
+      ],
+      "explanation": "Sylvestrovo kritérium říká, že symetrická matice je pozitivně definitní právě tehdy, když všechny její hlavní vedoucí minory jsou ostře kladné ($\\det(A_k) > 0$ pro $k = 1, \\dots, n$)."
+    },
+    {
+      "id": "num-03-q14",
+      "number": 14,
+      "type": "choice",
+      "text": "Jak získáme dolní trojúhelníkovou matici $L$ v **LU rozkladu** přímo během přímého chodu Gaussovy eliminační metody (skripta 3.3)?",
+      "options": {
+        "A": "Jako transpozici výsledné horní matice $U^T$",
+        "B": "Na diagonálu $L$ dáme jedničky a pod diagonálu na pozici $(i, j)$ uložíme eliminační násobek $k_{ij} = a_{ij}^{(j)} / a_{jj}^{(j)}$, kterým jsme nulovali prvek v řádku $i$",
+        "C": "Na diagonálu $L$ uložíme pravou stranu $\\vec{b}$ a ostatní prvky vynulujeme",
+        "D": "Vypočítáme inverzní matici $A^{-1}$ a vezmeme její dolní část"
+      },
+      "correct": ["B"],
+      "hints": [
+        "Krok 1: Každý eliminační krok $R_i \\leftarrow R_i - k_{ij} R_j$ odpovídá násobení elementární dolní trojúhelníkovou maticí.",
+        "Krok 2: Inverzní matice k těmto krokům mají přesně koeficienty $+k_{ij}$ pod diagonálou a jedničky na diagonále.",
+        "Vysvětlení: Díky tomu vzniká $L$ i $U$ najednou během jediného přímého chodu GEM bez dodatečné složitosti."
+      ],
+      "explanation": "Při přímém chodu GEM vzniká horní matice $U$ a uložením eliminačních násobků $k_{ij}$ pod jednotkovou diagonálu dostáváme přímo dolní matici $L$ tak, že $A = LU$ (s pivotací $PA = LU$)."
+    },
+    {
+      "id": "num-03-q15",
+      "number": 15,
+      "type": "input_numeric",
+      "text": "Řešíme soustavu $4x_1 + x_2 = 9$, $x_1 + 3x_2 = 5$ **Jacobiho metodou** z počátečního odhadu $\\vec{x}^{(0)} = (0, 0)$. Jaká je hodnota druhé složky $x_2^{(1)}$ po 1. iteraci? (Pozor na rozdíl oproti Gauss–Seidelovi!)",
+      "answer": 1.6667,
+      "tolerance": 0.01,
+      "tolerance_mode": "abs",
+      "unit": "",
+      "hints": [
+        "Krok 1: Z druhé rovnice vyjádříme $x_2 = \\frac{5 - x_1}{3}$.",
+        "Krok 2: Jacobiho metoda používá pro všechny složky v 1. kroku výhradně starý vektor $\\vec{x}^{(0)} = (0, 0)$ — tedy $x_1^{(0)} = 0$, nikoli nové $x_1^{(1)} = 2{,}25$!",
+        "Vysvětlení: $x_2^{(1)} = \\frac{5 - 0}{3} = \\frac{5}{3} \\approx 1{,}6667$ (Gauss–Seidel by dal $\\frac{5 - 2{,}25}{3} \\approx 0{,}9167$)."
+      ],
+      "explanation": "Jacobiho metoda při výpočtu $x_2^{(1)}$ dosazuje starou hodnotu $x_1^{(0)} = 0$, takže $x_2^{(1)} = (5 - 0)/3 \\approx 1{,}6667$."
     }
   ]
 }
