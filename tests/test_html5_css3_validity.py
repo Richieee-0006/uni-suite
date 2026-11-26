@@ -193,7 +193,7 @@ def test_real_catalog_subjects_valid_html5(
         r_code_q = tc.get("/api/num/questions?mode=practice&type=code_task&limit=50")
         assert r_code_q.status_code == 200
         q_list = r_code_q.json().get("questions", [])
-        assert len(q_list) == 10
+        assert len(q_list) == 13
         for item in q_list:
             assert "solution_code" not in item
             assert "hidden_tests" not in item
